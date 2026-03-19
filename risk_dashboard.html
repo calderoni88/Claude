@@ -3,990 +3,338 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CENTINELA — Dashboard de Riesgo Operativo</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>CENTINELA — Monitor de Riesgo Operativo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0c10;
-  --surface: #0f1219;
-  --surface2: #161b26;
-  --border: #1e2535;
-  --border2: #2a3347;
-  --text: #e8ecf4;
-  --text-muted: #5a6480;
-  --text-dim: #8892aa;
-  --accent: #00d4ff;
-  --accent-glow: rgba(0,212,255,0.15);
-  --red: #ff3b5c;
-  --red-glow: rgba(255,59,92,0.15);
-  --orange: #ff8c42;
-  --orange-glow: rgba(255,140,66,0.12);
-  --yellow: #ffd166;
-  --yellow-glow: rgba(255,209,102,0.12);
-  --green: #06d6a0;
-  --green-glow: rgba(6,214,160,0.12);
-  --purple: #9b5de5;
-  --mono: 'Space Mono', monospace;
-  --sans: 'Syne', sans-serif;
+  --navy: #0d1b3e;
+  --navy-mid: #1a2f5e;
+  --blue: #1e5bc6;
+  --blue-light: #3b82f6;
+  --blue-pale: #eff6ff;
+  --bg: #f4f6fb;
+  --white: #ffffff;
+  --border: #e2e8f0;
+  --border-dark: #cbd5e1;
+  --text: #0f172a;
+  --text-mid: #334155;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --red-border: #fecaca;
+  --orange: #d97706;
+  --orange-bg: #fffbeb;
+  --orange-border: #fde68a;
+  --green: #059669;
+  --green-bg: #f0fdf4;
+  --green-border: #bbf7d0;
+  --yellow: #b45309;
+  --yellow-bg: #fefce8;
+  --purple: #7c3aed;
+  --purple-bg: #f5f3ff;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --font: 'DM Sans', 'Inter', sans-serif;
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* SCANLINES OVERLAY */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-  pointer-events: none;
-  z-index: 1000;
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh}
 
 /* HEADER */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 28px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(10,12,16,0.95);
-  backdrop-filter: blur(12px);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
+.header{background:var(--navy);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(13,27,62,0.3)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:18px solid var(--blue-light);flex-shrink:0}
+.logo-name{font-size:17px;font-weight:700;color:#fff;letter-spacing:0.5px}
+.logo-sep{width:1px;height:20px;background:rgba(255,255,255,0.2);margin:0 8px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,0.5);font-weight:400}
+.header-center{display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,0.6)}
+.live-pill{display:flex;align-items:center;gap:5px;background:rgba(220,38,38,0.2);border:1px solid rgba(220,38,38,0.4);border-radius:20px;padding:3px 10px;font-size:11px;color:#fca5a5;font-weight:500}
+.live-dot{width:6px;height:6px;background:#f87171;border-radius:50%;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.header-right{display:flex;align-items:center;gap:12px}
+.clock{font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);letter-spacing:1px}
+.bell-btn{position:relative;width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:15px}
+.bell-btn:hover{background:rgba(255,255,255,0.18)}
+.bell-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px}
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+/* ALERT BAR */
+.alert-bar{background:var(--red);display:flex;align-items:center;height:32px;overflow:hidden}
+.alert-bar-label{background:rgba(0,0,0,0.2);color:#fff;font-size:10px;font-weight:700;letter-spacing:2px;padding:0 14px;height:100%;display:flex;align-items:center;flex-shrink:0;white-space:nowrap}
+.ticker-wrap{overflow:hidden;flex:1}
+.ticker-content{display:flex;animation:ticker 32s linear infinite;white-space:nowrap}
+.ticker-item{font-size:11px;color:rgba(255,255,255,0.92);padding:0 32px;display:flex;align-items:center;gap:8px;font-weight:500}
+.ticker-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.7);flex-shrink:0}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-.logo-mark {
-  width: 36px;
-  height: 36px;
-  background: var(--accent);
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  animation: pulse-mark 3s ease-in-out infinite;
-}
-
-@keyframes pulse-mark {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(0,212,255,0); }
-}
-
-.logo-text {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 4px;
-  color: var(--text);
-}
-.logo-sub {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text-muted);
-  letter-spacing: 2px;
-  margin-top: 2px;
-}
-
-.header-center {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.live-dot {
-  width: 8px; height: 8px;
-  background: var(--red);
-  border-radius: 50%;
-  animation: blink 1.2s ease-in-out infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.clock {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--accent);
-  letter-spacing: 2px;
-}
-
-.alert-bell {
-  position: relative;
-  cursor: pointer;
-  width: 32px; height: 32px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 14px;
-  transition: all 0.2s;
-}
-.alert-bell:hover { border-color: var(--accent); background: var(--accent-glow); }
-.alert-badge {
-  position: absolute;
-  top: -4px; right: -4px;
-  width: 16px; height: 16px;
-  background: var(--red);
-  border-radius: 50%;
-  font-size: 9px;
-  font-family: var(--mono);
-  display: flex; align-items: center; justify-content: center;
-  animation: pulse-badge 2s ease-in-out infinite;
-}
-@keyframes pulse-badge { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
-
-/* ALERT TICKER */
-.ticker-wrap {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  overflow: hidden;
-  height: 34px;
-  display: flex;
-  align-items: center;
-}
-.ticker-label {
-  background: var(--red);
-  color: #fff;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  padding: 0 16px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-.ticker-content {
-  display: flex;
-  animation: ticker 30s linear infinite;
-  white-space: nowrap;
-}
-.ticker-item {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text-dim);
-  padding: 0 40px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.ticker-item .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-/* MAIN LAYOUT */
-.main {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  grid-template-rows: auto 1fr;
-  height: calc(100vh - 35px - 34px);
-  overflow: hidden;
-}
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:256px 1fr;height:calc(100vh - 58px - 32px);overflow:hidden}
 
 /* SIDEBAR */
-.sidebar {
-  border-right: 1px solid var(--border);
-  background: var(--surface);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-.sidebar::-webkit-scrollbar { width: 4px; }
-.sidebar::-webkit-scrollbar-track { background: transparent; }
-.sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.sidebar{background:var(--white);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border-dark);border-radius:2px}
+.sidebar-logo-block{padding:18px 16px 14px;border-bottom:1px solid var(--border)}
+.sidebar-brand{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.risk-score-block{display:flex;align-items:center;gap:12px;background:var(--navy);border-radius:var(--radius-sm);padding:12px}
+.risk-gauge-wrap{position:relative;flex-shrink:0}
+.risk-num-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.risk-num{font-size:18px;font-weight:700;color:#fff;line-height:1}
+.risk-num-sub{font-size:9px;color:rgba(255,255,255,0.4)}
+.risk-info-label{font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:1px;margin-bottom:2px}
+.risk-info-band{font-size:13px;font-weight:700;color:#fca5a5;display:flex;align-items:center;gap:4px}
+.risk-info-desc{font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px;line-height:1.3}
+.sidebar-section{padding:14px 16px;border-bottom:1px solid var(--border)}
+.sidebar-section-title{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.filter-group{margin-bottom:9px}
+.filter-label{font-size:11px;font-weight:500;color:var(--text-muted);margin-bottom:3px}
+.filter-select{width:100%;background:var(--bg);border:1px solid var(--border-dark);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:12px;padding:7px 10px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:border-color 0.15s}
+.filter-select:focus{border-color:var(--blue)}
+.producer-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s;margin-bottom:2px}
+.producer-item:hover{background:var(--bg)}
+.p-avatar{width:28px;height:28px;border-radius:7px;background:var(--navy);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.p-name{font-size:12px;font-weight:600;color:var(--text)}
+.p-ops{font-size:10px;color:var(--text-muted)}
+.p-risk-badge{margin-left:auto;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;flex-shrink:0}
 
-.sidebar-section {
-  padding: 20px 16px 12px;
-  border-bottom: 1px solid var(--border);
-}
-.sidebar-title {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
+/* CONTENT */
+.content{overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:16px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--border-dark);border-radius:2px}
+.section-header{display:flex;align-items:center;justify-content:space-between}
+.section-title{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+.section-title::before{content:'';display:block;width:3px;height:14px;background:var(--blue);border-radius:2px}
 
-.risk-score-widget {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 0;
-}
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:box-shadow 0.2s,transform 0.15s;position:relative;overflow:hidden}
+.kpi-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.kpi-card.danger{border-top:3px solid var(--red)}
+.kpi-card.warning{border-top:3px solid var(--orange)}
+.kpi-card.caution{border-top:3px solid #eab308}
+.kpi-card.success{border-top:3px solid var(--green)}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.kpi-label{font-size:11px;font-weight:500;color:var(--text-muted);line-height:1.3}
+.kpi-icon-wrap{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.kpi-card.danger .kpi-icon-wrap{background:var(--red-bg)}
+.kpi-card.warning .kpi-icon-wrap{background:var(--orange-bg)}
+.kpi-card.caution .kpi-icon-wrap{background:var(--yellow-bg)}
+.kpi-card.success .kpi-icon-wrap{background:var(--green-bg)}
+.kpi-value{font-size:22px;font-weight:700;line-height:1;margin-bottom:3px;font-variant-numeric:tabular-nums}
+.kpi-card.danger .kpi-value{color:var(--red)}
+.kpi-card.warning .kpi-value{color:var(--orange)}
+.kpi-card.caution .kpi-value{color:var(--yellow)}
+.kpi-card.success .kpi-value{color:var(--green)}
+.kpi-sub{font-size:10px;color:var(--text-light)}
+.kpi-cta{margin-top:7px;font-size:10px;color:var(--blue);font-weight:600;opacity:0;transition:opacity 0.15s}
+.kpi-card:hover .kpi-cta{opacity:1}
 
-.risk-gauge {
-  position: relative;
-  width: 120px;
-  height: 120px;
-}
+/* MID GRID */
+.mid-grid{display:grid;grid-template-columns:1fr 298px;gap:12px}
 
-.risk-gauge svg { width: 100%; height: 100%; }
-
-.risk-score-value {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.risk-score-num {
-  font-family: var(--mono);
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--red);
-  line-height: 1;
-}
-.risk-score-label {
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 2px;
-}
-
-.risk-band {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 3px;
-  font-weight: 700;
-  color: var(--red);
-  background: var(--red-glow);
-  border: 1px solid rgba(255,59,92,0.3);
-  padding: 4px 12px;
-  border-radius: 2px;
-}
-
-/* FILTER BLOCK */
-.filter-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 10px;
-}
-.filter-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-}
-.filter-select {
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  color: var(--text-dim);
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 6px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  outline: none;
-  width: 100%;
-  transition: border-color 0.2s;
-}
-.filter-select:focus { border-color: var(--accent); }
-
-/* PRODUCER LIST */
-.producer-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s;
-  margin-bottom: 2px;
-}
-.producer-item:hover, .producer-item.active { background: var(--surface2); }
-.producer-avatar {
-  width: 28px; height: 28px;
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-.producer-info { flex: 1; min-width: 0; }
-.producer-name {
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.producer-ops {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-muted);
-}
-.producer-risk {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 3px;
-}
-
-/* CONTENT AREA */
-.content {
-  overflow-y: auto;
-  padding: 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.content::-webkit-scrollbar { width: 4px; }
-.content::-webkit-scrollbar-track { background: transparent; }
-.content::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
-/* KPI ROW */
-.kpi-row {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-}
-
-.kpi-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.2s, transform 0.2s;
-  cursor: pointer;
-}
-.kpi-card:hover { transform: translateY(-2px); }
-.kpi-card.critical { border-color: rgba(255,59,92,0.4); }
-.kpi-card.high { border-color: rgba(255,140,66,0.4); }
-.kpi-card.medium { border-color: rgba(255,209,102,0.3); }
-.kpi-card.ok { border-color: rgba(6,214,160,0.3); }
-
-.kpi-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-}
-.kpi-card.critical::before { background: var(--red); }
-.kpi-card.high::before { background: var(--orange); }
-.kpi-card.medium::before { background: var(--yellow); }
-.kpi-card.ok::before { background: var(--green); }
-
-.kpi-glow {
-  position: absolute;
-  top: -20px; right: -20px;
-  width: 80px; height: 80px;
-  border-radius: 50%;
-  opacity: 0.06;
-}
-.kpi-card.critical .kpi-glow { background: var(--red); }
-.kpi-card.high .kpi-glow { background: var(--orange); }
-.kpi-card.medium .kpi-glow { background: var(--yellow); }
-.kpi-card.ok .kpi-glow { background: var(--green); }
-
-.kpi-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.kpi-value {
-  font-family: var(--mono);
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-.kpi-card.critical .kpi-value { color: var(--red); }
-.kpi-card.high .kpi-value { color: var(--orange); }
-.kpi-card.medium .kpi-value { color: var(--yellow); }
-.kpi-card.ok .kpi-value { color: var(--green); }
-
-.kpi-delta {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.kpi-icon {
-  position: absolute;
-  bottom: 12px;
-  right: 14px;
-  font-size: 20px;
-  opacity: 0.2;
-}
-
-/* MIDDLE ROW */
-.mid-row {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 16px;
-}
+/* CARD */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+.card-header{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:700;color:var(--text)}
 
 /* TABLE */
-.table-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
+.ops-table{width:100%;border-collapse:collapse}
+.ops-table thead th{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;padding:9px 13px;text-align:left;background:var(--bg);border-bottom:1px solid var(--border);white-space:nowrap}
+.ops-table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;animation:row-fade 0.25s ease-out}
+@keyframes row-fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.ops-table tbody tr:hover{background:var(--blue-pale)}
+.ops-table tbody tr.is-new{background:#eff6ff}
+.ops-table td{padding:10px 13px;font-size:12px;color:var(--text-mid);white-space:nowrap}
+.op-id{font-size:10px;color:var(--text-light);font-weight:500}
 
-.table-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border);
-}
-.table-title {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-.table-controls {
-  display: flex;
-  gap: 8px;
-}
-.chip {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 1px;
-  padding: 4px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 1px solid var(--border2);
-  color: var(--text-muted);
-  background: transparent;
-  transition: all 0.15s;
-}
-.chip:hover, .chip.active {
-  background: var(--accent-glow);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.chip.red.active { background: var(--red-glow); border-color: var(--red); color: var(--red); }
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.pill-confirmed{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.pill-confirmed .pill-dot{background:var(--green)}
+.pill-pending{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--orange-border)}
+.pill-pending .pill-dot{background:#eab308;animation:blink 1.5s infinite}
+.pill-late{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)}
+.pill-late .pill-dot{background:var(--orange)}
+.pill-critical{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.pill-critical .pill-dot{background:var(--red);animation:blink 0.8s infinite}
+.pill-invalid{background:var(--purple-bg);color:var(--purple);border:1px solid #ddd6fe}
+.pill-invalid .pill-dot{background:var(--purple)}
+.pill-observed{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)}
+.pill-observed .pill-dot{background:var(--orange)}
 
-.ops-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.ops-table thead th {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 10px 14px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-.ops-table tbody tr {
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background 0.1s;
-  animation: row-in 0.3s ease-out;
-}
-@keyframes row-in { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
-.ops-table tbody tr:hover { background: var(--surface2); }
-.ops-table tbody tr.new-row { background: rgba(0,212,255,0.04); }
-.ops-table td {
-  padding: 11px 14px;
-  font-size: 12px;
-  white-space: nowrap;
-}
-.ops-table td.mono { font-family: var(--mono); font-size: 11px; }
+/* RISK BADGES */
+.rbadge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px}
+.rbadge-low{background:var(--green-bg);color:var(--green)}
+.rbadge-medium{background:var(--yellow-bg);color:var(--yellow)}
+.rbadge-high{background:var(--orange-bg);color:var(--orange)}
+.rbadge-critical{background:var(--red-bg);color:var(--red);font-weight:800}
+.amount-big{color:var(--red);font-weight:700}
+.time-ok{color:var(--text-muted)}
+.time-warn{color:var(--orange);font-weight:600}
+.time-crit{color:var(--red);font-weight:700}
 
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 1px;
-  padding: 3px 8px;
-  border-radius: 3px;
-  white-space: nowrap;
-}
-.status-pill .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+/* TABLE CONTROLS */
+.tbl-btn{font-size:10px;font-weight:600;padding:5px 11px;border-radius:20px;cursor:pointer;border:1px solid var(--border-dark);background:transparent;color:var(--text-muted);transition:all 0.15s;font-family:var(--font)}
+.tbl-btn:hover{border-color:var(--blue);color:var(--blue)}
+.tbl-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tbl-btn.danger.active{background:var(--red);border-color:var(--red);color:#fff}
+.auto-btn{font-size:10px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border-dark);background:var(--bg);color:var(--text-muted);display:flex;align-items:center;gap:5px;font-family:var(--font);transition:all 0.15s}
+.auto-btn.on{background:var(--blue-pale);border-color:var(--blue-light);color:var(--blue)}
 
-.status-confirmed { background: rgba(6,214,160,0.1); color: var(--green); border: 1px solid rgba(6,214,160,0.25); }
-.status-confirmed .dot { background: var(--green); }
-.status-pending { background: rgba(255,209,102,0.1); color: var(--yellow); border: 1px solid rgba(255,209,102,0.25); }
-.status-pending .dot { background: var(--yellow); animation: blink 1.5s infinite; }
-.status-late { background: rgba(255,140,66,0.1); color: var(--orange); border: 1px solid rgba(255,140,66,0.25); }
-.status-late .dot { background: var(--orange); }
-.status-critical { background: rgba(255,59,92,0.1); color: var(--red); border: 1px solid rgba(255,59,92,0.3); }
-.status-critical .dot { background: var(--red); animation: blink 0.8s infinite; }
-.status-invalid { background: rgba(155,93,229,0.1); color: var(--purple); border: 1px solid rgba(155,93,229,0.3); }
-.status-invalid .dot { background: var(--purple); }
-.status-observed { background: rgba(255,140,66,0.08); color: var(--orange); border: 1px solid rgba(255,140,66,0.2); }
-.status-observed .dot { background: var(--orange); }
+/* ALERTS */
+.alerts-list{overflow-y:auto;max-height:350px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.alerts-list::-webkit-scrollbar{width:3px}
+.alerts-list::-webkit-scrollbar-thumb{background:var(--border-dark)}
+.alert-item{padding:9px 11px;border-radius:var(--radius-sm);border-left:3px solid;animation:slide-in 0.3s ease-out;transition:box-shadow 0.15s;cursor:pointer}
+.alert-item:hover{box-shadow:var(--shadow-sm)}
+@keyframes slide-in{from{opacity:0;transform:translateX(6px)}to{opacity:1;transform:none}}
+.alert-item.critical{background:var(--red-bg);border-color:var(--red)}
+.alert-item.high{background:var(--orange-bg);border-color:var(--orange)}
+.alert-item.medium{background:var(--yellow-bg);border-color:#eab308}
+.alert-type{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.alert-item.critical .alert-type{color:var(--red)}
+.alert-item.high .alert-type{color:var(--orange)}
+.alert-item.medium .alert-type{color:var(--yellow)}
+.alert-msg{font-size:11px;color:var(--text-mid);line-height:1.4;margin-bottom:2px}
+.alert-time{font-size:10px;color:var(--text-light)}
+.alerts-count-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px}
 
-.risk-badge {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 3px;
-}
-.risk-low { background: rgba(6,214,160,0.1); color: var(--green); }
-.risk-medium { background: rgba(255,209,102,0.1); color: var(--yellow); }
-.risk-high { background: rgba(255,140,66,0.12); color: var(--orange); }
-.risk-critical { background: rgba(255,59,92,0.12); color: var(--red); animation: pulse-red 2s ease-in-out infinite; }
-@keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:0.6} }
-
-.time-since {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text-dim);
-}
-.time-since.over-sla { color: var(--orange); }
-.time-since.critical-time { color: var(--red); font-weight: 700; }
-
-/* ALERTS PANEL */
-.alerts-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.alerts-header {
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.alerts-title {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.alerts-count {
-  background: var(--red);
-  color: #fff;
-  font-family: var(--mono);
-  font-size: 10px;
-  padding: 2px 7px;
-  border-radius: 10px;
-}
-.alerts-list {
-  overflow-y: auto;
-  flex: 1;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.alerts-list::-webkit-scrollbar { width: 3px; }
-.alerts-list::-webkit-scrollbar-thumb { background: var(--border2); }
-
-.alert-item {
-  border-radius: 6px;
-  padding: 10px 12px;
-  border-left: 3px solid;
-  animation: alert-slide 0.4s ease-out;
-}
-@keyframes alert-slide { from { opacity:0; transform: translateX(12px); } to { opacity:1; transform: none; } }
-.alert-item.critical { background: rgba(255,59,92,0.08); border-color: var(--red); }
-.alert-item.high { background: rgba(255,140,66,0.08); border-color: var(--orange); }
-.alert-item.medium { background: rgba(255,209,102,0.08); border-color: var(--yellow); }
-
-.alert-type {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-.alert-item.critical .alert-type { color: var(--red); }
-.alert-item.high .alert-type { color: var(--orange); }
-.alert-item.medium .alert-type { color: var(--yellow); }
-.alert-msg { font-size: 11px; color: var(--text-dim); line-height: 1.4; margin-bottom: 4px; }
-.alert-time { font-family: var(--mono); font-size: 9px; color: var(--text-muted); }
-
-/* BOTTOM ROW */
-.bottom-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.chart-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-.chart-header {
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.chart-title { font-size: 13px; font-weight: 700; letter-spacing: 1px; }
-.chart-body { padding: 16px 18px; }
-
-/* MINI SPARKLINE */
-.sparkline { display: flex; align-items: flex-end; gap: 4px; height: 60px; }
-.spark-bar {
-  flex: 1;
-  border-radius: 2px 2px 0 0;
-  transition: height 0.5s ease;
-  min-height: 4px;
-}
-
-/* PRODUCER BAR CHART */
-.prod-chart { display: flex; flex-direction: column; gap: 10px; }
-.prod-row { display: flex; align-items: center; gap: 10px; }
-.prod-name-chart { font-size: 11px; color: var(--text-dim); width: 90px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.prod-bar-wrap { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
-.prod-bar { height: 100%; border-radius: 4px; transition: width 1s ease; }
-.prod-score { font-family: var(--mono); font-size: 10px; width: 30px; text-align: right; flex-shrink: 0; }
-
-/* COMPLIANCE PIE */
-.compliance-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 8px 0;
-}
-.donut-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-.donut-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-  text-align: center;
-}
-.donut-val {
-  font-family: var(--mono);
-  font-size: 16px;
-  font-weight: 700;
-}
+/* BOTTOM */
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chart-pad{padding:14px 16px}
+.evo-chart{display:flex;align-items:flex-end;gap:4px;height:68px;margin-bottom:5px}
+.evo-bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;transition:height 0.5s ease;cursor:pointer}
+.evo-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text-light);margin-bottom:10px}
+.chart-legend{display:flex;gap:12px}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-muted)}
+.legend-dot{width:8px;height:8px;border-radius:2px}
+.prod-rows{display:flex;flex-direction:column;gap:10px}
+.prod-row{display:flex;align-items:center;gap:10px}
+.prod-label{font-size:11px;color:var(--text-mid);width:80px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-track{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.prod-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.prod-val{font-size:10px;font-weight:600;width:28px;text-align:right;flex-shrink:0}
+.compliance-grid{display:flex;justify-content:space-around;padding:12px 0}
+.donut-block{display:flex;flex-direction:column;align-items:center;gap:5px}
+.donut-label{font-size:9px;color:var(--text-muted);text-align:center;max-width:70px;line-height:1.3}
 
 /* MODAL */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-}
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 12px;
-  width: 560px;
-  max-height: 80vh;
-  overflow-y: auto;
-  padding: 28px;
-  transform: translateY(20px);
-  transition: transform 0.2s;
-}
-.modal-overlay.open .modal { transform: none; }
-.modal-title {
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.modal-close {
-  margin-left: auto;
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-}
-.modal-close:hover { color: var(--text); }
-.detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-.detail-item { display: flex; flex-direction: column; gap: 4px; }
-.detail-key { font-family: var(--mono); font-size: 9px; color: var(--text-muted); letter-spacing: 2px; }
-.detail-val { font-size: 14px; font-weight: 600; }
-.scoring-breakdown {
-  background: var(--bg);
-  border-radius: 8px;
-  padding: 16px;
-  border: 1px solid var(--border);
-}
-.scoring-title { font-family: var(--mono); font-size: 10px; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 12px; }
-.scoring-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-  color: var(--text-dim);
-}
-.scoring-item:last-child { border: none; }
-.scoring-pts { font-family: var(--mono); font-size: 11px; font-weight: 700; }
-.scoring-total {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 10px;
-  font-weight: 700;
-}
-.scoring-total-pts { font-family: var(--mono); font-size: 16px; }
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:400;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;backdrop-filter:blur(2px)}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:14px;width:560px;max-height:82vh;overflow-y:auto;box-shadow:var(--shadow-lg);transform:translateY(16px);transition:transform 0.2s}
+.modal-overlay.open .modal{transform:none}
+.modal-head{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1}
+.modal-title-text{font-size:16px;font-weight:700}
+.modal-close{background:var(--bg);border:none;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;transition:background 0.15s}
+.modal-close:hover{background:var(--border)}
+.modal-body{padding:18px 22px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.detail-key{font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.detail-val{font-size:14px;font-weight:600;color:var(--text)}
+.score-breakdown{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;margin-bottom:13px}
+.score-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.score-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-mid)}
+.score-row:last-child{border:none}
+.score-pts{font-weight:700}
+.score-total{display:flex;justify-content:space-between;padding-top:9px;font-weight:700;font-size:14px}
+.rec-box{background:var(--blue-pale);border:1px solid #bfdbfe;border-radius:var(--radius);padding:12px 14px}
+.rec-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:5px}
+.rec-text{font-size:12px;color:var(--text-mid);line-height:1.6}
 
-/* TOOLTIP */
-.tooltip {
-  position: fixed;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text-dim);
-  pointer-events: none;
-  z-index: 500;
-  opacity: 0;
-  transition: opacity 0.15s;
-  white-space: nowrap;
-}
-.tooltip.visible { opacity: 1; }
-
-/* SECTION DIVIDER */
-.section-label {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.section-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-/* SCROLL INDICATOR */
-.scroll-lock-indicator {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  transition: all 0.2s;
-}
-.scroll-lock-indicator:hover { border-color: var(--accent); color: var(--accent); }
-.scroll-lock-indicator.locked { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
-
-.amount-cell { font-family: var(--mono); font-size: 12px; }
-.amount-cell.big-amount { color: var(--red); font-weight: 700; }
-
-/* NOTIFICATIONS */
-.notif-tab {
-  flex: 1;
-  text-align: center;
-  padding: 8px;
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--text-muted);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.15s;
-}
-.notif-tab:hover { color: var(--text-dim); }
-.notif-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-.notif-item {
-  border-radius: 6px;
-  padding: 10px 12px;
-  border-left: 3px solid;
-  cursor: pointer;
-  transition: opacity 0.2s, background 0.15s;
-  position: relative;
-}
-.notif-item:hover { filter: brightness(1.15); }
-.notif-item.read { opacity: 0.45; }
-.notif-item.critical { background: rgba(255,59,92,0.08); border-color: var(--red); }
-.notif-item.high { background: rgba(255,140,66,0.08); border-color: var(--orange); }
-.notif-item.medium { background: rgba(255,209,102,0.08); border-color: var(--yellow); }
-.notif-unread-dot {
-  position: absolute;
-  top: 10px; right: 10px;
-  width: 7px; height: 7px;
-  background: var(--accent);
-  border-radius: 50%;
-}
-@keyframes notif-in { from { opacity:0; transform: translateY(-10px) scale(0.97); } to { opacity:1; transform: none; } }
-
+/* NOTIF PANEL */
+.notif-panel{position:fixed;top:62px;right:14px;width:355px;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);z-index:300;display:none;flex-direction:column;overflow:hidden;animation:notif-drop 0.18s ease-out}
+.notif-panel.open{display:flex}
+@keyframes notif-drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.notif-head{padding:13px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.notif-head-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.notif-tabs{display:flex;border-bottom:1px solid var(--border)}
+.ntab{flex:1;padding:8px;text-align:center;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s}
+.ntab:hover{color:var(--navy)}
+.ntab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.notif-list{max-height:370px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:5px}
+.notif-list::-webkit-scrollbar{width:3px}
+.notif-list::-webkit-scrollbar-thumb{background:var(--border-dark)}
+.notif-item{padding:9px 11px;border-radius:var(--radius-sm);border-left:3px solid;cursor:pointer;position:relative;transition:opacity 0.2s}
+.notif-item.read{opacity:0.45}
+.notif-item:hover{filter:brightness(0.97)}
+.notif-item.critical{background:var(--red-bg);border-color:var(--red)}
+.notif-item.high{background:var(--orange-bg);border-color:var(--orange)}
+.notif-item.medium{background:var(--yellow-bg);border-color:#eab308}
+.notif-type{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.notif-item.critical .notif-type{color:var(--red)}
+.notif-item.high .notif-type{color:var(--orange)}
+.notif-item.medium .notif-type{color:var(--yellow)}
+.notif-msg{font-size:11px;color:var(--text-mid);line-height:1.4;margin-bottom:2px}
+.notif-time{font-size:10px;color:var(--text-light)}
+.notif-unread-dot{position:absolute;top:10px;right:10px;width:7px;height:7px;background:var(--blue);border-radius:50%}
+.notif-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.notif-foot-btn{font-size:11px;font-weight:600;color:var(--blue);cursor:pointer;background:none;border:none;font-family:var(--font)}
+.notif-foot-close{font-size:11px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:var(--font)}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
   <div class="logo">
-    <div class="logo-mark">⬡</div>
-    <div>
-      <div class="logo-text">CENTINELA</div>
-      <div class="logo-sub">RISK MONITORING SYSTEM</div>
-    </div>
+    <div class="logo-icon"></div>
+    <span class="logo-name">CENTINELA</span>
+    <div class="logo-sep"></div>
+    <span class="logo-sub">Monitor de Riesgo Operativo</span>
   </div>
   <div class="header-center">
-    <div class="live-dot"></div>
-    <span>STREAM EN VIVO</span>
-    <span style="color:var(--border2)">|</span>
-    <span>ÚLTIMA ACTUALIZACIÓN: <span id="lastUpdate" style="color:var(--accent)">—</span></span>
+    <div class="live-pill"><div class="live-dot"></div>EN VIVO</div>
+    <span>Última actualización: <span id="lastUpdate" style="color:rgba(255,255,255,0.75)">—</span></span>
   </div>
   <div class="header-right">
     <div class="clock" id="clock">—</div>
-    <div class="alert-bell" title="Ver alertas activas" onclick="toggleNotifPanel()">
-      🔔
-      <div class="alert-badge" id="alertBadge">7</div>
-    </div>
+    <div class="bell-btn" onclick="toggleNotifPanel()">🔔<div class="bell-badge" id="bellBadge">7</div></div>
   </div>
 </header>
 
-<!-- NOTIFICATIONS PANEL -->
-<div id="notifPanel" style="
-  position:fixed;top:64px;right:16px;width:360px;
-  background:var(--surface);border:1px solid var(--border2);
-  border-radius:10px;z-index:300;
-  box-shadow:0 20px 60px rgba(0,0,0,0.5);
-  display:none;flex-direction:column;overflow:hidden;
-  animation:notif-in 0.2s ease-out;
-">
-  <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-    <div style="font-size:13px;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px">
-      🔔 Notificaciones
-      <span style="background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:10px" id="notifCount">7</span>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <span onclick="markAllRead()" style="font-family:var(--mono);font-size:9px;color:var(--accent);cursor:pointer;letter-spacing:1px">MARCAR LEÍDAS</span>
-      <span onclick="toggleNotifPanel()" style="color:var(--text-muted);cursor:pointer;font-size:16px;line-height:1">✕</span>
-    </div>
-  </div>
-  <div style="display:flex;border-bottom:1px solid var(--border)">
-    <div class="notif-tab active" id="tab-all" onclick="switchNotifTab('all')">TODAS</div>
-    <div class="notif-tab" id="tab-critical" onclick="switchNotifTab('critical')">CRÍTICAS</div>
-    <div class="notif-tab" id="tab-unread" onclick="switchNotifTab('unread')">NO LEÍDAS</div>
-  </div>
-  <div id="notifList" style="max-height:400px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px"></div>
-  <div style="padding:10px 14px;border-top:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text-muted);text-align:center;cursor:pointer" onclick="toggleNotifPanel()">
-    VER PANEL COMPLETO DE ALERTAS ↓
-  </div>
-</div>
-
-<!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker-label">⚡ ALERTAS</div>
-  <div style="overflow:hidden;flex:1">
-    <div class="ticker-content" id="ticker">
-      <div class="ticker-item"><div class="dot" style="background:var(--red)"></div>[CRÍTICO] OP-0023 · MÉNDEZ PABLO · $245M sin confirmar · 47min transcurridos</div>
-      <div class="ticker-item"><div class="dot" style="background:var(--red)"></div>[INVÁLIDO] OP-0031 · Operador NO AUTORIZADO detectado · RAMÍREZ JORGE</div>
-      <div class="ticker-item"><div class="dot" style="background:var(--orange)"></div>[FUERA SLA] OP-0018 · VÁSQUEZ ANA · $42M · 6hs sin confirmación</div>
-      <div class="ticker-item"><div class="dot" style="background:var(--orange)"></div>[ACUMULACIÓN] Productor SORIA L. · Score de riesgo: 320pts</div>
-      <div class="ticker-item"><div class="dot" style="background:var(--yellow)"></div>[CIERRE HOY] 8 operaciones pendientes de confirmación por resumen diario</div>
-      <!-- duplicate for seamless loop -->
-      <div class="ticker-item"><div class="dot" style="background:var(--red)"></div>[CRÍTICO] OP-0023 · MÉNDEZ PABLO · $245M sin confirmar · 47min transcurridos</div>
-      <div class="ticker-item"><div class="dot" style="background:var(--red)"></div>[INVÁLIDO] OP-0031 · Operador NO AUTORIZADO detectado · RAMÍREZ JORGE</div>
-      <div class="ticker-item"><div class="dot" style="background:var(--orange)"></div>[FUERA SLA] OP-0018 · VÁSQUEZ ANA · $42M · 6hs sin confirmación</div>
-      <div class="ticker-item"><div class="dot" style="background:var(--orange)"></div>[ACUMULACIÓN] Productor SORIA L. · Score de riesgo: 320pts</div>
-      <div class="ticker-item"><div class="dot" style="background:var(--yellow)"></div>[CIERRE HOY] 8 operaciones pendientes de confirmación por resumen diario</div>
+<div class="alert-bar">
+  <div class="alert-bar-label">⚡ ALERTAS</div>
+  <div class="ticker-wrap">
+    <div class="ticker-content">
+      <div class="ticker-item"><div class="ticker-dot"></div>CRÍTICO · OP-0023 · Manager 139 · $245M sin confirmar · 47min transcurridos</div>
+      <div class="ticker-item"><div class="ticker-dot"></div>SLA VENCIDO · OP-0018 · $42M · 6hs sin confirmación del cliente</div>
+      <div class="ticker-item"><div class="ticker-dot"></div>ACUMULACIÓN · Manager 139 · Score de riesgo: 320 puntos · umbral superado</div>
+      <div class="ticker-item"><div class="ticker-dot"></div>CIERRE HOY · 8 operaciones pendientes de resumen diario · vencen a las 18hs</div>
+      <div class="ticker-item"><div class="ticker-dot"></div>CRÍTICO · OP-0023 · Manager 139 · $245M sin confirmar · 47min transcurridos</div>
+      <div class="ticker-item"><div class="ticker-dot"></div>SLA VENCIDO · OP-0018 · $42M · 6hs sin confirmación del cliente</div>
+      <div class="ticker-item"><div class="ticker-dot"></div>ACUMULACIÓN · Manager 139 · Score de riesgo: 320 puntos · umbral superado</div>
+      <div class="ticker-item"><div class="ticker-dot"></div>CIERRE HOY · 8 operaciones pendientes de resumen diario · vencen a las 18hs</div>
     </div>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="main">
-  <!-- SIDEBAR -->
+<div class="layout">
   <aside class="sidebar">
-    <!-- RISK SCORE -->
-    <div class="sidebar-section">
-      <div class="sidebar-title">Score de Riesgo Global</div>
-      <div class="risk-score-widget">
-        <div class="risk-gauge">
-          <svg viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="8"/>
-            <!-- Score 74/100 = 74% of 314px circumference = 232px -->
-            <circle cx="60" cy="60" r="50" fill="none" stroke="var(--red)" stroke-width="8"
-              stroke-dasharray="232 82" stroke-dashoffset="78" stroke-linecap="round"
-              style="transition:stroke-dasharray 1s ease"/>
-            <circle cx="60" cy="60" r="38" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 4"/>
+    <div class="sidebar-logo-block">
+      <div class="sidebar-brand">Riesgo Global</div>
+      <div class="risk-score-block">
+        <div class="risk-gauge-wrap">
+          <svg width="68" height="68" viewBox="0 0 68 68">
+            <circle cx="34" cy="34" r="26" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
+            <circle cx="34" cy="34" r="26" fill="none" stroke="#f87171" stroke-width="6"
+              stroke-dasharray="121 42" stroke-dashoffset="41" stroke-linecap="round"/>
           </svg>
-          <div class="risk-score-value">
-            <div class="risk-score-num" id="globalScore">74</div>
-            <div class="risk-score-label">/ 100</div>
-          </div>
+          <div class="risk-num-overlay"><div class="risk-num">74</div><div class="risk-num-sub">/100</div></div>
         </div>
-        <div class="risk-band">🔴 ALTO</div>
+        <div>
+          <div class="risk-info-label">NIVEL ACTUAL</div>
+          <div class="risk-info-band">🔴 ALTO</div>
+          <div class="risk-info-desc">Acción requerida en operaciones críticas</div>
+        </div>
       </div>
     </div>
 
-    <!-- FILTERS -->
     <div class="sidebar-section">
-      <div class="sidebar-title">Filtros</div>
-      <div class="filter-item">
-        <div class="filter-label">ESTADO</div>
+      <div class="sidebar-section-title">Filtros</div>
+      <div class="filter-group">
+        <div class="filter-label">Estado</div>
         <select class="filter-select" id="filterStatus" onchange="applyFilters()">
           <option value="">Todos</option>
           <option value="pending">Pendiente</option>
@@ -995,29 +343,29 @@ body::before {
           <option value="invalid">Inválida</option>
         </select>
       </div>
-      <div class="filter-item">
-        <div class="filter-label">PRODUCTOR</div>
+      <div class="filter-group">
+        <div class="filter-label">Productor</div>
         <select class="filter-select" id="filterProducer" onchange="applyFilters()">
           <option value="">Todos</option>
           <option value="Manager 139">Manager 139</option>
         </select>
       </div>
-      <div class="filter-item">
-        <div class="filter-label">INSTRUMENTO</div>
+      <div class="filter-group">
+        <div class="filter-label">Instrumento</div>
         <select class="filter-select" id="filterInstrument" onchange="applyFilters()">
           <option value="">Todos</option>
           <option value="ON">ON</option>
           <option value="FCI">FCI</option>
           <option value="CEDEAR">CEDEAR</option>
           <option value="BONO">BONO</option>
-          <option value="ACCION">ACCIÓN</option>
+          <option value="ACCIÓN">ACCIÓN</option>
           <option value="OPCIONES">Opciones</option>
           <option value="FUTUROS">Futuros</option>
-          <option value="CAUCION">Caución</option>
+          <option value="CAUCIÓN">Caución</option>
         </select>
       </div>
-      <div class="filter-item">
-        <div class="filter-label">MONTO</div>
+      <div class="filter-group">
+        <div class="filter-label">Monto</div>
         <select class="filter-select" id="filterAmount" onchange="applyFilters()">
           <option value="">Todos</option>
           <option value="high">&gt; ARS 100M</option>
@@ -1026,679 +374,449 @@ body::before {
       </div>
     </div>
 
-    <!-- PRODUCERS -->
     <div class="sidebar-section">
-      <div class="sidebar-title">Productores por Riesgo</div>
+      <div class="sidebar-section-title">Productores por Riesgo</div>
       <div id="producerList"></div>
     </div>
   </aside>
 
-  <!-- CONTENT -->
   <main class="content">
-
-    <!-- KPIs -->
-    <div class="section-label">KPIs EN TIEMPO REAL</div>
-    <div class="kpi-row">
-      <div class="kpi-card critical" onclick="filterByKpi('unconfirmed')" title="Ver operaciones sin confirmar">
-        <div class="kpi-glow"></div>
-        <div class="kpi-label">Sin Confirmar</div>
+    <div class="section-header">
+      <div class="section-title">Indicadores Clave</div>
+      <div style="font-size:10px;color:var(--text-light)">Hacé click en una tarjeta para filtrar la tabla</div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card danger" onclick="filterByKpi('unconfirmed')">
+        <div class="kpi-top"><div class="kpi-label">Sin Confirmar</div><div class="kpi-icon-wrap">⚠️</div></div>
         <div class="kpi-value" id="kpiUnconfirmed">34%</div>
-        <div class="kpi-delta">↑ <span id="kpiUnconfirmedCount">11 ops</span></div>
-        <div class="kpi-icon">⚠️</div>
-        <div style="position:absolute;bottom:10px;left:14px;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:1px">VER TABLA →</div>
+        <div class="kpi-sub" id="kpiUnconfirmedCount">11 operaciones</div>
+        <div class="kpi-cta">Ver operaciones →</div>
       </div>
-      <div class="kpi-card critical" onclick="filterByKpi('highrisk')" title="Ver operaciones >100M sin confirmar">
-        <div class="kpi-glow"></div>
-        <div class="kpi-label">Monto en Riesgo &gt;100M</div>
+      <div class="kpi-card danger" onclick="filterByKpi('highrisk')">
+        <div class="kpi-top"><div class="kpi-label">Monto en Riesgo &gt;100M</div><div class="kpi-icon-wrap">🔴</div></div>
         <div class="kpi-value" id="kpiHighRisk">$643M</div>
-        <div class="kpi-delta">3 operaciones críticas</div>
-        <div class="kpi-icon">🔴</div>
-        <div style="position:absolute;bottom:10px;left:14px;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:1px">VER TABLA →</div>
+        <div class="kpi-sub">3 operaciones críticas</div>
+        <div class="kpi-cta">Ver operaciones →</div>
       </div>
-      <div class="kpi-card high" onclick="filterByKpi('outsla')" title="Ver operaciones fuera de SLA">
-        <div class="kpi-glow"></div>
-        <div class="kpi-label">Fuera de SLA</div>
+      <div class="kpi-card warning" onclick="filterByKpi('outsla')">
+        <div class="kpi-top"><div class="kpi-label">Fuera de SLA</div><div class="kpi-icon-wrap">⏱️</div></div>
         <div class="kpi-value" id="kpiOutSLA">5</div>
-        <div class="kpi-delta">↑ +2 última hora</div>
-        <div class="kpi-icon">⏱️</div>
-        <div style="position:absolute;bottom:10px;left:14px;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:1px">VER TABLA →</div>
+        <div class="kpi-sub">↑ +2 última hora</div>
+        <div class="kpi-cta">Ver operaciones →</div>
       </div>
-      <div class="kpi-card medium" onclick="filterByKpi('total')" title="Ver todas las operaciones sin confirmar">
-        <div class="kpi-glow"></div>
-        <div class="kpi-label">Monto Total Sin Conf.</div>
+      <div class="kpi-card caution" onclick="filterByKpi('total')">
+        <div class="kpi-top"><div class="kpi-label">Monto Total Sin Confirmar</div><div class="kpi-icon-wrap">💰</div></div>
         <div class="kpi-value" id="kpiTotalUnconf">$1.2B</div>
-        <div class="kpi-delta">↑ $342M última hora</div>
-        <div class="kpi-icon">💰</div>
-        <div style="position:absolute;bottom:10px;left:14px;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:1px">VER TABLA →</div>
+        <div class="kpi-sub">↑ $342M última hora</div>
+        <div class="kpi-cta">Ver operaciones →</div>
       </div>
-      <div class="kpi-card ok" onclick="filterByKpi('compliance')" title="Ver operaciones confirmadas">
-        <div class="kpi-glow"></div>
-        <div class="kpi-label">Cumplimiento</div>
+      <div class="kpi-card success" onclick="filterByKpi('compliance')">
+        <div class="kpi-top"><div class="kpi-label">Cumplimiento</div><div class="kpi-icon-wrap">✅</div></div>
         <div class="kpi-value" id="kpiCompliance">66%</div>
-        <div class="kpi-delta">↓ vs 71% ayer</div>
-        <div class="kpi-icon">✅</div>
-        <div style="position:absolute;bottom:10px;left:14px;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:1px">VER TABLA →</div>
+        <div class="kpi-sub">↓ vs 71% ayer</div>
+        <div class="kpi-cta">Ver operaciones →</div>
       </div>
     </div>
 
-    <!-- TABLE + ALERTS -->
-    <div class="section-label">OPERACIONES EN TIEMPO REAL</div>
-    <div class="mid-row">
-      <div class="table-card">
-        <div class="table-header">
-          <div class="table-title">Operaciones Activas</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <div class="scroll-lock-indicator locked" id="autoScrollBtn" onclick="toggleAutoScroll()">
-              <span id="autoScrollIcon">⏸</span> AUTO
-            </div>
-            <div class="chip red active" onclick="filterByRisk('critical')">CRÍTICO</div>
-            <div class="chip" onclick="filterByRisk('all')">TODOS</div>
+    <div class="section-header"><div class="section-title">Operaciones en Tiempo Real</div></div>
+    <div class="mid-grid">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Operaciones Activas</div>
+          <div style="display:flex;gap:7px;align-items:center">
+            <button class="auto-btn on" id="autoBtn" onclick="toggleAutoScroll()"><span id="autoIcon">⏸</span> Auto-refresh</button>
+            <button class="tbl-btn danger active" onclick="setRiskFilter('critical',this)">Críticas</button>
+            <button class="tbl-btn" onclick="setRiskFilter('all',this)">Todas</button>
           </div>
         </div>
         <div style="overflow-x:auto">
           <table class="ops-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>CLIENTE</th>
-                <th>PRODUCTOR</th>
-                <th>INSTRUMENTO</th>
-                <th>MONTO (ARS)</th>
-                <th>ESTADO</th>
-                <th>TIEMPO</th>
-                <th>RIESGO</th>
-              </tr>
-            </thead>
-            <tbody id="opsTableBody">
-            </tbody>
+            <thead><tr><th>ID</th><th>Cliente</th><th>Productor</th><th>Instrumento</th><th>Monto (ARS)</th><th>Estado</th><th>Tiempo</th><th>Riesgo</th></tr></thead>
+            <tbody id="opsTableBody"></tbody>
           </table>
         </div>
       </div>
-
-      <!-- ALERTS PANEL -->
-      <div class="alerts-panel">
-        <div class="alerts-header">
-          <div class="alerts-title">
-            Alertas Activas
-            <span class="alerts-count" id="alertsCount">7</span>
-          </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Alertas Activas</div>
+          <span class="alerts-count-badge" id="alertsCount">7</span>
         </div>
         <div class="alerts-list" id="alertsList"></div>
       </div>
     </div>
 
-    <!-- CHARTS -->
-    <div class="section-label">ANÁLISIS Y DISTRIBUCIÓN</div>
-    <div class="bottom-row">
-      <!-- RISK EVOLUTION -->
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title">Evolución del Riesgo Hoy</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">SCORE PROMEDIO / HORA</div>
+    <div class="section-header"><div class="section-title">Análisis y Distribución</div></div>
+    <div class="bottom-grid">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Evolución del Riesgo — Hoy</div>
+          <div style="font-size:10px;color:var(--text-light)">Score promedio / hora</div>
         </div>
-        <div class="chart-body">
-          <div style="display:flex;align-items:flex-end;gap:3px;height:80px;margin-bottom:8px" id="riskEvolution"></div>
-          <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--text-muted)">
-            <span>08:00</span><span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span><span>18:00</span>
-          </div>
-          <div style="display:flex;gap:16px;margin-top:12px">
-            <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text-muted)">
-              <div style="width:10px;height:10px;background:var(--red);border-radius:2px"></div> Crítico
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text-muted)">
-              <div style="width:10px;height:10px;background:var(--orange);border-radius:2px"></div> Alto
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text-muted)">
-              <div style="width:10px;height:10px;background:var(--green);border-radius:2px"></div> Bajo
-            </div>
+        <div class="chart-pad">
+          <div class="evo-chart" id="riskEvoChart"></div>
+          <div class="evo-labels"><span>08:00</span><span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span><span>18:00</span></div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Crítico</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Alto</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Normal</div>
           </div>
         </div>
       </div>
-
-      <!-- PRODUCER RISK -->
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title">Score por Productor</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">RIESGO ACUMULADO</div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Score por Productor</div>
+          <div style="font-size:10px;color:var(--text-light)">Riesgo acumulado</div>
         </div>
-        <div class="chart-body">
-          <div class="prod-chart" id="producerChart"></div>
-        </div>
+        <div class="chart-pad"><div class="prod-rows" id="producerChart"></div></div>
       </div>
     </div>
 
-    <!-- COMPLIANCE -->
-    <div class="section-label">COMPLIANCE</div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px">
-      <div class="compliance-row" id="complianceRow"></div>
-    </div>
-
+    <div class="section-header"><div class="section-title">Cumplimiento Regulatorio</div></div>
+    <div class="card"><div class="compliance-grid" id="complianceRow"></div></div>
   </main>
 </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" id="modalContent">
-    <div class="modal-title">
-      <span id="modalTitleText">Detalle de Operación</span>
-      <button class="modal-close" onclick="closeModalBtn()">✕</button>
-    </div>
-    <div id="modalBody"></div>
+<!-- NOTIF PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-head">
+    <div class="notif-head-title">🔔 Notificaciones <span class="alerts-count-badge" id="notifCount">7</span></div>
+    <button class="modal-close" onclick="toggleNotifPanel()">✕</button>
+  </div>
+  <div class="notif-tabs">
+    <div class="ntab active" id="ntab-all" onclick="switchNotifTab('all')">Todas</div>
+    <div class="ntab" id="ntab-critical" onclick="switchNotifTab('critical')">Críticas</div>
+    <div class="ntab" id="ntab-unread" onclick="switchNotifTab('unread')">No leídas</div>
+  </div>
+  <div class="notif-list" id="notifList"></div>
+  <div class="notif-foot">
+    <button class="notif-foot-btn" onclick="markAllRead()">Marcar todas como leídas</button>
+    <button class="notif-foot-close" onclick="toggleNotifPanel()">Cerrar</button>
   </div>
 </div>
 
-<div class="tooltip" id="tooltip"></div>
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-text" id="modalTitle">Detalle de Operación</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
 
 <script>
-// ========== DATA MODEL ==========
-const INSTRUMENTS = ['ON', 'FCI', 'CEDEAR', 'BONO', 'ACCIÓN', 'OPCIONES', 'FUTUROS', 'CAUCIÓN'];
-const CLIENTS = ['Inversiones Alpha SA', 'Delta Capital SRL', 'Omega Fund', 'Beta Gestión', 'Gamma Holding', 'Epsilon Partners', 'Zeta Asset Mgmt', 'Eta Inversiones', 'Theta Corp', 'Iota Capital'];
-const PRODUCERS = ['Manager 139'];
-const PRODUCER_COLORS = ['#00d4ff'];
-const AUTHORIZED_MAP = {
-  'Inversiones Alpha SA': ['Manager 139'],
-  'Delta Capital SRL': ['Manager 139'],
-  'Omega Fund': ['Manager 139'],
-  'Beta Gestión': ['Manager 139'],
-  'Gamma Holding': ['Manager 139'],
-  'Epsilon Partners': ['Manager 139'],
-  'Zeta Asset Mgmt': ['Manager 139'],
-  'Eta Inversiones': ['Manager 139'],
-  'Theta Corp': ['Manager 139'],
-  'Iota Capital': ['Manager 139'],
-};
+const INSTRUMENTS=['ON','FCI','CEDEAR','BONO','ACCIÓN','OPCIONES','FUTUROS','CAUCIÓN'];
+const CLIENTS=['Inversiones Alpha SA','Delta Capital SRL','Omega Fund','Beta Gestión','Gamma Holding','Epsilon Partners','Zeta Asset Mgmt','Eta Inversiones','Theta Corp','Iota Capital'];
+const PRODUCERS=['Manager 139'];
+const PRODUCER_COLORS=['#1e5bc6'];
+const AUTHORIZED_MAP={'Inversiones Alpha SA':['Manager 139'],'Delta Capital SRL':['Manager 139'],'Omega Fund':['Manager 139'],'Beta Gestión':['Manager 139'],'Gamma Holding':['Manager 139'],'Epsilon Partners':['Manager 139'],'Zeta Asset Mgmt':['Manager 139'],'Eta Inversiones':['Manager 139'],'Theta Corp':['Manager 139'],'Iota Capital':['Manager 139']};
+function isAuth(c,p){return AUTHORIZED_MAP[c]?.includes(p)??false}
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+let opId=1,allOps=[],filteredOps=[],autoScroll=true,activeRiskFilter='critical';
 
-function isAuthorized(client, producer) {
-  return AUTHORIZED_MAP[client]?.includes(producer) ?? false;
+function computeScore(op){
+  let s=0;const bd=[];
+  if(!op.authorized){s+=150;bd.push({r:'Operado por no autorizado',p:150})}
+  if(op.monto>100_000_000&&op.status!=='confirmed'){s+=100;bd.push({r:'Monto >100M sin confirmación',p:100})}
+  if(op.status==='pending'){s+=50;bd.push({r:'Sin confirmación',p:50})}
+  if(op.status==='late'){s+=70;bd.push({r:'Fuera de SLA',p:70})}
+  if(op.status==='observed'){s+=30;bd.push({r:'Confirmación incompleta',p:30})}
+  op.scoreBreakdown=bd;op.score=s;return s;
 }
+function rl(s){return s>=150?'critical':s>=100?'high':s>=50?'medium':'low'}
+function rlabel(l){return{critical:'CRÍTICO',high:'ALTO',medium:'MEDIO',low:'BAJO'}[l]}
 
-function randomBetween(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
-function randomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-let opIdCounter = 1;
-let allOps = [];
-let filteredOps = [];
-let autoScroll = true;
-let activeRiskFilter = 'critical';
-
-// ========== SCORING ==========
-function computeScore(op) {
-  let score = 0;
-  const breakdown = [];
-  if (!op.authorized) { score += 150; breakdown.push({reason: 'Operado por no autorizado', pts: 150}); }
-  if (op.monto > 100_000_000 && op.status !== 'confirmed') { score += 100; breakdown.push({reason: 'Monto >100M sin confirmación', pts: 100}); }
-  if (op.status === 'pending' && !op.authorized) { score += 50; } // already counted
-  else if (op.status === 'pending') { score += 50; breakdown.push({reason: 'Sin confirmación', pts: 50}); }
-  if (op.status === 'late') { score += 70; breakdown.push({reason: 'Fuera de SLA', pts: 70}); }
-  if (op.status === 'observed') { score += 30; breakdown.push({reason: 'Confirmación incompleta / observada', pts: 30}); }
-  op.scoreBreakdown = breakdown;
-  op.score = score;
-  return score;
-}
-
-function getRiskLevel(score) {
-  if (score >= 150) return 'critical';
-  if (score >= 100) return 'high';
-  if (score >= 50) return 'medium';
-  return 'low';
-}
-
-function getRiskLabel(level) {
-  return { critical: 'CRÍTICO', high: 'ALTO', medium: 'MEDIO', low: 'BAJO' }[level];
-}
-
-// ========== GENERATE OPS ==========
-function generateOp(overrides = {}) {
-  const client = overrides.client || randomFrom(CLIENTS);
-  const producer = overrides.producer || randomFrom(PRODUCERS);
-  const authorized = isAuthorized(client, producer);
-  const monto = overrides.monto || (Math.random() < 0.3 ? randomBetween(100_000_001, 500_000_000) : randomBetween(1_000_000, 99_999_999));
-  const minutesAgo = randomBetween(1, 480);
-  const hora = new Date(Date.now() - minutesAgo * 60000);
-
+function generateOp(ov={}){
+  const client=ov.client||pick(CLIENTS),producer=ov.producer||pick(PRODUCERS);
+  const authorized=isAuth(client,producer);
+  const monto=ov.monto||(Math.random()<0.3?rnd(100_000_001,500_000_000):rnd(1_000_000,99_999_999));
+  const minutesAgo=rnd(1,480);
   let status;
-  if (!authorized) status = 'invalid';
-  else if (monto > 100_000_000 && minutesAgo > 30) status = 'critical';
-  else if (minutesAgo > 360) status = 'late';
-  else if (Math.random() < 0.35) status = 'confirmed';
-  else if (Math.random() < 0.2) status = 'observed';
-  else status = 'pending';
-
-  const op = {
-    id: `OP-${String(opIdCounter++).padStart(4, '0')}`,
-    client, producer, authorized,
-    instrument: randomFrom(INSTRUMENTS),
-    monto, minutesAgo, hora, status,
-    score: 0, riskLevel: 'low', scoreBreakdown: [],
-    isNew: true,
-  };
-  computeScore(op);
-  op.riskLevel = getRiskLevel(op.score);
-  return op;
+  if(!authorized)status='invalid';
+  else if(monto>100_000_000&&minutesAgo>30)status='critical';
+  else if(minutesAgo>360)status='late';
+  else if(Math.random()<0.35)status='confirmed';
+  else if(Math.random()<0.15)status='observed';
+  else status='pending';
+  const op={id:`OP-${String(opId++).padStart(4,'0')}`,client,producer,authorized,instrument:pick(INSTRUMENTS),monto,minutesAgo,status,score:0,riskLevel:'low',scoreBreakdown:[],isNew:true};
+  computeScore(op);op.riskLevel=rl(op.score);return op;
 }
 
-// ========== SEED DATA ==========
-function seedData() {
-  allOps = [];
-  // Force some specific critical cases
-  allOps.push(generateOp({ monto: 245_000_000, producer: 'Méndez P.', client: 'Inversiones Alpha SA' }));
-  allOps.push(generateOp({ monto: 178_000_000, producer: 'Soria L.', client: 'Beta Gestión' }));
-  // Force an invalid op
-  const invalidOp = generateOp({ producer: 'Fernández G.', client: 'Delta Capital SRL' });
-  allOps.push(invalidOp);
-  // Rest random
-  for (let i = 0; i < 25; i++) allOps.push(generateOp());
-  filteredOps = [...allOps];
+function seedData(){
+  allOps=[];
+  allOps.push(generateOp({monto:245_000_000,client:'Inversiones Alpha SA'}));
+  allOps.push(generateOp({monto:178_000_000,client:'Beta Gestión'}));
+  for(let i=0;i<26;i++)allOps.push(generateOp());
+  filteredOps=[...allOps];
 }
 
-// ========== RENDER TABLE ==========
-function formatMonto(m) {
-  if (m >= 1_000_000_000) return `$${(m/1_000_000_000).toFixed(2)}B`;
-  if (m >= 1_000_000) return `$${(m/1_000_000).toFixed(1)}M`;
-  return `$${m.toLocaleString('es-AR')}`;
+function fmt(m){
+  if(m>=1e9)return`$${(m/1e9).toFixed(2)}B`;
+  if(m>=1e6)return`$${(m/1e6).toFixed(1)}M`;
+  return`$${m.toLocaleString('es-AR')}`;
+}
+function fmtT(min){return min<60?`${min}m`:`${Math.floor(min/60)}h ${min%60}m`}
+
+function statusPill(status,authorized){
+  if(!authorized||status==='invalid')return`<span class="pill pill-invalid"><span class="pill-dot"></span>INVÁLIDA</span>`;
+  const m={confirmed:`<span class="pill pill-confirmed"><span class="pill-dot"></span>Confirmada</span>`,pending:`<span class="pill pill-pending"><span class="pill-dot"></span>Pendiente</span>`,late:`<span class="pill pill-late"><span class="pill-dot"></span>Fuera SLA</span>`,critical:`<span class="pill pill-critical"><span class="pill-dot"></span>Riesgo Alto</span>`,observed:`<span class="pill pill-observed"><span class="pill-dot"></span>Observada</span>`};
+  return m[status]||m.pending;
+}
+function rbadge(l){return`<span class="rbadge rbadge-${l}">${rlabel(l)}</span>`}
+function tcls(op){return op.minutesAgo>360?'time-crit':op.minutesAgo>60?'time-warn':'time-ok'}
+
+function renderTable(){
+  let ops=filteredOps;
+  if(activeRiskFilter==='critical')ops=ops.filter(o=>o.riskLevel==='critical'||o.riskLevel==='high');
+  const ord={critical:0,high:1,medium:2,low:3};
+  ops=[...ops].sort((a,b)=>ord[a.riskLevel]-ord[b.riskLevel]);
+  document.getElementById('opsTableBody').innerHTML=ops.slice(0,20).map(op=>`
+    <tr class="${op.isNew?'is-new':''}" onclick="showOpDetail('${op.id}')">
+      <td class="op-id">${op.id}</td>
+      <td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis">${op.client}</td>
+      <td style="font-size:12px;color:var(--navy);font-weight:500">${op.producer}</td>
+      <td style="font-size:11px;font-weight:600;color:var(--blue)">${op.instrument}</td>
+      <td style="font-variant-numeric:tabular-nums;font-weight:600" class="${op.monto>100_000_000?'amount-big':''}">${fmt(op.monto)}</td>
+      <td>${statusPill(op.status,op.authorized)}</td>
+      <td class="${tcls(op)}" style="font-variant-numeric:tabular-nums">${fmtT(op.minutesAgo)}</td>
+      <td>${rbadge(op.riskLevel)}</td>
+    </tr>`).join('');
+  setTimeout(()=>ops.forEach(o=>o.isNew=false),500);
 }
 
-function getStatusPill(status, authorized) {
-  if (!authorized || status === 'invalid') return `<span class="status-pill status-invalid"><span class="dot"></span>INVÁLIDA</span>`;
-  const map = {
-    confirmed: `<span class="status-pill status-confirmed"><span class="dot"></span>CONFIRMADA</span>`,
-    pending: `<span class="status-pill status-pending"><span class="dot"></span>PENDIENTE</span>`,
-    late: `<span class="status-pill status-late"><span class="dot"></span>FUERA SLA</span>`,
-    critical: `<span class="status-pill status-critical"><span class="dot"></span>RIESGO ALTO</span>`,
-    observed: `<span class="status-pill status-observed"><span class="dot"></span>OBSERVADA</span>`,
-  };
-  return map[status] || map.pending;
-}
-
-function getRiskBadge(level) {
-  return `<span class="risk-badge risk-${level}">${getRiskLabel(level)}</span>`;
-}
-
-function getTimeClass(op) {
-  if (op.minutesAgo > 360) return 'critical-time';
-  if (op.minutesAgo > 60) return 'over-sla';
-  return '';
-}
-
-function formatTime(min) {
-  if (min < 60) return `${min}min`;
-  const h = Math.floor(min/60), m = min%60;
-  return `${h}h ${m}m`;
-}
-
-function renderTable() {
-  const tbody = document.getElementById('opsTableBody');
-  let ops = filteredOps;
-  if (activeRiskFilter === 'critical') ops = ops.filter(o => o.riskLevel === 'critical' || o.riskLevel === 'high' || o.status === 'invalid');
-  
-  // Sort: critical first
-  const levelOrder = { critical: 0, high: 1, medium: 2, low: 3 };
-  ops = [...ops].sort((a,b) => levelOrder[a.riskLevel] - levelOrder[b.riskLevel]);
-  
-  tbody.innerHTML = ops.slice(0, 20).map(op => `
-    <tr class="${op.isNew ? 'new-row' : ''}" onclick="showOpDetail('${op.id}')">
-      <td class="mono" style="color:var(--text-dim)">${op.id}</td>
-      <td style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis">${op.client}</td>
-      <td style="font-size:11px">${op.producer}</td>
-      <td class="mono" style="color:var(--accent)">${op.instrument}</td>
-      <td class="amount-cell ${op.monto > 100_000_000 ? 'big-amount' : ''}">${formatMonto(op.monto)}</td>
-      <td>${getStatusPill(op.status, op.authorized)}</td>
-      <td class="time-since ${getTimeClass(op)}">${formatTime(op.minutesAgo)}</td>
-      <td>${getRiskBadge(op.riskLevel)}</td>
-    </tr>
-  `).join('');
-  setTimeout(() => { ops.forEach(o => o.isNew = false); }, 500);
-}
-
-// ========== FILTERS ==========
-function applyFilters() {
-  const status = document.getElementById('filterStatus').value;
-  const producer = document.getElementById('filterProducer').value;
-  const instrument = document.getElementById('filterInstrument').value;
-  const amount = document.getElementById('filterAmount').value;
-  filteredOps = allOps.filter(op => {
-    if (status && op.status !== status) return false;
-    if (producer && op.producer !== producer) return false;
-    if (instrument && op.instrument !== instrument) return false;
-    if (amount === 'high' && op.monto <= 100_000_000) return false;
-    if (amount === 'low' && op.monto > 100_000_000) return false;
+function applyFilters(){
+  const s=document.getElementById('filterStatus').value;
+  const p=document.getElementById('filterProducer').value;
+  const ins=document.getElementById('filterInstrument').value;
+  const amt=document.getElementById('filterAmount').value;
+  filteredOps=allOps.filter(op=>{
+    if(s&&op.status!==s)return false;
+    if(p&&op.producer!==p)return false;
+    if(ins&&op.instrument!==ins)return false;
+    if(amt==='high'&&op.monto<=100_000_000)return false;
+    if(amt==='low'&&op.monto>100_000_000)return false;
     return true;
   });
   renderTable();
 }
 
-function filterByRisk(type) {
-  activeRiskFilter = type;
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  event.target.classList.add('active');
+function setRiskFilter(type,el){
+  activeRiskFilter=type;
+  document.querySelectorAll('.tbl-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
   renderTable();
 }
 
-// ========== KPIs ==========
-function updateKPIs() {
-  const total = allOps.length;
-  const unconf = allOps.filter(o => ['pending','critical','late'].includes(o.status)).length;
-  const pct = Math.round(unconf/total*100);
-  const highRiskAmt = allOps.filter(o => o.monto > 100_000_000 && o.status !== 'confirmed').reduce((s,o) => s + o.monto, 0);
-  const outSLA = allOps.filter(o => o.status === 'late').length;
-  const totalUnconfAmt = allOps.filter(o => o.status !== 'confirmed').reduce((s,o) => s + o.monto, 0);
-  const confirmed = allOps.filter(o => o.status === 'confirmed').length;
-  const compliance = Math.round(confirmed/total*100);
-  
-  document.getElementById('kpiUnconfirmed').textContent = pct + '%';
-  document.getElementById('kpiUnconfirmedCount').textContent = unconf + ' ops';
-  document.getElementById('kpiHighRisk').textContent = formatMonto(highRiskAmt);
-  document.getElementById('kpiOutSLA').textContent = outSLA;
-  document.getElementById('kpiTotalUnconf').textContent = formatMonto(totalUnconfAmt);
-  document.getElementById('kpiCompliance').textContent = compliance + '%';
+function filterByKpi(type){
+  document.getElementById('filterStatus').value='';
+  document.getElementById('filterProducer').value='';
+  document.getElementById('filterInstrument').value='';
+  document.getElementById('filterAmount').value='';
+  if(type==='unconfirmed')filteredOps=allOps.filter(o=>['pending','critical'].includes(o.status));
+  else if(type==='highrisk'){filteredOps=allOps.filter(o=>o.monto>100_000_000&&o.status!=='confirmed');document.getElementById('filterAmount').value='high';}
+  else if(type==='outsla')filteredOps=allOps.filter(o=>o.status==='late');
+  else if(type==='total')filteredOps=allOps.filter(o=>o.status!=='confirmed');
+  else if(type==='compliance'){filteredOps=allOps.filter(o=>o.status==='confirmed');document.getElementById('filterStatus').value='confirmed';}
+  activeRiskFilter='all';
+  document.querySelectorAll('.tbl-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.content').scrollTo({top:280,behavior:'smooth'});
+  renderTable();
 }
 
-// ========== ALERTS ==========
-const STATIC_ALERTS = [
-  { level:'critical', type:'MONTO CRÍTICO', msg:'OP-0001 · $245M sin confirmación · 47 minutos transcurridos · requiere acción inmediata', time:'hace 2min' },
-  { level:'critical', type:'NO AUTORIZADO', msg:'OP-0003 · Fernández G. no está autorizado para operar en Delta Capital SRL', time:'hace 5min' },
-  { level:'high', type:'FUERA DE SLA', msg:'OP-0018 · Vásquez A. · $42M · 6hs sin confirmación del cliente', time:'hace 12min' },
-  { level:'critical', type:'ACUMULACIÓN', msg:'Soria L. acumula score 320pts en 3 operaciones · umbral superado', time:'hace 18min' },
-  { level:'high', type:'CIERRE CERCANO', msg:'8 operaciones < $100M pendientes de resumen diario · cierre en 2hs', time:'hace 25min' },
-  { level:'medium', type:'CONFIRMACIÓN PARCIAL', msg:'OP-0011 · conformidad no expresa por operación individual detectada', time:'hace 31min' },
-  { level:'high', type:'SIN CONFIRMAR', msg:'OP-0022 · $178M · Soria L. · Beta Gestión · pendiente 38min', time:'hace 38min' },
-];
+function updateKPIs(){
+  const total=allOps.length;
+  const unconf=allOps.filter(o=>['pending','critical','late'].includes(o.status)).length;
+  const pct=Math.round(unconf/total*100);
+  const highAmt=allOps.filter(o=>o.monto>100_000_000&&o.status!=='confirmed').reduce((s,o)=>s+o.monto,0);
+  const outSLA=allOps.filter(o=>o.status==='late').length;
+  const totalUnconf=allOps.filter(o=>o.status!=='confirmed').reduce((s,o)=>s+o.monto,0);
+  const conf=allOps.filter(o=>o.status==='confirmed').length;
+  document.getElementById('kpiUnconfirmed').textContent=pct+'%';
+  document.getElementById('kpiUnconfirmedCount').textContent=unconf+' operaciones';
+  document.getElementById('kpiHighRisk').textContent=fmt(highAmt);
+  document.getElementById('kpiOutSLA').textContent=outSLA;
+  document.getElementById('kpiTotalUnconf').textContent=fmt(totalUnconf);
+  document.getElementById('kpiCompliance').textContent=Math.round(conf/total*100)+'%';
+}
 
-function renderAlerts() {
-  const list = document.getElementById('alertsList');
-  list.innerHTML = STATIC_ALERTS.map(a => `
+const STATIC_ALERTS=[
+  {level:'critical',type:'MONTO CRÍTICO',msg:'OP-0001 · $245M sin confirmación · 47 minutos transcurridos',time:'hace 2min'},
+  {level:'critical',type:'ACUMULACIÓN',msg:'Manager 139 acumula score 320pts en múltiples operaciones',time:'hace 5min'},
+  {level:'high',type:'FUERA DE SLA',msg:'OP-0018 · $42M · 6hs sin confirmación del cliente',time:'hace 12min'},
+  {level:'high',type:'CIERRE CERCANO',msg:'8 ops < $100M pendientes de resumen diario · cierre en 2hs',time:'hace 25min'},
+  {level:'medium',type:'CONFIRMACIÓN PARCIAL',msg:'OP-0011 · conformidad no expresa por operación individual',time:'hace 31min'},
+  {level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 · $178M · Beta Gestión · pendiente 38min',time:'hace 38min'},
+  {level:'medium',type:'PENDIENTE',msg:'OP-0015 · $34M · Omega Fund · sin respuesta 2hs',time:'hace 52min'},
+];
+function renderAlerts(){
+  document.getElementById('alertsList').innerHTML=STATIC_ALERTS.map(a=>`
     <div class="alert-item ${a.level}">
       <div class="alert-type">${a.type}</div>
       <div class="alert-msg">${a.msg}</div>
       <div class="alert-time">${a.time}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-// ========== PRODUCER LIST + CHART ==========
-function renderProducers() {
-  const scores = {};
-  const ops = {};
-  PRODUCERS.forEach(p => { scores[p] = 0; ops[p] = 0; });
-  allOps.forEach(op => {
-    scores[op.producer] = (scores[op.producer] || 0) + op.score;
-    ops[op.producer] = (ops[op.producer] || 0) + 1;
-  });
-  
-  const sorted = PRODUCERS.map((p,i) => ({ name:p, score:scores[p], ops:ops[p], color:PRODUCER_COLORS[i] }))
-    .sort((a,b) => b.score - a.score);
-  
-  const list = document.getElementById('producerList');
-  list.innerHTML = sorted.map(p => {
-    const level = getRiskLevel(p.score / Math.max(p.ops,1));
-    const levelColors = { critical: 'var(--red)', high: 'var(--orange)', medium: 'var(--yellow)', low: 'var(--green)' };
-    return `
-      <div class="producer-item" onclick="document.getElementById('filterProducer').value='${p.name}';applyFilters()">
-        <div class="producer-avatar" style="background:${p.color}22;color:${p.color}">${p.name.charAt(0)}</div>
-        <div class="producer-info">
-          <div class="producer-name">${p.name}</div>
-          <div class="producer-ops">${p.ops} ops · score ${p.score}pts</div>
-        </div>
-        <div class="producer-risk" style="color:${levelColors[level]};background:${levelColors[level]}22">${getRiskLabel(level)}</div>
-      </div>
-    `;
+function renderProducers(){
+  const scores={},ops={};
+  PRODUCERS.forEach(p=>{scores[p]=0;ops[p]=0});
+  allOps.forEach(op=>{scores[op.producer]=(scores[op.producer]||0)+op.score;ops[op.producer]=(ops[op.producer]||0)+1});
+  const sorted=PRODUCERS.map((p,i)=>({name:p,score:scores[p],ops:ops[p],color:PRODUCER_COLORS[i]})).sort((a,b)=>b.score-a.score);
+  const maxScore=Math.max(...sorted.map(p=>p.score),1);
+  const rColors={critical:'#dc2626',high:'#d97706',medium:'#b45309',low:'#059669'};
+  const rBgs={critical:'#fef2f2',high:'#fffbeb',medium:'#fefce8',low:'#f0fdf4'};
+  document.getElementById('producerList').innerHTML=sorted.map(p=>{
+    const lv=rl(p.score/Math.max(p.ops,1));
+    return`<div class="producer-item" onclick="document.getElementById('filterProducer').value='${p.name}';applyFilters()">
+      <div class="p-avatar">${p.name.charAt(0)}</div>
+      <div><div class="p-name">${p.name}</div><div class="p-ops">${p.ops} ops · ${p.score}pts</div></div>
+      <div class="p-risk-badge" style="color:${rColors[lv]};background:${rBgs[lv]}">${rlabel(lv)}</div>
+    </div>`;
   }).join('');
-  
-  // Producer chart
-  const maxScore = Math.max(...sorted.map(p => p.score), 1);
-  const chart = document.getElementById('producerChart');
-  chart.innerHTML = sorted.map(p => {
-    const pct = Math.round(p.score / maxScore * 100);
-    const color = p.score > 200 ? 'var(--red)' : p.score > 100 ? 'var(--orange)' : 'var(--green)';
-    return `
-      <div class="prod-row">
-        <div class="prod-name-chart">${p.name}</div>
-        <div class="prod-bar-wrap">
-          <div class="prod-bar" style="width:${pct}%;background:${color}"></div>
-        </div>
-        <div class="prod-score" style="color:${color}">${p.score}</div>
-      </div>
-    `;
-  }).join('');
-}
-
-// ========== RISK EVOLUTION CHART ==========
-const riskHistory = [18, 22, 31, 28, 45, 52, 68, 74, 71, 78, 74];
-function renderRiskEvolution() {
-  const wrap = document.getElementById('riskEvolution');
-  const max = Math.max(...riskHistory);
-  wrap.innerHTML = riskHistory.map((v, i) => {
-    const h = Math.round(v/max*72);
-    const color = v > 60 ? 'var(--red)' : v > 40 ? 'var(--orange)' : 'var(--green)';
-    const isLast = i === riskHistory.length - 1;
-    return `<div style="flex:1;height:${h}px;background:${color};border-radius:3px 3px 0 0;opacity:${isLast?'1':'0.6'};
-      position:relative;transition:height 0.5s ease;cursor:pointer"
-      title="Score: ${v}">
-      ${isLast ? `<div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:9px;color:${color};white-space:nowrap">${v}</div>` : ''}
+  document.getElementById('producerChart').innerHTML=sorted.map(p=>{
+    const pct=Math.round(p.score/maxScore*100);
+    const color=p.score>200?'var(--red)':p.score>100?'var(--orange)':'var(--green)';
+    return`<div class="prod-row">
+      <div class="prod-label">${p.name}</div>
+      <div class="prod-track"><div class="prod-fill" style="width:${pct}%;background:${color}"></div></div>
+      <div class="prod-val" style="color:${color}">${p.score}</div>
     </div>`;
   }).join('');
 }
 
-// ========== COMPLIANCE DONUTS ==========
-function renderCompliance() {
-  const total = allOps.length;
-  const confirmedInTime = allOps.filter(o => o.status === 'confirmed' && o.minutesAgo <= 360).length;
-  const expressConf = allOps.filter(o => o.status === 'confirmed').length;
-  const authorized = allOps.filter(o => o.authorized).length;
-  
-  const metrics = [
-    { label: 'CONF. EN TIEMPO', val: Math.round(confirmedInTime/total*100), color: 'var(--green)' },
-    { label: 'CONFORMIDAD EXPRESA', val: Math.round(expressConf/total*100), color: 'var(--accent)' },
-    { label: 'OPERADORES AUTH.', val: Math.round(authorized/total*100), color: 'var(--yellow)' },
-    { label: 'SLA CUMPLIDO', val: Math.round((total - allOps.filter(o=>o.status==='late').length)/total*100), color: 'var(--purple)' },
-  ];
-  
-  const row = document.getElementById('complianceRow');
-  row.innerHTML = metrics.map(m => {
-    const r = 28, circ = 2 * Math.PI * r;
-    const dash = circ * m.val/100;
-    return `
-      <div class="donut-wrap">
-        <svg width="72" height="72" viewBox="0 0 72 72">
-          <circle cx="36" cy="36" r="${r}" fill="none" stroke="var(--border)" stroke-width="6"/>
-          <circle cx="36" cy="36" r="${r}" fill="none" stroke="${m.color}" stroke-width="6"
-            stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ*0.25}" stroke-linecap="round"/>
-          <text x="36" y="41" text-anchor="middle" fill="${m.color}" font-family="Space Mono" font-size="12" font-weight="700">${m.val}%</text>
-        </svg>
-        <div class="donut-label">${m.label}</div>
-      </div>
-    `;
+const riskHistory=[18,22,31,28,45,52,68,74,71,78,74];
+function renderRiskEvo(){
+  const max=Math.max(...riskHistory);
+  document.getElementById('riskEvoChart').innerHTML=riskHistory.map((v,i)=>{
+    const h=Math.round(v/max*64);
+    const color=v>60?'var(--red)':v>40?'var(--orange)':'var(--green)';
+    const isLast=i===riskHistory.length-1;
+    return`<div class="evo-bar" style="height:${h}px;background:${color};opacity:${isLast?'1':'0.55'}" title="Score: ${v}"></div>`;
   }).join('');
 }
 
-// ========== KPI FILTER (click KPI → filter table) ==========
-function filterByKpi(type) {
-  // Reset sidebar filters first
-  document.getElementById('filterStatus').value = '';
-  document.getElementById('filterProducer').value = '';
-  document.getElementById('filterInstrument').value = '';
-  document.getElementById('filterAmount').value = '';
-
-  if (type === 'unconfirmed') {
-    filteredOps = allOps.filter(o => ['pending', 'critical'].includes(o.status));
-  } else if (type === 'highrisk') {
-    filteredOps = allOps.filter(o => o.monto > 100_000_000 && o.status !== 'confirmed');
-    document.getElementById('filterAmount').value = 'high';
-  } else if (type === 'outsla') {
-    filteredOps = allOps.filter(o => o.status === 'late');
-  } else if (type === 'total') {
-    filteredOps = allOps.filter(o => o.status !== 'confirmed');
-  } else if (type === 'compliance') {
-    filteredOps = allOps.filter(o => o.status === 'confirmed');
-    document.getElementById('filterStatus').value = 'confirmed';
-  }
-
-  activeRiskFilter = 'all';
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  // scroll content to table
-  document.querySelector('.content').scrollTo({ top: 300, behavior: 'smooth' });
-  renderTable();
+function renderCompliance(){
+  const total=allOps.length;
+  const c1=Math.round(allOps.filter(o=>o.status==='confirmed'&&o.minutesAgo<=360).length/total*100);
+  const c2=Math.round(allOps.filter(o=>o.status==='confirmed').length/total*100);
+  const c3=Math.round(allOps.filter(o=>o.authorized).length/total*100);
+  const c4=Math.round((total-allOps.filter(o=>o.status==='late').length)/total*100);
+  const metrics=[{label:'Conf. en tiempo',val:c1,color:'#059669'},{label:'Conformidad expresa',val:c2,color:'#1e5bc6'},{label:'Operadores auth.',val:c3,color:'#b45309'},{label:'SLA cumplido',val:c4,color:'#7c3aed'}];
+  const r=28,circ=2*Math.PI*r;
+  document.getElementById('complianceRow').innerHTML=metrics.map(m=>{
+    const dash=circ*m.val/100;
+    return`<div class="donut-block" style="padding:14px 0">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="6"/>
+        <circle cx="36" cy="36" r="${r}" fill="none" stroke="${m.color}" stroke-width="6"
+          stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ*0.25}" stroke-linecap="round"/>
+        <text x="36" y="40" text-anchor="middle" fill="${m.color}" font-family="DM Sans,sans-serif" font-size="13" font-weight="700">${m.val}%</text>
+      </svg>
+      <div class="donut-label">${m.label}</div>
+    </div>`;
+  }).join('');
 }
 
-// ========== NOTIFICATIONS PANEL ==========
-let notifPanelOpen = false;
-let currentNotifTab = 'all';
-const notifData = [
-  { id:1, level:'critical', type:'MONTO CRÍTICO', msg:'OP-0001 · $245M sin confirmación · 47 min transcurridos', time:'hace 2min', read:false },
-  { id:2, level:'critical', type:'NO AUTORIZADO', msg:'OP-0003 · Manager 139 sin autorización en Delta Capital SRL', time:'hace 5min', read:false },
-  { id:3, level:'high', type:'FUERA DE SLA', msg:'OP-0018 · $42M · 6hs sin confirmación del cliente', time:'hace 12min', read:false },
-  { id:4, level:'critical', type:'ACUMULACIÓN', msg:'Manager 139 acumula score 320pts · umbral superado', time:'hace 18min', read:false },
-  { id:5, level:'high', type:'CIERRE CERCANO', msg:'8 operaciones < $100M pendientes · cierre en 2hs', time:'hace 25min', read:false },
-  { id:6, level:'medium', type:'CONFIRMACIÓN PARCIAL', msg:'OP-0011 · conformidad no expresa por operación individual', time:'hace 31min', read:true },
-  { id:7, level:'high', type:'SIN CONFIRMAR', msg:'OP-0022 · $178M · Beta Gestión · pendiente 38min', time:'hace 38min', read:true },
-];
-
-function toggleNotifPanel() {
-  notifPanelOpen = !notifPanelOpen;
-  const panel = document.getElementById('notifPanel');
-  panel.style.display = notifPanelOpen ? 'flex' : 'none';
-  if (notifPanelOpen) renderNotifList();
-}
-
-function switchNotifTab(tab) {
-  currentNotifTab = tab;
-  document.querySelectorAll('.notif-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  renderNotifList();
-}
-
-function renderNotifList() {
-  let items = notifData;
-  if (currentNotifTab === 'critical') items = notifData.filter(n => n.level === 'critical');
-  if (currentNotifTab === 'unread') items = notifData.filter(n => !n.read);
-  const unreadCount = notifData.filter(n => !n.read).length;
-  document.getElementById('notifCount').textContent = unreadCount;
-  document.getElementById('alertBadge').textContent = unreadCount;
-
-  document.getElementById('notifList').innerHTML = items.map(n => `
-    <div class="notif-item ${n.level} ${n.read ? 'read' : ''}" onclick="markNotifRead(${n.id})">
-      ${!n.read ? '<div class="notif-unread-dot"></div>' : ''}
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;margin-bottom:4px;color:${n.level==='critical'?'var(--red)':n.level==='high'?'var(--orange)':'var(--yellow)'}">${n.type}</div>
-      <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:4px">${n.msg}</div>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">${n.time}</div>
-    </div>
-  `).join('') || '<div style="padding:20px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text-muted)">Sin notificaciones en esta categoría</div>';
-}
-
-function markNotifRead(id) {
-  const n = notifData.find(x => x.id === id);
-  if (n) { n.read = true; renderNotifList(); }
-}
-
-function markAllRead() {
-  notifData.forEach(n => n.read = true);
-  renderNotifList();
-}
-
-// Close notif panel clicking outside
-document.addEventListener('click', function(e) {
-  const panel = document.getElementById('notifPanel');
-  const bell = document.querySelector('.alert-bell');
-  if (notifPanelOpen && !panel.contains(e.target) && !bell.contains(e.target)) {
-    notifPanelOpen = false;
-    panel.style.display = 'none';
-  }
-});
-
-// ========== MODAL ==========
-function showOpDetail(id) {
-  const op = allOps.find(o => o.id === id);
-  if (!op) return;
-  document.getElementById('modalTitleText').textContent = `${op.id} — ${op.instrument}`;
-  const riskColors = { critical:'var(--red)', high:'var(--orange)', medium:'var(--yellow)', low:'var(--green)' };
-  document.getElementById('modalBody').innerHTML = `
+function showOpDetail(id){
+  const op=allOps.find(o=>o.id===id);if(!op)return;
+  document.getElementById('modalTitle').textContent=`${op.id} — ${op.instrument}`;
+  const rColors={critical:'var(--red)',high:'var(--orange)',medium:'var(--yellow)',low:'var(--green)'};
+  document.getElementById('modalBody').innerHTML=`
     <div class="detail-grid">
-      <div class="detail-item"><div class="detail-key">CLIENTE</div><div class="detail-val">${op.client}</div></div>
-      <div class="detail-item"><div class="detail-key">PRODUCTOR</div><div class="detail-val">${op.producer}</div></div>
-      <div class="detail-item"><div class="detail-key">MONTO</div><div class="detail-val" style="color:${op.monto>100_000_000?'var(--red)':'var(--text)'}">${formatMonto(op.monto)}</div></div>
-      <div class="detail-item"><div class="detail-key">INSTRUMENTO</div><div class="detail-val" style="color:var(--accent)">${op.instrument}</div></div>
-      <div class="detail-item"><div class="detail-key">ESTADO</div><div class="detail-val">${getStatusPill(op.status, op.authorized)}</div></div>
-      <div class="detail-item"><div class="detail-key">TIEMPO TRANSCURRIDO</div><div class="detail-val" style="font-family:var(--mono)">${formatTime(op.minutesAgo)}</div></div>
-      <div class="detail-item"><div class="detail-key">AUTORIZADO</div><div class="detail-val" style="color:${op.authorized?'var(--green)':'var(--red)'}">${op.authorized?'✓ SÍ':'✗ NO'}</div></div>
-      <div class="detail-item"><div class="detail-key">NIVEL DE RIESGO</div><div class="detail-val" style="color:${riskColors[op.riskLevel]}">${getRiskLabel(op.riskLevel)}</div></div>
+      <div><div class="detail-key">Cliente</div><div class="detail-val">${op.client}</div></div>
+      <div><div class="detail-key">Productor</div><div class="detail-val">${op.producer}</div></div>
+      <div><div class="detail-key">Monto</div><div class="detail-val" style="color:${op.monto>100_000_000?'var(--red)':'var(--text)'}">${fmt(op.monto)}</div></div>
+      <div><div class="detail-key">Instrumento</div><div class="detail-val" style="color:var(--blue)">${op.instrument}</div></div>
+      <div><div class="detail-key">Estado</div><div class="detail-val">${statusPill(op.status,op.authorized)}</div></div>
+      <div><div class="detail-key">Tiempo</div><div class="detail-val">${fmtT(op.minutesAgo)}</div></div>
+      <div><div class="detail-key">Autorizado</div><div class="detail-val" style="color:${op.authorized?'var(--green)':'var(--red)'}">${op.authorized?'✓ Sí':'✗ No'}</div></div>
+      <div><div class="detail-key">Nivel de riesgo</div><div class="detail-val" style="color:${rColors[op.riskLevel]}">${rlabel(op.riskLevel)}</div></div>
     </div>
-    <div class="scoring-breakdown">
-      <div class="scoring-title">DESGLOSE DE SCORING</div>
-      ${op.scoreBreakdown.map(b => `
-        <div class="scoring-item">
-          <span>${b.reason}</span>
-          <span class="scoring-pts" style="color:var(--red)">+${b.pts}pts</span>
-        </div>
-      `).join('')}
-      ${op.scoreBreakdown.length === 0 ? '<div class="scoring-item" style="color:var(--green)">Sin factores de riesgo detectados</div>' : ''}
-      <div class="scoring-total">
-        <span style="color:var(--text-dim);font-size:13px">SCORE TOTAL</span>
-        <span class="scoring-total-pts" style="color:${riskColors[op.riskLevel]}">${op.score} pts</span>
-      </div>
+    <div class="score-breakdown">
+      <div class="score-title">Desglose de scoring</div>
+      ${op.scoreBreakdown.map(b=>`<div class="score-row"><span>${b.r}</span><span class="score-pts" style="color:var(--red)">+${b.p} pts</span></div>`).join('')}
+      ${op.scoreBreakdown.length===0?'<div class="score-row" style="color:var(--green)">Sin factores de riesgo</div>':''}
+      <div class="score-total"><span>Score total</span><span style="color:${rColors[op.riskLevel]}">${op.score} pts</span></div>
     </div>
-    <div style="margin-top:16px;padding:12px;background:var(--bg);border-radius:6px;border:1px solid var(--border)">
-      <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted);letter-spacing:2px;margin-bottom:8px">RECOMENDACIÓN</div>
-      <div style="font-size:12px;color:var(--text-dim);line-height:1.6">
-        ${op.riskLevel === 'critical' && !op.authorized ? '🔴 Escalar inmediatamente a Compliance. Suspender operaciones futuras del productor hasta verificación.' :
-          op.riskLevel === 'critical' ? '🔴 Contactar al cliente inmediatamente para obtener confirmación expresa. Documentar intento de contacto.' :
-          op.riskLevel === 'high' ? '🟠 Enviar recordatorio al cliente. Si no hay respuesta en 30min, escalar a supervisor.' :
-          op.riskLevel === 'medium' ? '🟡 Monitorear. Incluir en el resumen de cierre del día.' :
-          '🟢 Operación dentro de parámetros normales.'}
-      </div>
-    </div>
-  `;
+    <div class="rec-box">
+      <div class="rec-title">Recomendación</div>
+      <div class="rec-text">${op.riskLevel==='critical'&&!op.authorized?'🔴 Escalar inmediatamente a Compliance. Suspender operaciones del productor hasta verificación.':op.riskLevel==='critical'?'🔴 Contactar al cliente de inmediato para obtener confirmación expresa. Documentar intento.':op.riskLevel==='high'?'🟠 Enviar recordatorio al cliente. Si no hay respuesta en 30 min, escalar a supervisor.':op.riskLevel==='medium'?'🟡 Monitorear. Incluir en resumen de cierre del día.':'🟢 Operación dentro de parámetros normales. Sin acción requerida.'}</div>
+    </div>`;
   document.getElementById('modalOverlay').classList.add('open');
 }
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open')}
+function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal()}
 
-function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalBtn(); }
-function closeModalBtn() { document.getElementById('modalOverlay').classList.remove('open'); }
-
-// ========== CLOCK ==========
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent = now.toLocaleTimeString('es-AR', { hour12: false });
-  document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('es-AR', { hour12: false });
+let notifOpen=false,currentTab='all';
+const notifData=[
+  {id:1,level:'critical',type:'MONTO CRÍTICO',msg:'OP-0001 · $245M sin confirmación · 47 min transcurridos',time:'hace 2min',read:false},
+  {id:2,level:'critical',type:'ACUMULACIÓN',msg:'Manager 139 acumula score 320pts · umbral superado',time:'hace 5min',read:false},
+  {id:3,level:'high',type:'FUERA DE SLA',msg:'OP-0018 · $42M · 6hs sin confirmación del cliente',time:'hace 12min',read:false},
+  {id:4,level:'high',type:'CIERRE CERCANO',msg:'8 operaciones < $100M pendientes · cierre en 2hs',time:'hace 25min',read:false},
+  {id:5,level:'medium',type:'CONFIRMACIÓN PARCIAL',msg:'OP-0011 · conformidad no expresa por operación individual',time:'hace 31min',read:false},
+  {id:6,level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 · $178M · Beta Gestión · pendiente 38min',time:'hace 38min',read:true},
+  {id:7,level:'medium',type:'PENDIENTE',msg:'OP-0015 · $34M · Omega Fund · sin respuesta 2hs',time:'hace 52min',read:true},
+];
+function toggleNotifPanel(){
+  notifOpen=!notifOpen;
+  document.getElementById('notifPanel').classList.toggle('open',notifOpen);
+  if(notifOpen)renderNotifList();
 }
-
-// ========== AUTO SCROLL / LIVE UPDATE ==========
-function toggleAutoScroll() {
-  autoScroll = !autoScroll;
-  const btn = document.getElementById('autoScrollBtn');
-  const icon = document.getElementById('autoScrollIcon');
-  btn.classList.toggle('locked', autoScroll);
-  icon.textContent = autoScroll ? '⏸' : '▶';
+function switchNotifTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('ntab-'+tab).classList.add('active');
+  renderNotifList();
 }
+function renderNotifList(){
+  let items=notifData;
+  if(currentTab==='critical')items=notifData.filter(n=>n.level==='critical');
+  if(currentTab==='unread')items=notifData.filter(n=>!n.read);
+  const unread=notifData.filter(n=>!n.read).length;
+  document.getElementById('notifCount').textContent=unread;
+  document.getElementById('bellBadge').textContent=unread;
+  document.getElementById('notifList').innerHTML=items.length
+    ?items.map(n=>`<div class="notif-item ${n.level} ${n.read?'read':''}" onclick="markNotifRead(${n.id})">
+        ${!n.read?'<div class="notif-unread-dot"></div>':''}
+        <div class="notif-type">${n.type}</div>
+        <div class="notif-msg">${n.msg}</div>
+        <div class="notif-time">${n.time}</div>
+      </div>`).join('')
+    :'<div style="padding:20px;text-align:center;font-size:12px;color:var(--text-light)">Sin notificaciones en esta categoría</div>';
+}
+function markNotifRead(id){const n=notifData.find(x=>x.id===id);if(n){n.read=true;renderNotifList()}}
+function markAllRead(){notifData.forEach(n=>n.read=true);renderNotifList()}
+document.addEventListener('click',e=>{
+  const panel=document.getElementById('notifPanel');
+  const bell=document.querySelector('.bell-btn');
+  if(notifOpen&&!panel.contains(e.target)&&!bell.contains(e.target)){notifOpen=false;panel.classList.remove('open')}
+});
 
-let liveCounter = 0;
-function liveUpdate() {
-  if (autoScroll && Math.random() < 0.3) {
-    const newOp = generateOp();
-    newOp.isNew = true;
-    allOps.unshift(newOp);
-    if (allOps.length > 50) allOps.pop();
-    filteredOps = [...allOps];
-    renderTable();
-    updateKPIs();
-    renderProducers();
-    liveCounter++;
-    // Pulse the live dot
-    document.querySelector('.live-dot').style.background = 'var(--accent)';
-    setTimeout(() => document.querySelector('.live-dot').style.background = 'var(--red)', 300);
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=now.toLocaleTimeString('es-AR',{hour12:false});
+  document.getElementById('lastUpdate').textContent=now.toLocaleTimeString('es-AR',{hour12:false});
+}
+function toggleAutoScroll(){
+  autoScroll=!autoScroll;
+  document.getElementById('autoBtn').classList.toggle('on',autoScroll);
+  document.getElementById('autoIcon').textContent=autoScroll?'⏸':'▶';
+}
+function liveUpdate(){
+  if(autoScroll&&Math.random()<0.3){
+    const op=generateOp();op.isNew=true;
+    allOps.unshift(op);if(allOps.length>50)allOps.pop();
+    filteredOps=[...allOps];
+    renderTable();updateKPIs();renderProducers();
+    document.querySelector('.live-dot').style.background='#fff';
+    setTimeout(()=>document.querySelector('.live-dot').style.background='#f87171',300);
   }
 }
 
-// ========== INIT ==========
-seedData();
-updateKPIs();
-renderTable();
-renderAlerts();
-renderProducers();
-renderRiskEvolution();
-renderCompliance();
-updateClock();
-
-setInterval(updateClock, 1000);
-setInterval(liveUpdate, 3500);
+seedData();updateKPIs();renderTable();renderAlerts();renderProducers();renderRiskEvo();renderCompliance();updateClock();
+setInterval(updateClock,1000);setInterval(liveUpdate,3500);
 </script>
 </body>
 </html>
