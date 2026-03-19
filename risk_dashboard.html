@@ -841,6 +841,43 @@ body::before {
 .amount-cell { font-family: var(--mono); font-size: 12px; }
 .amount-cell.big-amount { color: var(--red); font-weight: 700; }
 
+/* NOTIFICATIONS */
+.notif-tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.notif-tab:hover { color: var(--text-dim); }
+.notif-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.notif-item {
+  border-radius: 6px;
+  padding: 10px 12px;
+  border-left: 3px solid;
+  cursor: pointer;
+  transition: opacity 0.2s, background 0.15s;
+  position: relative;
+}
+.notif-item:hover { filter: brightness(1.15); }
+.notif-item.read { opacity: 0.45; }
+.notif-item.critical { background: rgba(255,59,92,0.08); border-color: var(--red); }
+.notif-item.high { background: rgba(255,140,66,0.08); border-color: var(--orange); }
+.notif-item.medium { background: rgba(255,209,102,0.08); border-color: var(--yellow); }
+.notif-unread-dot {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 7px; height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+@keyframes notif-in { from { opacity:0; transform: translateY(-10px) scale(0.97); } to { opacity:1; transform: none; } }
+
 </style>
 </head>
 <body>
@@ -862,12 +899,42 @@ body::before {
   </div>
   <div class="header-right">
     <div class="clock" id="clock">—</div>
-    <div class="alert-bell" title="Ver alertas activas">
+    <div class="alert-bell" title="Ver alertas activas" onclick="toggleNotifPanel()">
       🔔
       <div class="alert-badge" id="alertBadge">7</div>
     </div>
   </div>
 </header>
+
+<!-- NOTIFICATIONS PANEL -->
+<div id="notifPanel" style="
+  position:fixed;top:64px;right:16px;width:360px;
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:10px;z-index:300;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  display:none;flex-direction:column;overflow:hidden;
+  animation:notif-in 0.2s ease-out;
+">
+  <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:13px;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px">
+      🔔 Notificaciones
+      <span style="background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:10px" id="notifCount">7</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span onclick="markAllRead()" style="font-family:var(--mono);font-size:9px;color:var(--accent);cursor:pointer;letter-spacing:1px">MARCAR LEÍDAS</span>
+      <span onclick="toggleNotifPanel()" style="color:var(--text-muted);cursor:pointer;font-size:16px;line-height:1">✕</span>
+    </div>
+  </div>
+  <div style="display:flex;border-bottom:1px solid var(--border)">
+    <div class="notif-tab active" id="tab-all" onclick="switchNotifTab('all')">TODAS</div>
+    <div class="notif-tab" id="tab-critical" onclick="switchNotifTab('critical')">CRÍTICAS</div>
+    <div class="notif-tab" id="tab-unread" onclick="switchNotifTab('unread')">NO LEÍDAS</div>
+  </div>
+  <div id="notifList" style="max-height:400px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px"></div>
+  <div style="padding:10px 14px;border-top:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text-muted);text-align:center;cursor:pointer" onclick="toggleNotifPanel()">
+    VER PANEL COMPLETO DE ALERTAS ↓
+  </div>
+</div>
 
 <!-- TICKER -->
 <div class="ticker-wrap">
@@ -924,21 +991,15 @@ body::before {
           <option value="">Todos</option>
           <option value="pending">Pendiente</option>
           <option value="confirmed">Confirmada</option>
-          <option value="late">Fuera de SLA</option>
           <option value="critical">Riesgo Alto</option>
           <option value="invalid">Inválida</option>
-          <option value="observed">Observada</option>
         </select>
       </div>
       <div class="filter-item">
         <div class="filter-label">PRODUCTOR</div>
         <select class="filter-select" id="filterProducer" onchange="applyFilters()">
           <option value="">Todos</option>
-          <option value="Méndez P.">Méndez P.</option>
-          <option value="Soria L.">Soria L.</option>
-          <option value="Vásquez A.">Vásquez A.</option>
-          <option value="Romero C.">Romero C.</option>
-          <option value="Fernández G.">Fernández G.</option>
+          <option value="Manager 139">Manager 139</option>
         </select>
       </div>
       <div class="filter-item">
@@ -950,6 +1011,9 @@ body::before {
           <option value="CEDEAR">CEDEAR</option>
           <option value="BONO">BONO</option>
           <option value="ACCION">ACCIÓN</option>
+          <option value="OPCIONES">Opciones</option>
+          <option value="FUTUROS">Futuros</option>
+          <option value="CAUCION">Caución</option>
         </select>
       </div>
       <div class="filter-item">
@@ -975,40 +1039,45 @@ body::before {
     <!-- KPIs -->
     <div class="section-label">KPIs EN TIEMPO REAL</div>
     <div class="kpi-row">
-      <div class="kpi-card critical" onclick="showKpiDetail('unconfirmed')">
+      <div class="kpi-card critical" onclick="filterByKpi('unconfirmed')" title="Ver operaciones sin confirmar">
         <div class="kpi-glow"></div>
         <div class="kpi-label">Sin Confirmar</div>
         <div class="kpi-value" id="kpiUnconfirmed">34%</div>
         <div class="kpi-delta">↑ <span id="kpiUnconfirmedCount">11 ops</span></div>
         <div class="kpi-icon">⚠️</div>
+        <div style="position:absolute;bottom:10px;left:14px;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:1px">VER TABLA →</div>
       </div>
-      <div class="kpi-card critical" onclick="showKpiDetail('highrisk')">
+      <div class="kpi-card critical" onclick="filterByKpi('highrisk')" title="Ver operaciones >100M sin confirmar">
         <div class="kpi-glow"></div>
         <div class="kpi-label">Monto en Riesgo &gt;100M</div>
         <div class="kpi-value" id="kpiHighRisk">$643M</div>
         <div class="kpi-delta">3 operaciones críticas</div>
         <div class="kpi-icon">🔴</div>
+        <div style="position:absolute;bottom:10px;left:14px;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:1px">VER TABLA →</div>
       </div>
-      <div class="kpi-card high" onclick="showKpiDetail('outsla')">
+      <div class="kpi-card high" onclick="filterByKpi('outsla')" title="Ver operaciones fuera de SLA">
         <div class="kpi-glow"></div>
         <div class="kpi-label">Fuera de SLA</div>
         <div class="kpi-value" id="kpiOutSLA">5</div>
         <div class="kpi-delta">↑ +2 última hora</div>
         <div class="kpi-icon">⏱️</div>
+        <div style="position:absolute;bottom:10px;left:14px;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:1px">VER TABLA →</div>
       </div>
-      <div class="kpi-card medium" onclick="showKpiDetail('total')">
+      <div class="kpi-card medium" onclick="filterByKpi('total')" title="Ver todas las operaciones sin confirmar">
         <div class="kpi-glow"></div>
         <div class="kpi-label">Monto Total Sin Conf.</div>
         <div class="kpi-value" id="kpiTotalUnconf">$1.2B</div>
         <div class="kpi-delta">↑ $342M última hora</div>
         <div class="kpi-icon">💰</div>
+        <div style="position:absolute;bottom:10px;left:14px;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:1px">VER TABLA →</div>
       </div>
-      <div class="kpi-card ok" onclick="showKpiDetail('compliance')">
+      <div class="kpi-card ok" onclick="filterByKpi('compliance')" title="Ver operaciones confirmadas">
         <div class="kpi-glow"></div>
         <div class="kpi-label">Cumplimiento</div>
         <div class="kpi-value" id="kpiCompliance">66%</div>
         <div class="kpi-delta">↓ vs 71% ayer</div>
         <div class="kpi-icon">✅</div>
+        <div style="position:absolute;bottom:10px;left:14px;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:1px">VER TABLA →</div>
       </div>
     </div>
 
@@ -1122,21 +1191,21 @@ body::before {
 
 <script>
 // ========== DATA MODEL ==========
-const INSTRUMENTS = ['ON', 'FCI', 'CEDEAR', 'BONO', 'ACCIÓN'];
+const INSTRUMENTS = ['ON', 'FCI', 'CEDEAR', 'BONO', 'ACCIÓN', 'OPCIONES', 'FUTUROS', 'CAUCIÓN'];
 const CLIENTS = ['Inversiones Alpha SA', 'Delta Capital SRL', 'Omega Fund', 'Beta Gestión', 'Gamma Holding', 'Epsilon Partners', 'Zeta Asset Mgmt', 'Eta Inversiones', 'Theta Corp', 'Iota Capital'];
-const PRODUCERS = ['Méndez P.', 'Soria L.', 'Vásquez A.', 'Romero C.', 'Fernández G.'];
-const PRODUCER_COLORS = ['#00d4ff', '#9b5de5', '#ff8c42', '#06d6a0', '#ffd166'];
+const PRODUCERS = ['Manager 139'];
+const PRODUCER_COLORS = ['#00d4ff'];
 const AUTHORIZED_MAP = {
-  'Inversiones Alpha SA': ['Méndez P.', 'Soria L.'],
-  'Delta Capital SRL': ['Vásquez A.', 'Romero C.'],
-  'Omega Fund': ['Méndez P.', 'Fernández G.'],
-  'Beta Gestión': ['Soria L.', 'Vásquez A.'],
-  'Gamma Holding': ['Romero C.', 'Méndez P.'],
-  'Epsilon Partners': ['Fernández G.', 'Soria L.'],
-  'Zeta Asset Mgmt': ['Vásquez A.', 'Romero C.'],
-  'Eta Inversiones': ['Méndez P.', 'Fernández G.'],
-  'Theta Corp': ['Soria L.', 'Romero C.'],
-  'Iota Capital': ['Vásquez A.', 'Méndez P.'],
+  'Inversiones Alpha SA': ['Manager 139'],
+  'Delta Capital SRL': ['Manager 139'],
+  'Omega Fund': ['Manager 139'],
+  'Beta Gestión': ['Manager 139'],
+  'Gamma Holding': ['Manager 139'],
+  'Epsilon Partners': ['Manager 139'],
+  'Zeta Asset Mgmt': ['Manager 139'],
+  'Eta Inversiones': ['Manager 139'],
+  'Theta Corp': ['Manager 139'],
+  'Iota Capital': ['Manager 139'],
 };
 
 function isAuthorized(client, producer) {
@@ -1441,6 +1510,100 @@ function renderCompliance() {
     `;
   }).join('');
 }
+
+// ========== KPI FILTER (click KPI → filter table) ==========
+function filterByKpi(type) {
+  // Reset sidebar filters first
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('filterProducer').value = '';
+  document.getElementById('filterInstrument').value = '';
+  document.getElementById('filterAmount').value = '';
+
+  if (type === 'unconfirmed') {
+    filteredOps = allOps.filter(o => ['pending', 'critical'].includes(o.status));
+  } else if (type === 'highrisk') {
+    filteredOps = allOps.filter(o => o.monto > 100_000_000 && o.status !== 'confirmed');
+    document.getElementById('filterAmount').value = 'high';
+  } else if (type === 'outsla') {
+    filteredOps = allOps.filter(o => o.status === 'late');
+  } else if (type === 'total') {
+    filteredOps = allOps.filter(o => o.status !== 'confirmed');
+  } else if (type === 'compliance') {
+    filteredOps = allOps.filter(o => o.status === 'confirmed');
+    document.getElementById('filterStatus').value = 'confirmed';
+  }
+
+  activeRiskFilter = 'all';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  // scroll content to table
+  document.querySelector('.content').scrollTo({ top: 300, behavior: 'smooth' });
+  renderTable();
+}
+
+// ========== NOTIFICATIONS PANEL ==========
+let notifPanelOpen = false;
+let currentNotifTab = 'all';
+const notifData = [
+  { id:1, level:'critical', type:'MONTO CRÍTICO', msg:'OP-0001 · $245M sin confirmación · 47 min transcurridos', time:'hace 2min', read:false },
+  { id:2, level:'critical', type:'NO AUTORIZADO', msg:'OP-0003 · Manager 139 sin autorización en Delta Capital SRL', time:'hace 5min', read:false },
+  { id:3, level:'high', type:'FUERA DE SLA', msg:'OP-0018 · $42M · 6hs sin confirmación del cliente', time:'hace 12min', read:false },
+  { id:4, level:'critical', type:'ACUMULACIÓN', msg:'Manager 139 acumula score 320pts · umbral superado', time:'hace 18min', read:false },
+  { id:5, level:'high', type:'CIERRE CERCANO', msg:'8 operaciones < $100M pendientes · cierre en 2hs', time:'hace 25min', read:false },
+  { id:6, level:'medium', type:'CONFIRMACIÓN PARCIAL', msg:'OP-0011 · conformidad no expresa por operación individual', time:'hace 31min', read:true },
+  { id:7, level:'high', type:'SIN CONFIRMAR', msg:'OP-0022 · $178M · Beta Gestión · pendiente 38min', time:'hace 38min', read:true },
+];
+
+function toggleNotifPanel() {
+  notifPanelOpen = !notifPanelOpen;
+  const panel = document.getElementById('notifPanel');
+  panel.style.display = notifPanelOpen ? 'flex' : 'none';
+  if (notifPanelOpen) renderNotifList();
+}
+
+function switchNotifTab(tab) {
+  currentNotifTab = tab;
+  document.querySelectorAll('.notif-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  renderNotifList();
+}
+
+function renderNotifList() {
+  let items = notifData;
+  if (currentNotifTab === 'critical') items = notifData.filter(n => n.level === 'critical');
+  if (currentNotifTab === 'unread') items = notifData.filter(n => !n.read);
+  const unreadCount = notifData.filter(n => !n.read).length;
+  document.getElementById('notifCount').textContent = unreadCount;
+  document.getElementById('alertBadge').textContent = unreadCount;
+
+  document.getElementById('notifList').innerHTML = items.map(n => `
+    <div class="notif-item ${n.level} ${n.read ? 'read' : ''}" onclick="markNotifRead(${n.id})">
+      ${!n.read ? '<div class="notif-unread-dot"></div>' : ''}
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;margin-bottom:4px;color:${n.level==='critical'?'var(--red)':n.level==='high'?'var(--orange)':'var(--yellow)'}">${n.type}</div>
+      <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:4px">${n.msg}</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">${n.time}</div>
+    </div>
+  `).join('') || '<div style="padding:20px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text-muted)">Sin notificaciones en esta categoría</div>';
+}
+
+function markNotifRead(id) {
+  const n = notifData.find(x => x.id === id);
+  if (n) { n.read = true; renderNotifList(); }
+}
+
+function markAllRead() {
+  notifData.forEach(n => n.read = true);
+  renderNotifList();
+}
+
+// Close notif panel clicking outside
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('notifPanel');
+  const bell = document.querySelector('.alert-bell');
+  if (notifPanelOpen && !panel.contains(e.target) && !bell.contains(e.target)) {
+    notifPanelOpen = false;
+    panel.style.display = 'none';
+  }
+});
 
 // ========== MODAL ==========
 function showOpDetail(id) {
