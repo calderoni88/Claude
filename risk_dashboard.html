@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CENTINELA — Monitor de Riesgo Operativo</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ── LIGHT THEME ── */
 :root {
   --navy: #0d1b3e;
-  --navy-mid: #1a2f5e;
   --blue: #1e5bc6;
   --blue-light: #3b82f6;
   --blue-pale: #eff6ff;
   --bg: #f4f6fb;
+  --bg2: #eef1f8;
   --white: #ffffff;
   --border: #e2e8f0;
   --border-dark: #cbd5e1;
@@ -20,77 +21,92 @@
   --text-mid: #334155;
   --text-muted: #64748b;
   --text-light: #94a3b8;
-  --red: #dc2626;
-  --red-bg: #fef2f2;
-  --red-border: #fecaca;
-  --orange: #d97706;
-  --orange-bg: #fffbeb;
-  --orange-border: #fde68a;
-  --green: #059669;
-  --green-bg: #f0fdf4;
-  --green-border: #bbf7d0;
-  --yellow: #b45309;
-  --yellow-bg: #fefce8;
-  --purple: #7c3aed;
-  --purple-bg: #f5f3ff;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --card-bg: #ffffff;
+  --sidebar-bg: #ffffff;
+  --input-bg: #f4f6fb;
+  --red: #dc2626; --red-bg: #fef2f2; --red-border: #fecaca;
+  --orange: #d97706; --orange-bg: #fffbeb; --orange-border: #fde68a;
+  --green: #059669; --green-bg: #f0fdf4; --green-border: #bbf7d0;
+  --yellow: #b45309; --yellow-bg: #fefce8;
+  --purple: #7c3aed; --purple-bg: #f5f3ff;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
   --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
-  --radius: 10px;
-  --radius-sm: 6px;
-  --font: 'DM Sans', 'Inter', sans-serif;
+  --radius: 10px; --radius-sm: 6px;
+  --font: 'DM Sans', sans-serif;
+}
+/* ── DARK THEME ── */
+[data-theme="dark"] {
+  --bg: #0f1117;
+  --bg2: #1a1d27;
+  --white: #1e2130;
+  --border: #2d3348;
+  --border-dark: #3d4460;
+  --text: #e8ecf4;
+  --text-mid: #b0b8d0;
+  --text-muted: #7480a0;
+  --text-light: #4a5470;
+  --card-bg: #1e2130;
+  --sidebar-bg: #181c2a;
+  --input-bg: #0f1117;
+  --blue-pale: #1a2540;
+  --red-bg: #2a1010; --red-border: #5a1a1a;
+  --orange-bg: #261a08; --orange-border: #5a3a08;
+  --green-bg: #0a2010; --green-border: #1a4a1a;
+  --yellow-bg: #221608;
+  --purple-bg: #1a1030;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh;transition:background 0.3s,color 0.3s}
 
-/* HEADER */
-.header{background:var(--navy);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(13,27,62,0.3)}
+/* ── HEADER ── */
+.header{background:var(--navy);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,0.3)}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:18px solid var(--blue-light);flex-shrink:0}
-.logo-name{font-size:17px;font-weight:700;color:#fff;letter-spacing:0.5px}
-.logo-sep{width:1px;height:20px;background:rgba(255,255,255,0.2);margin:0 8px}
-.logo-sub{font-size:11px;color:rgba(255,255,255,0.5);font-weight:400}
-.header-center{display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,0.6)}
-.live-pill{display:flex;align-items:center;gap:5px;background:rgba(220,38,38,0.2);border:1px solid rgba(220,38,38,0.4);border-radius:20px;padding:3px 10px;font-size:11px;color:#fca5a5;font-weight:500}
+.logo-icon{width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:16px solid var(--blue-light);flex-shrink:0}
+.logo-name{font-size:16px;font-weight:700;color:#fff}
+.logo-sep{width:1px;height:18px;background:rgba(255,255,255,0.2);margin:0 8px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,0.45)}
+.header-center{display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,0.55)}
+.live-pill{display:flex;align-items:center;gap:5px;background:rgba(220,38,38,0.2);border:1px solid rgba(220,38,38,0.35);border-radius:20px;padding:3px 10px;font-size:11px;color:#fca5a5;font-weight:500}
 .live-dot{width:6px;height:6px;background:#f87171;border-radius:50%;animation:blink 1.2s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
-.header-right{display:flex;align-items:center;gap:12px}
-.clock{font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);letter-spacing:1px}
-.bell-btn{position:relative;width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:15px}
-.bell-btn:hover{background:rgba(255,255,255,0.18)}
+.header-right{display:flex;align-items:center;gap:10px}
+.clock{font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);letter-spacing:1px}
+.hbtn{position:relative;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:background 0.2s;color:#fff}
+.hbtn:hover{background:rgba(255,255,255,0.18)}
 .bell-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px}
 
-/* ALERT BAR */
-.alert-bar{background:var(--red);display:flex;align-items:center;height:32px;overflow:hidden}
+/* ── ALERT BAR ── */
+.alert-bar{background:var(--red);display:flex;align-items:center;height:30px;overflow:hidden}
 .alert-bar-label{background:rgba(0,0,0,0.2);color:#fff;font-size:10px;font-weight:700;letter-spacing:2px;padding:0 14px;height:100%;display:flex;align-items:center;flex-shrink:0;white-space:nowrap}
 .ticker-wrap{overflow:hidden;flex:1}
 .ticker-content{display:flex;animation:ticker 32s linear infinite;white-space:nowrap}
-.ticker-item{font-size:11px;color:rgba(255,255,255,0.92);padding:0 32px;display:flex;align-items:center;gap:8px;font-weight:500}
-.ticker-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.7);flex-shrink:0}
+.ticker-item{font-size:11px;color:rgba(255,255,255,0.9);padding:0 30px;display:flex;align-items:center;gap:7px;font-weight:500}
+.ticker-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.6);flex-shrink:0}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* LAYOUT */
-.layout{display:grid;grid-template-columns:256px 1fr;height:calc(100vh - 58px - 32px);overflow:hidden}
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:252px 1fr;height:calc(100vh - 56px - 30px);overflow:hidden}
 
-/* SIDEBAR */
-.sidebar{background:var(--white);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+/* ── SIDEBAR ── */
+.sidebar{background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;transition:background 0.3s}
 .sidebar::-webkit-scrollbar{width:3px}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border-dark);border-radius:2px}
-.sidebar-logo-block{padding:18px 16px 14px;border-bottom:1px solid var(--border)}
+.sidebar-logo-block{padding:16px;border-bottom:1px solid var(--border)}
 .sidebar-brand{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
 .risk-score-block{display:flex;align-items:center;gap:12px;background:var(--navy);border-radius:var(--radius-sm);padding:12px}
 .risk-gauge-wrap{position:relative;flex-shrink:0}
 .risk-num-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
-.risk-num{font-size:18px;font-weight:700;color:#fff;line-height:1}
+.risk-num{font-size:17px;font-weight:700;color:#fff;line-height:1}
 .risk-num-sub{font-size:9px;color:rgba(255,255,255,0.4)}
-.risk-info-label{font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:1px;margin-bottom:2px}
-.risk-info-band{font-size:13px;font-weight:700;color:#fca5a5;display:flex;align-items:center;gap:4px}
-.risk-info-desc{font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px;line-height:1.3}
+.risk-info-label{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-bottom:2px}
+.risk-info-band{font-size:13px;font-weight:700;color:#fca5a5}
+.risk-info-desc{font-size:10px;color:rgba(255,255,255,0.3);margin-top:3px;line-height:1.3}
 .sidebar-section{padding:14px 16px;border-bottom:1px solid var(--border)}
 .sidebar-section-title{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
-.filter-group{margin-bottom:9px}
+.filter-group{margin-bottom:8px}
 .filter-label{font-size:11px;font-weight:500;color:var(--text-muted);margin-bottom:3px}
-.filter-select{width:100%;background:var(--bg);border:1px solid var(--border-dark);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:12px;padding:7px 10px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:border-color 0.15s}
+.filter-select{width:100%;background:var(--input-bg);border:1px solid var(--border-dark);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:12px;padding:7px 10px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:border-color 0.15s}
 .filter-select:focus{border-color:var(--blue)}
 .producer-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s;margin-bottom:2px}
 .producer-item:hover{background:var(--bg)}
@@ -99,7 +115,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .p-ops{font-size:10px;color:var(--text-muted)}
 .p-risk-badge{margin-left:auto;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;flex-shrink:0}
 
-/* CONTENT */
+/* ── CONTENT ── */
 .content{overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:16px}
 .content::-webkit-scrollbar{width:4px}
 .content::-webkit-scrollbar-thumb{background:var(--border-dark);border-radius:2px}
@@ -107,9 +123,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .section-title{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:7px}
 .section-title::before{content:'';display:block;width:3px;height:14px;background:var(--blue);border-radius:2px}
 
-/* KPI GRID */
+/* ── KPI ── */
 .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:box-shadow 0.2s,transform 0.15s;position:relative;overflow:hidden}
+.kpi-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:box-shadow 0.2s,transform 0.15s;position:relative;overflow:hidden}
 .kpi-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
 .kpi-card.danger{border-top:3px solid var(--red)}
 .kpi-card.warning{border-top:3px solid var(--orange)}
@@ -128,28 +144,30 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .kpi-card.caution .kpi-value{color:var(--yellow)}
 .kpi-card.success .kpi-value{color:var(--green)}
 .kpi-sub{font-size:10px;color:var(--text-light)}
-.kpi-cta{margin-top:7px;font-size:10px;color:var(--blue);font-weight:600;opacity:0;transition:opacity 0.15s}
+.kpi-cta{margin-top:6px;font-size:10px;color:var(--blue);font-weight:600;opacity:0;transition:opacity 0.15s}
 .kpi-card:hover .kpi-cta{opacity:1}
 
-/* MID GRID */
+/* ── MID GRID ── */
 .mid-grid{display:grid;grid-template-columns:1fr 298px;gap:12px}
 
-/* CARD */
-.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+/* ── CARD ── */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);transition:background 0.3s,border-color 0.3s}
 .card-header{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .card-title{font-size:13px;font-weight:700;color:var(--text)}
 
-/* TABLE */
+/* ── TABLE ── */
 .ops-table{width:100%;border-collapse:collapse}
 .ops-table thead th{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;padding:9px 13px;text-align:left;background:var(--bg);border-bottom:1px solid var(--border);white-space:nowrap}
 .ops-table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;animation:row-fade 0.25s ease-out}
 @keyframes row-fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
 .ops-table tbody tr:hover{background:var(--blue-pale)}
-.ops-table tbody tr.is-new{background:#eff6ff}
-.ops-table td{padding:10px 13px;font-size:12px;color:var(--text-mid);white-space:nowrap}
+.ops-table tbody tr.is-new{background:var(--blue-pale)}
+.ops-table td{padding:9px 13px;font-size:12px;color:var(--text-mid);white-space:nowrap}
 .op-id{font-size:10px;color:var(--text-light);font-weight:500}
+.edit-btn{font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;border:1px solid var(--border-dark);background:var(--bg);color:var(--text-muted);cursor:pointer;font-family:var(--font);transition:all 0.15s;white-space:nowrap}
+.edit-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-pale)}
 
-/* PILLS */
+/* ── PILLS ── */
 .pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
 .pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .pill-confirmed{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
@@ -164,8 +182,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .pill-invalid .pill-dot{background:var(--purple)}
 .pill-observed{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)}
 .pill-observed .pill-dot{background:var(--orange)}
-
-/* RISK BADGES */
 .rbadge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px}
 .rbadge-low{background:var(--green-bg);color:var(--green)}
 .rbadge-medium{background:var(--yellow-bg);color:var(--yellow)}
@@ -176,7 +192,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .time-warn{color:var(--orange);font-weight:600}
 .time-crit{color:var(--red);font-weight:700}
 
-/* TABLE CONTROLS */
+/* ── TABLE CONTROLS ── */
 .tbl-btn{font-size:10px;font-weight:600;padding:5px 11px;border-radius:20px;cursor:pointer;border:1px solid var(--border-dark);background:transparent;color:var(--text-muted);transition:all 0.15s;font-family:var(--font)}
 .tbl-btn:hover{border-color:var(--blue);color:var(--blue)}
 .tbl-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
@@ -184,13 +200,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .auto-btn{font-size:10px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border-dark);background:var(--bg);color:var(--text-muted);display:flex;align-items:center;gap:5px;font-family:var(--font);transition:all 0.15s}
 .auto-btn.on{background:var(--blue-pale);border-color:var(--blue-light);color:var(--blue)}
 
-/* ALERTS */
+/* ── ALERTS ── */
 .alerts-list{overflow-y:auto;max-height:350px;padding:8px;display:flex;flex-direction:column;gap:6px}
 .alerts-list::-webkit-scrollbar{width:3px}
 .alerts-list::-webkit-scrollbar-thumb{background:var(--border-dark)}
-.alert-item{padding:9px 11px;border-radius:var(--radius-sm);border-left:3px solid;animation:slide-in 0.3s ease-out;transition:box-shadow 0.15s;cursor:pointer}
+.alert-item{padding:9px 11px;border-radius:var(--radius-sm);border-left:3px solid;cursor:pointer;transition:box-shadow 0.15s}
 .alert-item:hover{box-shadow:var(--shadow-sm)}
-@keyframes slide-in{from{opacity:0;transform:translateX(6px)}to{opacity:1;transform:none}}
 .alert-item.critical{background:var(--red-bg);border-color:var(--red)}
 .alert-item.high{background:var(--orange-bg);border-color:var(--orange)}
 .alert-item.medium{background:var(--yellow-bg);border-color:#eab308}
@@ -200,9 +215,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .alert-item.medium .alert-type{color:var(--yellow)}
 .alert-msg{font-size:11px;color:var(--text-mid);line-height:1.4;margin-bottom:2px}
 .alert-time{font-size:10px;color:var(--text-light)}
-.alerts-count-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px}
+.count-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px}
 
-/* BOTTOM */
+/* ── CHARTS ── */
 .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .chart-pad{padding:14px 16px}
 .evo-chart{display:flex;align-items:flex-end;gap:4px;height:68px;margin-bottom:5px}
@@ -221,13 +236,39 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .donut-block{display:flex;flex-direction:column;align-items:center;gap:5px}
 .donut-label{font-size:9px;color:var(--text-muted);text-align:center;max-width:70px;line-height:1.3}
 
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:400;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;backdrop-filter:blur(2px)}
+/* ── PRODUCER METRICS SECTION ── */
+.prod-metrics-section{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:background 0.3s}
+.prod-metrics-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.prod-metrics-header:hover{background:var(--bg)}
+.prod-metrics-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+.prod-metrics-body{padding:20px}
+.prod-selector-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.prod-selector-btn{font-size:12px;font-weight:600;padding:7px 16px;border-radius:20px;cursor:pointer;border:1px solid var(--border-dark);background:var(--bg);color:var(--text-muted);transition:all 0.15s;font-family:var(--font)}
+.prod-selector-btn:hover{border-color:var(--blue);color:var(--blue)}
+.prod-selector-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px}
+.metric-card-label{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.metric-card-value{font-size:24px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+.metric-card-sub{font-size:11px;color:var(--text-light);margin-top:2px}
+.prod-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.prod-detail-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.prod-detail-card-title{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--card-bg)}
+.prod-mini-table{width:100%;border-collapse:collapse}
+.prod-mini-table th{font-size:9px;font-weight:700;color:var(--text-light);letter-spacing:1px;text-transform:uppercase;padding:7px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.prod-mini-table td{font-size:11px;color:var(--text-mid);padding:8px 12px;border-bottom:1px solid var(--border)}
+.prod-mini-table tr:last-child td{border:none}
+.prod-mini-table tr:hover td{background:var(--blue-pale)}
+.prod-bar-mini-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;min-width:50px}
+.prod-bar-mini{height:100%;border-radius:3px;background:var(--blue)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.55);z-index:400;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;backdrop-filter:blur(2px)}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--white);border-radius:14px;width:560px;max-height:82vh;overflow-y:auto;box-shadow:var(--shadow-lg);transform:translateY(16px);transition:transform 0.2s}
+.modal{background:var(--card-bg);border-radius:14px;width:580px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg);transform:translateY(16px);transition:transform 0.2s,background 0.3s;border:1px solid var(--border)}
 .modal-overlay.open .modal{transform:none}
-.modal-head{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1}
-.modal-title-text{font-size:16px;font-weight:700}
+.modal-head{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--card-bg);z-index:1}
+.modal-title-text{font-size:16px;font-weight:700;color:var(--text)}
 .modal-close{background:var(--bg);border:none;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;transition:background 0.15s}
 .modal-close:hover{background:var(--border)}
 .modal-body{padding:18px 22px}
@@ -239,27 +280,43 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .score-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-mid)}
 .score-row:last-child{border:none}
 .score-pts{font-weight:700}
-.score-total{display:flex;justify-content:space-between;padding-top:9px;font-weight:700;font-size:14px}
-.rec-box{background:var(--blue-pale);border:1px solid #bfdbfe;border-radius:var(--radius);padding:12px 14px}
+.score-total{display:flex;justify-content:space-between;padding-top:9px;font-weight:700;font-size:14px;color:var(--text)}
+.rec-box{background:var(--blue-pale);border:1px solid #bfdbfe;border-radius:var(--radius);padding:12px 14px;margin-bottom:14px}
 .rec-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:5px}
 .rec-text{font-size:12px;color:var(--text-mid);line-height:1.6}
 
-/* NOTIF PANEL */
-.notif-panel{position:fixed;top:62px;right:14px;width:355px;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);z-index:300;display:none;flex-direction:column;overflow:hidden;animation:notif-drop 0.18s ease-out}
+/* ── EDIT FORM ── */
+.edit-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}
+.form-input,.form-select{background:var(--input-bg);border:1px solid var(--border-dark);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 10px;outline:none;transition:border-color 0.15s;width:100%}
+.form-input:focus,.form-select:focus{border-color:var(--blue)}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.btn-primary{background:var(--blue);color:#fff;border:none;border-radius:var(--radius-sm);padding:9px 20px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s}
+.btn-primary:hover{background:#1a50b0}
+.btn-secondary{background:var(--bg);color:var(--text-muted);border:1px solid var(--border-dark);border-radius:var(--radius-sm);padding:9px 16px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.btn-secondary:hover{border-color:var(--text-muted);color:var(--text)}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:9px 16px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.btn-danger:hover{background:var(--red);color:#fff}
+
+/* ── FILTER EDITOR ── */
+.filter-editor-modal{width:640px}
+.filter-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+
+/* ── NOTIF PANEL ── */
+.notif-panel{position:fixed;top:60px;right:14px;width:350px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);z-index:300;display:none;flex-direction:column;overflow:hidden;animation:notif-drop 0.18s ease-out;transition:background 0.3s}
 .notif-panel.open{display:flex}
 @keyframes notif-drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 .notif-head{padding:13px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.notif-head-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.notif-head-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
 .notif-tabs{display:flex;border-bottom:1px solid var(--border)}
 .ntab{flex:1;padding:8px;text-align:center;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s}
-.ntab:hover{color:var(--navy)}
+.ntab:hover{color:var(--text)}
 .ntab.active{color:var(--blue);border-bottom-color:var(--blue)}
-.notif-list{max-height:370px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:5px}
-.notif-list::-webkit-scrollbar{width:3px}
-.notif-list::-webkit-scrollbar-thumb{background:var(--border-dark)}
+.notif-list{max-height:360px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:5px}
 .notif-item{padding:9px 11px;border-radius:var(--radius-sm);border-left:3px solid;cursor:pointer;position:relative;transition:opacity 0.2s}
 .notif-item.read{opacity:0.45}
-.notif-item:hover{filter:brightness(0.97)}
 .notif-item.critical{background:var(--red-bg);border-color:var(--red)}
 .notif-item.high{background:var(--orange-bg);border-color:var(--orange)}
 .notif-item.medium{background:var(--yellow-bg);border-color:#eab308}
@@ -270,13 +327,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .notif-msg{font-size:11px;color:var(--text-mid);line-height:1.4;margin-bottom:2px}
 .notif-time{font-size:10px;color:var(--text-light)}
 .notif-unread-dot{position:absolute;top:10px;right:10px;width:7px;height:7px;background:var(--blue);border-radius:50%}
-.notif-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.notif-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
 .notif-foot-btn{font-size:11px;font-weight:600;color:var(--blue);cursor:pointer;background:none;border:none;font-family:var(--font)}
 .notif-foot-close{font-size:11px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:var(--font)}
+
+/* ── DARK TOGGLE ── */
+.theme-toggle{font-size:16px}
+.chevron{font-size:12px;color:var(--text-muted);transition:transform 0.25s}
+.chevron.open{transform:rotate(180deg)}
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="header">
   <div class="logo">
     <div class="logo-icon"></div>
@@ -286,18 +349,23 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
   </div>
   <div class="header-center">
     <div class="live-pill"><div class="live-dot"></div>EN VIVO</div>
-    <span>Última actualización: <span id="lastUpdate" style="color:rgba(255,255,255,0.75)">—</span></span>
+    <span>Últ. actualización: <span id="lastUpdate" style="color:rgba(255,255,255,0.75)">—</span></span>
   </div>
   <div class="header-right">
     <div class="clock" id="clock">—</div>
-    <div class="bell-btn" onclick="toggleNotifPanel()">🔔<div class="bell-badge" id="bellBadge">7</div></div>
+    <div class="hbtn theme-toggle" onclick="toggleTheme()" title="Modo oscuro/claro" id="themeBtn">🌙</div>
+    <div class="hbtn" onclick="openFilterEditor()" title="Editar filtros y opciones">⚙️</div>
+    <div class="hbtn" onclick="toggleNotifPanel()" title="Notificaciones">
+      🔔<div class="bell-badge" id="bellBadge">7</div>
+    </div>
   </div>
 </header>
 
+<!-- ALERT BAR -->
 <div class="alert-bar">
   <div class="alert-bar-label">⚡ ALERTAS</div>
   <div class="ticker-wrap">
-    <div class="ticker-content">
+    <div class="ticker-content" id="tickerContent">
       <div class="ticker-item"><div class="ticker-dot"></div>CRÍTICO · OP-0023 · Manager 139 · $245M sin confirmar · 47min transcurridos</div>
       <div class="ticker-item"><div class="ticker-dot"></div>SLA VENCIDO · OP-0018 · $42M · 6hs sin confirmación del cliente</div>
       <div class="ticker-item"><div class="ticker-dot"></div>ACUMULACIÓN · Manager 139 · Score de riesgo: 320 puntos · umbral superado</div>
@@ -310,16 +378,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
   </div>
 </div>
 
+<!-- LAYOUT -->
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-logo-block">
       <div class="sidebar-brand">Riesgo Global</div>
       <div class="risk-score-block">
         <div class="risk-gauge-wrap">
-          <svg width="68" height="68" viewBox="0 0 68 68">
-            <circle cx="34" cy="34" r="26" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
-            <circle cx="34" cy="34" r="26" fill="none" stroke="#f87171" stroke-width="6"
-              stroke-dasharray="121 42" stroke-dashoffset="41" stroke-linecap="round"/>
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="24" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
+            <circle cx="32" cy="32" r="24" fill="none" stroke="#f87171" stroke-width="6"
+              stroke-dasharray="113 38" stroke-dashoffset="38" stroke-linecap="round"/>
           </svg>
           <div class="risk-num-overlay"><div class="risk-num">74</div><div class="risk-num-sub">/100</div></div>
         </div>
@@ -337,31 +406,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
         <div class="filter-label">Estado</div>
         <select class="filter-select" id="filterStatus" onchange="applyFilters()">
           <option value="">Todos</option>
-          <option value="pending">Pendiente</option>
-          <option value="confirmed">Confirmada</option>
-          <option value="critical">Riesgo Alto</option>
-          <option value="invalid">Inválida</option>
         </select>
       </div>
       <div class="filter-group">
         <div class="filter-label">Productor</div>
         <select class="filter-select" id="filterProducer" onchange="applyFilters()">
           <option value="">Todos</option>
-          <option value="Manager 139">Manager 139</option>
         </select>
       </div>
       <div class="filter-group">
         <div class="filter-label">Instrumento</div>
         <select class="filter-select" id="filterInstrument" onchange="applyFilters()">
           <option value="">Todos</option>
-          <option value="ON">ON</option>
-          <option value="FCI">FCI</option>
-          <option value="CEDEAR">CEDEAR</option>
-          <option value="BONO">BONO</option>
-          <option value="ACCIÓN">ACCIÓN</option>
-          <option value="OPCIONES">Opciones</option>
-          <option value="FUTUROS">Futuros</option>
-          <option value="CAUCIÓN">Caución</option>
         </select>
       </div>
       <div class="filter-group">
@@ -381,43 +437,45 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
   </aside>
 
   <main class="content">
+    <!-- KPIs -->
     <div class="section-header">
       <div class="section-title">Indicadores Clave</div>
-      <div style="font-size:10px;color:var(--text-light)">Hacé click en una tarjeta para filtrar la tabla</div>
+      <div style="font-size:10px;color:var(--text-light)">Click en una tarjeta para filtrar la tabla</div>
     </div>
     <div class="kpi-grid">
       <div class="kpi-card danger" onclick="filterByKpi('unconfirmed')">
         <div class="kpi-top"><div class="kpi-label">Sin Confirmar</div><div class="kpi-icon-wrap">⚠️</div></div>
         <div class="kpi-value" id="kpiUnconfirmed">34%</div>
         <div class="kpi-sub" id="kpiUnconfirmedCount">11 operaciones</div>
-        <div class="kpi-cta">Ver operaciones →</div>
+        <div class="kpi-cta">Ver en tabla →</div>
       </div>
       <div class="kpi-card danger" onclick="filterByKpi('highrisk')">
         <div class="kpi-top"><div class="kpi-label">Monto en Riesgo &gt;100M</div><div class="kpi-icon-wrap">🔴</div></div>
         <div class="kpi-value" id="kpiHighRisk">$643M</div>
         <div class="kpi-sub">3 operaciones críticas</div>
-        <div class="kpi-cta">Ver operaciones →</div>
+        <div class="kpi-cta">Ver en tabla →</div>
       </div>
       <div class="kpi-card warning" onclick="filterByKpi('outsla')">
         <div class="kpi-top"><div class="kpi-label">Fuera de SLA</div><div class="kpi-icon-wrap">⏱️</div></div>
         <div class="kpi-value" id="kpiOutSLA">5</div>
         <div class="kpi-sub">↑ +2 última hora</div>
-        <div class="kpi-cta">Ver operaciones →</div>
+        <div class="kpi-cta">Ver en tabla →</div>
       </div>
       <div class="kpi-card caution" onclick="filterByKpi('total')">
         <div class="kpi-top"><div class="kpi-label">Monto Total Sin Confirmar</div><div class="kpi-icon-wrap">💰</div></div>
         <div class="kpi-value" id="kpiTotalUnconf">$1.2B</div>
         <div class="kpi-sub">↑ $342M última hora</div>
-        <div class="kpi-cta">Ver operaciones →</div>
+        <div class="kpi-cta">Ver en tabla →</div>
       </div>
       <div class="kpi-card success" onclick="filterByKpi('compliance')">
         <div class="kpi-top"><div class="kpi-label">Cumplimiento</div><div class="kpi-icon-wrap">✅</div></div>
         <div class="kpi-value" id="kpiCompliance">66%</div>
         <div class="kpi-sub">↓ vs 71% ayer</div>
-        <div class="kpi-cta">Ver operaciones →</div>
+        <div class="kpi-cta">Ver en tabla →</div>
       </div>
     </div>
 
+    <!-- TABLE -->
     <div class="section-header"><div class="section-title">Operaciones en Tiempo Real</div></div>
     <div class="mid-grid">
       <div class="card">
@@ -425,13 +483,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
           <div class="card-title">Operaciones Activas</div>
           <div style="display:flex;gap:7px;align-items:center">
             <button class="auto-btn on" id="autoBtn" onclick="toggleAutoScroll()"><span id="autoIcon">⏸</span> Auto-refresh</button>
+            <button class="tbl-btn" onclick="openNewOpModal()">+ Nueva op.</button>
             <button class="tbl-btn danger active" onclick="setRiskFilter('critical',this)">Críticas</button>
             <button class="tbl-btn" onclick="setRiskFilter('all',this)">Todas</button>
           </div>
         </div>
         <div style="overflow-x:auto">
           <table class="ops-table">
-            <thead><tr><th>ID</th><th>Cliente</th><th>Productor</th><th>Instrumento</th><th>Monto (ARS)</th><th>Estado</th><th>Tiempo</th><th>Riesgo</th></tr></thead>
+            <thead><tr><th>ID</th><th>Cliente</th><th>Productor</th><th>Instrumento</th><th>Monto (ARS)</th><th>Estado</th><th>Tiempo</th><th>Riesgo</th><th></th></tr></thead>
             <tbody id="opsTableBody"></tbody>
           </table>
         </div>
@@ -439,12 +498,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
       <div class="card">
         <div class="card-header">
           <div class="card-title">Alertas Activas</div>
-          <span class="alerts-count-badge" id="alertsCount">7</span>
+          <span class="count-badge" id="alertsCount">7</span>
         </div>
         <div class="alerts-list" id="alertsList"></div>
       </div>
     </div>
 
+    <!-- CHARTS -->
     <div class="section-header"><div class="section-title">Análisis y Distribución</div></div>
     <div class="bottom-grid">
       <div class="card">
@@ -471,15 +531,35 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
       </div>
     </div>
 
+    <!-- COMPLIANCE -->
     <div class="section-header"><div class="section-title">Cumplimiento Regulatorio</div></div>
     <div class="card"><div class="compliance-grid" id="complianceRow"></div></div>
+
+    <!-- PRODUCER METRICS -->
+    <div class="prod-metrics-section" id="prodMetricsSection">
+      <div class="prod-metrics-header" onclick="toggleProdMetrics()">
+        <div class="prod-metrics-title">
+          📊 Métricas por Productor
+          <span style="font-size:11px;font-weight:400;color:var(--text-muted)">— Detalle individual y comparativo</span>
+        </div>
+        <span class="chevron" id="prodMetricsChevron">▼</span>
+      </div>
+      <div id="prodMetricsBody" style="display:none">
+        <div class="prod-metrics-body">
+          <div class="prod-selector-row" id="prodSelectorRow"></div>
+          <div class="metrics-grid" id="prodMetricsKpis"></div>
+          <div class="prod-detail-grid" id="prodDetailGrid"></div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
 <!-- NOTIF PANEL -->
 <div class="notif-panel" id="notifPanel">
   <div class="notif-head">
-    <div class="notif-head-title">🔔 Notificaciones <span class="alerts-count-badge" id="notifCount">7</span></div>
+    <div class="notif-head-title">🔔 Notificaciones <span class="count-badge" id="notifCount">7</span></div>
     <button class="modal-close" onclick="toggleNotifPanel()">✕</button>
   </div>
   <div class="notif-tabs">
@@ -496,9 +576,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
-  <div class="modal">
+  <div class="modal" id="modalEl">
     <div class="modal-head">
-      <div class="modal-title-text" id="modalTitle">Detalle de Operación</div>
+      <div class="modal-title-text" id="modalTitle">Detalle</div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body" id="modalBody"></div>
@@ -506,52 +586,87 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 </div>
 
 <script>
-const INSTRUMENTS=['ON','FCI','CEDEAR','BONO','ACCIÓN','OPCIONES','FUTUROS','CAUCIÓN'];
-const CLIENTS=['Inversiones Alpha SA','Delta Capital SRL','Omega Fund','Beta Gestión','Gamma Holding','Epsilon Partners','Zeta Asset Mgmt','Eta Inversiones','Theta Corp','Iota Capital'];
-const PRODUCERS=['Manager 139'];
-const PRODUCER_COLORS=['#1e5bc6'];
-const AUTHORIZED_MAP={'Inversiones Alpha SA':['Manager 139'],'Delta Capital SRL':['Manager 139'],'Omega Fund':['Manager 139'],'Beta Gestión':['Manager 139'],'Gamma Holding':['Manager 139'],'Epsilon Partners':['Manager 139'],'Zeta Asset Mgmt':['Manager 139'],'Eta Inversiones':['Manager 139'],'Theta Corp':['Manager 139'],'Iota Capital':['Manager 139']};
-function isAuth(c,p){return AUTHORIZED_MAP[c]?.includes(p)??false}
-function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
-let opId=1,allOps=[],filteredOps=[],autoScroll=true,activeRiskFilter='critical';
+// ════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════
+let PRODUCERS = ['Manager 139'];
+let INSTRUMENTS = ['ON','FCI','CEDEAR','BONO','ACCIÓN','OPCIONES','FUTUROS','CAUCIÓN'];
+let STATUS_OPTIONS = ['pending','confirmed','critical','invalid','late','observed'];
+let STATUS_LABELS = {pending:'Pendiente',confirmed:'Confirmada',critical:'Riesgo Alto',invalid:'Inválida',late:'Fuera SLA',observed:'Observada'};
 
+const CLIENT_COUNT = 10;
+const CLIENT_NAMES = Array.from({length:CLIENT_COUNT},(_,i)=>`Cliente ${i+1}`);
+
+const AUTHORIZED_MAP = {};
+CLIENT_NAMES.forEach(c => { AUTHORIZED_MAP[c] = [...PRODUCERS]; });
+
+let allOps=[], filteredOps=[], autoScrollOn=true, activeRiskFilter='critical';
+let opId=1;
+let selectedProdFilter='__all__';
+let prodMetricsOpen=false;
+
+// ════════════════════════════════════════
+// DARK MODE
+// ════════════════════════════════════════
+let darkMode = false;
+function toggleTheme(){
+  darkMode=!darkMode;
+  document.documentElement.setAttribute('data-theme', darkMode?'dark':'light');
+  document.getElementById('themeBtn').textContent = darkMode ? '☀️' : '🌙';
+}
+
+// ════════════════════════════════════════
+// SCORING
+// ════════════════════════════════════════
 function computeScore(op){
-  let s=0;const bd=[];
+  let s=0; const bd=[];
   if(!op.authorized){s+=150;bd.push({r:'Operado por no autorizado',p:150})}
   if(op.monto>100_000_000&&op.status!=='confirmed'){s+=100;bd.push({r:'Monto >100M sin confirmación',p:100})}
   if(op.status==='pending'){s+=50;bd.push({r:'Sin confirmación',p:50})}
   if(op.status==='late'){s+=70;bd.push({r:'Fuera de SLA',p:70})}
   if(op.status==='observed'){s+=30;bd.push({r:'Confirmación incompleta',p:30})}
-  op.scoreBreakdown=bd;op.score=s;return s;
+  op.scoreBreakdown=bd; op.score=s; return s;
 }
 function rl(s){return s>=150?'critical':s>=100?'high':s>=50?'medium':'low'}
 function rlabel(l){return{critical:'CRÍTICO',high:'ALTO',medium:'MEDIO',low:'BAJO'}[l]}
 
+// ════════════════════════════════════════
+// GENERATE OPS
+// ════════════════════════════════════════
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function isAuth(c,p){return (AUTHORIZED_MAP[c]||[]).includes(p)}
+
 function generateOp(ov={}){
-  const client=ov.client||pick(CLIENTS),producer=ov.producer||pick(PRODUCERS);
+  const client=ov.client||pick(CLIENT_NAMES);
+  const producer=ov.producer||pick(PRODUCERS);
   const authorized=isAuth(client,producer);
   const monto=ov.monto||(Math.random()<0.3?rnd(100_000_001,500_000_000):rnd(1_000_000,99_999_999));
-  const minutesAgo=rnd(1,480);
-  let status;
-  if(!authorized)status='invalid';
-  else if(monto>100_000_000&&minutesAgo>30)status='critical';
-  else if(minutesAgo>360)status='late';
-  else if(Math.random()<0.35)status='confirmed';
-  else if(Math.random()<0.15)status='observed';
-  else status='pending';
-  const op={id:`OP-${String(opId++).padStart(4,'0')}`,client,producer,authorized,instrument:pick(INSTRUMENTS),monto,minutesAgo,status,score:0,riskLevel:'low',scoreBreakdown:[],isNew:true};
-  computeScore(op);op.riskLevel=rl(op.score);return op;
+  const minutesAgo=ov.minutesAgo||rnd(1,480);
+  let status=ov.status;
+  if(!status){
+    if(!authorized)status='invalid';
+    else if(monto>100_000_000&&minutesAgo>30)status='critical';
+    else if(minutesAgo>360)status='late';
+    else if(Math.random()<0.35)status='confirmed';
+    else if(Math.random()<0.12)status='observed';
+    else status='pending';
+  }
+  const op={id:ov.id||`OP-${String(opId++).padStart(4,'0')}`,client,producer,authorized,instrument:ov.instrument||pick(INSTRUMENTS),monto,minutesAgo,status,score:0,riskLevel:'low',scoreBreakdown:[],isNew:true};
+  computeScore(op); op.riskLevel=rl(op.score); return op;
 }
 
 function seedData(){
   allOps=[];
-  allOps.push(generateOp({monto:245_000_000,client:'Inversiones Alpha SA'}));
-  allOps.push(generateOp({monto:178_000_000,client:'Beta Gestión'}));
-  for(let i=0;i<26;i++)allOps.push(generateOp());
+  allOps.push(generateOp({monto:245_000_000,client:'Cliente 1'}));
+  allOps.push(generateOp({monto:178_000_000,client:'Cliente 2'}));
+  for(let i=0;i<26;i++) allOps.push(generateOp());
   filteredOps=[...allOps];
 }
 
+// ════════════════════════════════════════
+// FORMAT
+// ════════════════════════════════════════
 function fmt(m){
   if(m>=1e9)return`$${(m/1e9).toFixed(2)}B`;
   if(m>=1e6)return`$${(m/1e6).toFixed(1)}M`;
@@ -567,23 +682,51 @@ function statusPill(status,authorized){
 function rbadge(l){return`<span class="rbadge rbadge-${l}">${rlabel(l)}</span>`}
 function tcls(op){return op.minutesAgo>360?'time-crit':op.minutesAgo>60?'time-warn':'time-ok'}
 
+// ════════════════════════════════════════
+// RENDER TABLE
+// ════════════════════════════════════════
 function renderTable(){
   let ops=filteredOps;
-  if(activeRiskFilter==='critical')ops=ops.filter(o=>o.riskLevel==='critical'||o.riskLevel==='high');
+  if(activeRiskFilter==='critical') ops=ops.filter(o=>o.riskLevel==='critical'||o.riskLevel==='high');
   const ord={critical:0,high:1,medium:2,low:3};
   ops=[...ops].sort((a,b)=>ord[a.riskLevel]-ord[b.riskLevel]);
-  document.getElementById('opsTableBody').innerHTML=ops.slice(0,20).map(op=>`
+  document.getElementById('opsTableBody').innerHTML=ops.slice(0,25).map(op=>`
     <tr class="${op.isNew?'is-new':''}" onclick="showOpDetail('${op.id}')">
       <td class="op-id">${op.id}</td>
-      <td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis">${op.client}</td>
+      <td style="font-size:11px">${op.client}</td>
       <td style="font-size:12px;color:var(--navy);font-weight:500">${op.producer}</td>
       <td style="font-size:11px;font-weight:600;color:var(--blue)">${op.instrument}</td>
       <td style="font-variant-numeric:tabular-nums;font-weight:600" class="${op.monto>100_000_000?'amount-big':''}">${fmt(op.monto)}</td>
       <td>${statusPill(op.status,op.authorized)}</td>
-      <td class="${tcls(op)}" style="font-variant-numeric:tabular-nums">${fmtT(op.minutesAgo)}</td>
+      <td class="${tcls(op)}">${fmtT(op.minutesAgo)}</td>
       <td>${rbadge(op.riskLevel)}</td>
+      <td onclick="event.stopPropagation()"><button class="edit-btn" onclick="openEditModal('${op.id}')">✏️ Editar</button></td>
     </tr>`).join('');
   setTimeout(()=>ops.forEach(o=>o.isNew=false),500);
+}
+
+// ════════════════════════════════════════
+// FILTERS
+// ════════════════════════════════════════
+function populateFilterSelects(){
+  // Status
+  const fs=document.getElementById('filterStatus');
+  const fsVal=fs.value;
+  fs.innerHTML='<option value="">Todos</option>';
+  STATUS_OPTIONS.forEach(s=>{ if(s!=='late'&&s!=='observed'){ const o=document.createElement('option'); o.value=s; o.textContent=STATUS_LABELS[s]; fs.appendChild(o); } });
+  fs.value=fsVal;
+  // Producer
+  const fp=document.getElementById('filterProducer');
+  const fpVal=fp.value;
+  fp.innerHTML='<option value="">Todos</option>';
+  PRODUCERS.forEach(p=>{ const o=document.createElement('option'); o.value=p; o.textContent=p; fp.appendChild(o); });
+  fp.value=fpVal;
+  // Instrument
+  const fi=document.getElementById('filterInstrument');
+  const fiVal=fi.value;
+  fi.innerHTML='<option value="">Todos</option>';
+  INSTRUMENTS.forEach(i=>{ const o=document.createElement('option'); o.value=i; o.textContent=i; fi.appendChild(o); });
+  fi.value=fiVal;
 }
 
 function applyFilters(){
@@ -614,26 +757,28 @@ function filterByKpi(type){
   document.getElementById('filterProducer').value='';
   document.getElementById('filterInstrument').value='';
   document.getElementById('filterAmount').value='';
-  if(type==='unconfirmed')filteredOps=allOps.filter(o=>['pending','critical'].includes(o.status));
+  if(type==='unconfirmed') filteredOps=allOps.filter(o=>['pending','critical'].includes(o.status));
   else if(type==='highrisk'){filteredOps=allOps.filter(o=>o.monto>100_000_000&&o.status!=='confirmed');document.getElementById('filterAmount').value='high';}
-  else if(type==='outsla')filteredOps=allOps.filter(o=>o.status==='late');
-  else if(type==='total')filteredOps=allOps.filter(o=>o.status!=='confirmed');
+  else if(type==='outsla') filteredOps=allOps.filter(o=>o.status==='late');
+  else if(type==='total') filteredOps=allOps.filter(o=>o.status!=='confirmed');
   else if(type==='compliance'){filteredOps=allOps.filter(o=>o.status==='confirmed');document.getElementById('filterStatus').value='confirmed';}
   activeRiskFilter='all';
   document.querySelectorAll('.tbl-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.content').scrollTo({top:280,behavior:'smooth'});
+  document.querySelector('.content').scrollTo({top:300,behavior:'smooth'});
   renderTable();
 }
 
+// ════════════════════════════════════════
+// KPIs
+// ════════════════════════════════════════
 function updateKPIs(){
   const total=allOps.length;
   const unconf=allOps.filter(o=>['pending','critical','late'].includes(o.status)).length;
-  const pct=Math.round(unconf/total*100);
   const highAmt=allOps.filter(o=>o.monto>100_000_000&&o.status!=='confirmed').reduce((s,o)=>s+o.monto,0);
   const outSLA=allOps.filter(o=>o.status==='late').length;
   const totalUnconf=allOps.filter(o=>o.status!=='confirmed').reduce((s,o)=>s+o.monto,0);
   const conf=allOps.filter(o=>o.status==='confirmed').length;
-  document.getElementById('kpiUnconfirmed').textContent=pct+'%';
+  document.getElementById('kpiUnconfirmed').textContent=Math.round(unconf/total*100)+'%';
   document.getElementById('kpiUnconfirmedCount').textContent=unconf+' operaciones';
   document.getElementById('kpiHighRisk').textContent=fmt(highAmt);
   document.getElementById('kpiOutSLA').textContent=outSLA;
@@ -641,14 +786,17 @@ function updateKPIs(){
   document.getElementById('kpiCompliance').textContent=Math.round(conf/total*100)+'%';
 }
 
+// ════════════════════════════════════════
+// ALERTS
+// ════════════════════════════════════════
 const STATIC_ALERTS=[
   {level:'critical',type:'MONTO CRÍTICO',msg:'OP-0001 · $245M sin confirmación · 47 minutos transcurridos',time:'hace 2min'},
   {level:'critical',type:'ACUMULACIÓN',msg:'Manager 139 acumula score 320pts en múltiples operaciones',time:'hace 5min'},
   {level:'high',type:'FUERA DE SLA',msg:'OP-0018 · $42M · 6hs sin confirmación del cliente',time:'hace 12min'},
   {level:'high',type:'CIERRE CERCANO',msg:'8 ops < $100M pendientes de resumen diario · cierre en 2hs',time:'hace 25min'},
   {level:'medium',type:'CONFIRMACIÓN PARCIAL',msg:'OP-0011 · conformidad no expresa por operación individual',time:'hace 31min'},
-  {level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 · $178M · Beta Gestión · pendiente 38min',time:'hace 38min'},
-  {level:'medium',type:'PENDIENTE',msg:'OP-0015 · $34M · Omega Fund · sin respuesta 2hs',time:'hace 52min'},
+  {level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 · $178M · Cliente 2 · pendiente 38min',time:'hace 38min'},
+  {level:'medium',type:'PENDIENTE',msg:'OP-0015 · $34M · Cliente 5 · sin respuesta 2hs',time:'hace 52min'},
 ];
 function renderAlerts(){
   document.getElementById('alertsList').innerHTML=STATIC_ALERTS.map(a=>`
@@ -659,11 +807,14 @@ function renderAlerts(){
     </div>`).join('');
 }
 
+// ════════════════════════════════════════
+// PRODUCERS
+// ════════════════════════════════════════
 function renderProducers(){
   const scores={},ops={};
-  PRODUCERS.forEach(p=>{scores[p]=0;ops[p]=0});
-  allOps.forEach(op=>{scores[op.producer]=(scores[op.producer]||0)+op.score;ops[op.producer]=(ops[op.producer]||0)+1});
-  const sorted=PRODUCERS.map((p,i)=>({name:p,score:scores[p],ops:ops[p],color:PRODUCER_COLORS[i]})).sort((a,b)=>b.score-a.score);
+  PRODUCERS.forEach(p=>{scores[p]=0;ops[p]=0;});
+  allOps.forEach(op=>{scores[op.producer]=(scores[op.producer]||0)+op.score;ops[op.producer]=(ops[op.producer]||0)+1;});
+  const sorted=PRODUCERS.map(p=>({name:p,score:scores[p]||0,ops:ops[p]||0})).sort((a,b)=>b.score-a.score);
   const maxScore=Math.max(...sorted.map(p=>p.score),1);
   const rColors={critical:'#dc2626',high:'#d97706',medium:'#b45309',low:'#059669'};
   const rBgs={critical:'#fef2f2',high:'#fffbeb',medium:'#fefce8',low:'#f0fdf4'};
@@ -673,8 +824,7 @@ function renderProducers(){
       <div class="p-avatar">${p.name.charAt(0)}</div>
       <div><div class="p-name">${p.name}</div><div class="p-ops">${p.ops} ops · ${p.score}pts</div></div>
       <div class="p-risk-badge" style="color:${rColors[lv]};background:${rBgs[lv]}">${rlabel(lv)}</div>
-    </div>`;
-  }).join('');
+    </div>`;}).join('');
   document.getElementById('producerChart').innerHTML=sorted.map(p=>{
     const pct=Math.round(p.score/maxScore*100);
     const color=p.score>200?'var(--red)':p.score>100?'var(--orange)':'var(--green)';
@@ -682,18 +832,19 @@ function renderProducers(){
       <div class="prod-label">${p.name}</div>
       <div class="prod-track"><div class="prod-fill" style="width:${pct}%;background:${color}"></div></div>
       <div class="prod-val" style="color:${color}">${p.score}</div>
-    </div>`;
-  }).join('');
+    </div>`;}).join('');
 }
 
+// ════════════════════════════════════════
+// CHARTS
+// ════════════════════════════════════════
 const riskHistory=[18,22,31,28,45,52,68,74,71,78,74];
 function renderRiskEvo(){
   const max=Math.max(...riskHistory);
   document.getElementById('riskEvoChart').innerHTML=riskHistory.map((v,i)=>{
     const h=Math.round(v/max*64);
     const color=v>60?'var(--red)':v>40?'var(--orange)':'var(--green)';
-    const isLast=i===riskHistory.length-1;
-    return`<div class="evo-bar" style="height:${h}px;background:${color};opacity:${isLast?'1':'0.55'}" title="Score: ${v}"></div>`;
+    return`<div class="evo-bar" style="height:${h}px;background:${color};opacity:${i===riskHistory.length-1?'1':'0.55'}" title="Score: ${v}"></div>`;
   }).join('');
 }
 
@@ -709,19 +860,301 @@ function renderCompliance(){
     const dash=circ*m.val/100;
     return`<div class="donut-block" style="padding:14px 0">
       <svg width="72" height="72" viewBox="0 0 72 72">
-        <circle cx="36" cy="36" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="6"/>
+        <circle cx="36" cy="36" r="${r}" fill="none" stroke="var(--border)" stroke-width="6"/>
         <circle cx="36" cy="36" r="${r}" fill="none" stroke="${m.color}" stroke-width="6"
           stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ*0.25}" stroke-linecap="round"/>
         <text x="36" y="40" text-anchor="middle" fill="${m.color}" font-family="DM Sans,sans-serif" font-size="13" font-weight="700">${m.val}%</text>
       </svg>
       <div class="donut-label">${m.label}</div>
-    </div>`;
-  }).join('');
+    </div>`;}).join('');
 }
 
+// ════════════════════════════════════════
+// PRODUCER METRICS SECTION
+// ════════════════════════════════════════
+function toggleProdMetrics(){
+  prodMetricsOpen=!prodMetricsOpen;
+  document.getElementById('prodMetricsBody').style.display=prodMetricsOpen?'block':'none';
+  document.getElementById('prodMetricsChevron').classList.toggle('open',prodMetricsOpen);
+  if(prodMetricsOpen) renderProdMetrics();
+}
+
+function renderProdMetrics(){
+  // Selector buttons
+  const row=document.getElementById('prodSelectorRow');
+  row.innerHTML=`<button class="prod-selector-btn ${selectedProdFilter==='__all__'?'active':''}" onclick="selectProd('__all__')">Todos los productores</button>`
+    +PRODUCERS.map(p=>`<button class="prod-selector-btn ${selectedProdFilter===p?'active':''}" onclick="selectProd('${p}')">${p}</button>`).join('');
+
+  // Filter ops
+  const ops=selectedProdFilter==='__all__'?allOps:allOps.filter(o=>o.producer===selectedProdFilter);
+  const producers=selectedProdFilter==='__all__'?PRODUCERS:[selectedProdFilter];
+
+  // KPIs
+  const totalOps=ops.length;
+  const confirmedOps=ops.filter(o=>o.status==='confirmed').length;
+  const criticalOps=ops.filter(o=>o.riskLevel==='critical'||o.riskLevel==='high').length;
+  const totalMonto=ops.reduce((s,o)=>s+o.monto,0);
+  document.getElementById('prodMetricsKpis').innerHTML=`
+    <div class="metric-card"><div class="metric-card-label">Total Operaciones</div><div class="metric-card-value">${totalOps}</div><div class="metric-card-sub">${producers.join(', ')}</div></div>
+    <div class="metric-card"><div class="metric-card-label">Confirmadas</div><div class="metric-card-value" style="color:var(--green)">${confirmedOps}</div><div class="metric-card-sub">${Math.round(confirmedOps/Math.max(totalOps,1)*100)}% del total</div></div>
+    <div class="metric-card"><div class="metric-card-label">En Riesgo</div><div class="metric-card-value" style="color:var(--red)">${criticalOps}</div><div class="metric-card-sub">críticas + altas</div></div>
+    <div class="metric-card"><div class="metric-card-label">Monto Total</div><div class="metric-card-value" style="font-size:18px">${fmt(totalMonto)}</div><div class="metric-card-sub">ARS operado</div></div>`;
+
+  // Tables
+  const grid=document.getElementById('prodDetailGrid');
+
+  // Clients per producer
+  if(selectedProdFilter==='__all__'){
+    // Cross table: producers vs clients
+    let clientOpMap={};
+    ops.forEach(o=>{
+      if(!clientOpMap[o.client]) clientOpMap[o.client]={};
+      clientOpMap[o.client][o.producer]=(clientOpMap[o.client][o.producer]||0)+1;
+    });
+    const clientTotals=CLIENT_NAMES.map(c=>({client:c,total:ops.filter(o=>o.client===c).length})).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
+    const maxC=Math.max(...clientTotals.map(x=>x.total),1);
+
+    // Ops per client
+    const clientHtml=`<div class="prod-detail-card">
+      <div class="prod-detail-card-title">Operaciones por Cliente</div>
+      <table class="prod-mini-table">
+        <thead><tr><th>Cliente</th><th>Ops</th><th>Monto total</th><th>Distribución</th></tr></thead>
+        <tbody>${clientTotals.slice(0,10).map(x=>{
+          const monto=ops.filter(o=>o.client===x.client).reduce((s,o)=>s+o.monto,0);
+          const pct=Math.round(x.total/maxC*100);
+          return`<tr><td>${x.client}</td><td><strong>${x.total}</strong></td><td>${fmt(monto)}</td>
+            <td><div style="display:flex;align-items:center;gap:6px"><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${pct}%"></div></div></div></td></tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+
+    // Ops per producer
+    const prodTotals=PRODUCERS.map(p=>({
+      prod:p,
+      total:ops.filter(o=>o.producer===p).length,
+      confirmed:ops.filter(o=>o.producer===p&&o.status==='confirmed').length,
+      critical:ops.filter(o=>o.producer===p&&(o.riskLevel==='critical'||o.riskLevel==='high')).length,
+      monto:ops.filter(o=>o.producer===p).reduce((s,o)=>s+o.monto,0)
+    })).sort((a,b)=>b.total-a.total);
+    const maxP=Math.max(...prodTotals.map(x=>x.total),1);
+
+    const prodHtml=`<div class="prod-detail-card">
+      <div class="prod-detail-card-title">Resumen por Productor</div>
+      <table class="prod-mini-table">
+        <thead><tr><th>Productor</th><th>Ops</th><th>Confirmadas</th><th>En riesgo</th><th>Monto</th></tr></thead>
+        <tbody>${prodTotals.map(x=>{
+          return`<tr><td><strong>${x.prod}</strong></td><td>${x.total}</td>
+            <td style="color:var(--green)">${x.confirmed}</td>
+            <td style="color:var(--red)">${x.critical}</td>
+            <td>${fmt(x.monto)}</td></tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+    grid.innerHTML=clientHtml+prodHtml;
+
+  } else {
+    // Single producer view
+    const pOps=ops;
+    const clientBreakdown=CLIENT_NAMES.map(c=>({
+      client:c,
+      total:pOps.filter(o=>o.client===c).length,
+      confirmed:pOps.filter(o=>o.client===c&&o.status==='confirmed').length,
+      critical:pOps.filter(o=>o.client===c&&(o.riskLevel==='critical'||o.riskLevel==='high')).length,
+      monto:pOps.filter(o=>o.client===c).reduce((s,o)=>s+o.monto,0)
+    })).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
+    const maxC=Math.max(...clientBreakdown.map(x=>x.total),1);
+
+    const clientHtml=`<div class="prod-detail-card">
+      <div class="prod-detail-card-title">Clientes de ${selectedProdFilter}</div>
+      <table class="prod-mini-table">
+        <thead><tr><th>Cliente</th><th>Ops</th><th>Confirmadas</th><th>En riesgo</th><th>Monto total</th></tr></thead>
+        <tbody>${clientBreakdown.map(x=>{
+          return`<tr><td>${x.client}</td><td><strong>${x.total}</strong></td>
+            <td style="color:var(--green)">${x.confirmed}</td>
+            <td style="color:${x.critical>0?'var(--red)':'var(--text-muted)'}">${x.critical}</td>
+            <td>${fmt(x.monto)}</td></tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+
+    // Status breakdown
+    const statusBreakdown=Object.entries(STATUS_LABELS).map(([s,l])=>({
+      status:s, label:l, count:pOps.filter(o=>o.status===s).length
+    })).filter(x=>x.count>0).sort((a,b)=>b.count-a.count);
+    const maxS=Math.max(...statusBreakdown.map(x=>x.count),1);
+
+    const statusHtml=`<div class="prod-detail-card">
+      <div class="prod-detail-card-title">Distribución de Estados — ${selectedProdFilter}</div>
+      <table class="prod-mini-table">
+        <thead><tr><th>Estado</th><th>Cantidad</th><th>% del total</th><th>Distribución</th></tr></thead>
+        <tbody>${statusBreakdown.map(x=>{
+          const pct=Math.round(x.count/pOps.length*100);
+          const barPct=Math.round(x.count/maxS*100);
+          return`<tr><td>${statusPill(x.status,x.status!=='invalid')}</td><td><strong>${x.count}</strong></td>
+            <td>${pct}%</td>
+            <td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${barPct}%"></div></div></td></tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+    grid.innerHTML=clientHtml+statusHtml;
+  }
+}
+
+function selectProd(p){
+  selectedProdFilter=p;
+  renderProdMetrics();
+}
+
+// ════════════════════════════════════════
+// EDIT MODAL
+// ════════════════════════════════════════
+function openEditModal(id){
+  const op=allOps.find(o=>o.id===id);
+  if(!op) return;
+  document.getElementById('modalTitle').textContent=`✏️ Editar Operación — ${op.id}`;
+  document.getElementById('modalEl').style.maxWidth='580px';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="edit-form">
+      <div class="form-group">
+        <label class="form-label">Cliente</label>
+        <select class="form-select" id="ef-client">
+          ${CLIENT_NAMES.map(c=>`<option value="${c}" ${op.client===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Productor</label>
+        <select class="form-select" id="ef-producer">
+          ${PRODUCERS.map(p=>`<option value="${p}" ${op.producer===p?'selected':''}>${p}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Instrumento</label>
+        <select class="form-select" id="ef-instrument">
+          ${INSTRUMENTS.map(i=>`<option value="${i}" ${op.instrument===i?'selected':''}>${i}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Monto (ARS)</label>
+        <input class="form-input" id="ef-monto" type="number" value="${op.monto}" min="1"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-select" id="ef-status">
+          ${Object.entries(STATUS_LABELS).map(([s,l])=>`<option value="${s}" ${op.status===s?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Minutos transcurridos</label>
+        <input class="form-input" id="ef-minutes" type="number" value="${op.minutesAgo}" min="1"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">
+      <button class="btn-danger" onclick="deleteOp('${op.id}')">🗑 Eliminar</button>
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveEdit('${op.id}')">Guardar cambios</button>
+    </div>`;
+  openModal();
+}
+
+function saveEdit(id){
+  const op=allOps.find(o=>o.id===id);
+  if(!op) return;
+  op.client=document.getElementById('ef-client').value;
+  op.producer=document.getElementById('ef-producer').value;
+  op.instrument=document.getElementById('ef-instrument').value;
+  op.monto=parseInt(document.getElementById('ef-monto').value)||op.monto;
+  op.status=document.getElementById('ef-status').value;
+  op.minutesAgo=parseInt(document.getElementById('ef-minutes').value)||op.minutesAgo;
+  op.authorized=isAuth(op.client,op.producer);
+  computeScore(op); op.riskLevel=rl(op.score);
+  filteredOps=[...allOps]; applyFilters(); updateKPIs(); renderProducers(); renderCompliance();
+  if(prodMetricsOpen) renderProdMetrics();
+  closeModal();
+  showToast('Operación actualizada correctamente','success');
+}
+
+function deleteOp(id){
+  if(!confirm('¿Eliminar esta operación?')) return;
+  allOps=allOps.filter(o=>o.id!==id);
+  filteredOps=filteredOps.filter(o=>o.id!==id);
+  renderTable(); updateKPIs(); renderProducers();
+  closeModal();
+  showToast('Operación eliminada','danger');
+}
+
+// ════════════════════════════════════════
+// NEW OP MODAL
+// ════════════════════════════════════════
+function openNewOpModal(){
+  document.getElementById('modalTitle').textContent='➕ Nueva Operación';
+  document.getElementById('modalEl').style.maxWidth='580px';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="edit-form">
+      <div class="form-group">
+        <label class="form-label">Cliente</label>
+        <select class="form-select" id="nf-client">
+          ${CLIENT_NAMES.map(c=>`<option value="${c}">${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Productor</label>
+        <select class="form-select" id="nf-producer">
+          ${PRODUCERS.map(p=>`<option value="${p}">${p}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Instrumento</label>
+        <select class="form-select" id="nf-instrument">
+          ${INSTRUMENTS.map(i=>`<option value="${i}">${i}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Monto (ARS)</label>
+        <input class="form-input" id="nf-monto" type="number" placeholder="Ej: 50000000" min="1"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-select" id="nf-status">
+          ${Object.entries(STATUS_LABELS).map(([s,l])=>`<option value="${s}">${l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Minutos transcurridos</label>
+        <input class="form-input" id="nf-minutes" type="number" value="5" min="1"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveNewOp()">Crear operación</button>
+    </div>`;
+  openModal();
+}
+
+function saveNewOp(){
+  const monto=parseInt(document.getElementById('nf-monto').value);
+  if(!monto||monto<1){showToast('Ingresá un monto válido','danger');return;}
+  const op=generateOp({
+    client:document.getElementById('nf-client').value,
+    producer:document.getElementById('nf-producer').value,
+    instrument:document.getElementById('nf-instrument').value,
+    monto,
+    status:document.getElementById('nf-status').value,
+    minutesAgo:parseInt(document.getElementById('nf-minutes').value)||5
+  });
+  allOps.unshift(op);
+  filteredOps=[...allOps]; applyFilters(); updateKPIs(); renderProducers(); renderCompliance();
+  if(prodMetricsOpen) renderProdMetrics();
+  closeModal();
+  showToast('Operación creada correctamente','success');
+}
+
+// ════════════════════════════════════════
+// OP DETAIL MODAL
+// ════════════════════════════════════════
 function showOpDetail(id){
   const op=allOps.find(o=>o.id===id);if(!op)return;
   document.getElementById('modalTitle').textContent=`${op.id} — ${op.instrument}`;
+  document.getElementById('modalEl').style.maxWidth='580px';
   const rColors={critical:'var(--red)',high:'var(--orange)',medium:'var(--yellow)',low:'var(--green)'};
   document.getElementById('modalBody').innerHTML=`
     <div class="detail-grid">
@@ -735,20 +1168,135 @@ function showOpDetail(id){
       <div><div class="detail-key">Nivel de riesgo</div><div class="detail-val" style="color:${rColors[op.riskLevel]}">${rlabel(op.riskLevel)}</div></div>
     </div>
     <div class="score-breakdown">
-      <div class="score-title">Desglose de scoring</div>
+      <div class="score-title">Desglose de Scoring</div>
       ${op.scoreBreakdown.map(b=>`<div class="score-row"><span>${b.r}</span><span class="score-pts" style="color:var(--red)">+${b.p} pts</span></div>`).join('')}
       ${op.scoreBreakdown.length===0?'<div class="score-row" style="color:var(--green)">Sin factores de riesgo</div>':''}
       <div class="score-total"><span>Score total</span><span style="color:${rColors[op.riskLevel]}">${op.score} pts</span></div>
     </div>
-    <div class="rec-box">
+    <div class="rec-box" style="margin-bottom:14px">
       <div class="rec-title">Recomendación</div>
-      <div class="rec-text">${op.riskLevel==='critical'&&!op.authorized?'🔴 Escalar inmediatamente a Compliance. Suspender operaciones del productor hasta verificación.':op.riskLevel==='critical'?'🔴 Contactar al cliente de inmediato para obtener confirmación expresa. Documentar intento.':op.riskLevel==='high'?'🟠 Enviar recordatorio al cliente. Si no hay respuesta en 30 min, escalar a supervisor.':op.riskLevel==='medium'?'🟡 Monitorear. Incluir en resumen de cierre del día.':'🟢 Operación dentro de parámetros normales. Sin acción requerida.'}</div>
+      <div class="rec-text">${op.riskLevel==='critical'&&!op.authorized?'🔴 Escalar inmediatamente a Compliance. Suspender operaciones del productor.':op.riskLevel==='critical'?'🔴 Contactar al cliente de inmediato para confirmación expresa.':op.riskLevel==='high'?'🟠 Enviar recordatorio. Sin respuesta en 30min, escalar a supervisor.':op.riskLevel==='medium'?'🟡 Monitorear. Incluir en resumen de cierre.':'🟢 Operación dentro de parámetros normales.'}</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);padding-top:14px">
+      <button class="btn-secondary" onclick="closeModal()">Cerrar</button>
+      <button class="btn-primary" onclick="closeModal();openEditModal('${op.id}')">✏️ Editar esta operación</button>
     </div>`;
-  document.getElementById('modalOverlay').classList.add('open');
+  openModal();
 }
+
+// ════════════════════════════════════════
+// FILTER EDITOR
+// ════════════════════════════════════════
+function openFilterEditor(){
+  document.getElementById('modalTitle').textContent='⚙️ Configuración de Filtros y Datos';
+  document.getElementById('modalEl').style.maxWidth='640px';
+  document.getElementById('modalBody').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:20px">
+
+      <!-- PRODUCERS -->
+      <div>
+        <div class="score-title" style="margin-bottom:10px">Productores</div>
+        <div id="fe-producers-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          ${PRODUCERS.map(p=>`<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600">
+            ${p}
+            ${PRODUCERS.length>1?`<span onclick="removeProducer('${p}')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px;line-height:1">×</span>`:''}
+          </div>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px">
+          <input class="form-input" id="fe-new-producer" placeholder="Nombre del nuevo productor" style="flex:1"/>
+          <button class="btn-primary" onclick="addProducer()" style="white-space:nowrap">+ Agregar</button>
+        </div>
+      </div>
+
+      <!-- INSTRUMENTS -->
+      <div>
+        <div class="score-title" style="margin-bottom:10px">Instrumentos disponibles</div>
+        <div id="fe-instruments-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          ${INSTRUMENTS.map(i=>`<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600">
+            ${i}
+            <span onclick="removeInstrument('${i}')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px;line-height:1">×</span>
+          </div>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px">
+          <input class="form-input" id="fe-new-instrument" placeholder="Nuevo instrumento (ej: SWAP)"/>
+          <button class="btn-primary" onclick="addInstrument()">+ Agregar</button>
+        </div>
+      </div>
+
+      <!-- STATUS OPTIONS -->
+      <div>
+        <div class="score-title" style="margin-bottom:10px">Estados visibles en filtros</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${Object.entries(STATUS_LABELS).map(([s,l])=>`
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px">
+              <input type="checkbox" ${STATUS_OPTIONS.includes(s)?'checked':''} onchange="toggleStatus('${s}',this.checked)" style="cursor:pointer"/>
+              ${l}
+            </label>`).join('')}
+        </div>
+      </div>
+
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);padding-top:14px;margin-top:20px">
+      <button class="btn-secondary" onclick="closeModal()">Cerrar</button>
+    </div>`;
+  openModal();
+}
+
+function addProducer(){
+  const val=document.getElementById('fe-new-producer').value.trim();
+  if(!val){showToast('Ingresá un nombre válido','danger');return;}
+  if(PRODUCERS.includes(val)){showToast('Ese productor ya existe','danger');return;}
+  PRODUCERS.push(val);
+  CLIENT_NAMES.forEach(c=>{ if(!AUTHORIZED_MAP[c]) AUTHORIZED_MAP[c]=[]; AUTHORIZED_MAP[c].push(val); });
+  populateFilterSelects(); renderProducers(); openFilterEditor();
+  showToast(`Productor "${val}" agregado`,'success');
+}
+function removeProducer(p){
+  if(PRODUCERS.length<=1){showToast('Debe haber al menos un productor','danger');return;}
+  PRODUCERS=PRODUCERS.filter(x=>x!==p);
+  CLIENT_NAMES.forEach(c=>{ AUTHORIZED_MAP[c]=(AUTHORIZED_MAP[c]||[]).filter(x=>x!==p); });
+  populateFilterSelects(); renderProducers(); openFilterEditor();
+}
+function addInstrument(){
+  const val=document.getElementById('fe-new-instrument').value.trim().toUpperCase();
+  if(!val){showToast('Ingresá un nombre válido','danger');return;}
+  if(INSTRUMENTS.includes(val)){showToast('Ese instrumento ya existe','danger');return;}
+  INSTRUMENTS.push(val);
+  populateFilterSelects(); openFilterEditor();
+  showToast(`Instrumento "${val}" agregado`,'success');
+}
+function removeInstrument(i){
+  if(INSTRUMENTS.length<=1){showToast('Debe haber al menos un instrumento','danger');return;}
+  INSTRUMENTS=INSTRUMENTS.filter(x=>x!==i);
+  populateFilterSelects(); openFilterEditor();
+}
+function toggleStatus(s,checked){
+  if(checked){if(!STATUS_OPTIONS.includes(s))STATUS_OPTIONS.push(s);}
+  else{STATUS_OPTIONS=STATUS_OPTIONS.filter(x=>x!==s);}
+  populateFilterSelects();
+}
+
+// ════════════════════════════════════════
+// MODAL HELPERS
+// ════════════════════════════════════════
+function openModal(){document.getElementById('modalOverlay').classList.add('open')}
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open')}
 function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal()}
 
+// ════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════
+function showToast(msg,type='success'){
+  const t=document.createElement('div');
+  t.style.cssText=`position:fixed;bottom:24px;right:24px;z-index:999;background:${type==='success'?'var(--green)':'var(--red)'};color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:var(--shadow-lg);animation:notif-drop 0.2s ease-out`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2800);
+}
+
+// ════════════════════════════════════════
+// NOTIFICATIONS
+// ════════════════════════════════════════
 let notifOpen=false,currentTab='all';
 const notifData=[
   {id:1,level:'critical',type:'MONTO CRÍTICO',msg:'OP-0001 · $245M sin confirmación · 47 min transcurridos',time:'hace 2min',read:false},
@@ -756,8 +1304,8 @@ const notifData=[
   {id:3,level:'high',type:'FUERA DE SLA',msg:'OP-0018 · $42M · 6hs sin confirmación del cliente',time:'hace 12min',read:false},
   {id:4,level:'high',type:'CIERRE CERCANO',msg:'8 operaciones < $100M pendientes · cierre en 2hs',time:'hace 25min',read:false},
   {id:5,level:'medium',type:'CONFIRMACIÓN PARCIAL',msg:'OP-0011 · conformidad no expresa por operación individual',time:'hace 31min',read:false},
-  {id:6,level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 · $178M · Beta Gestión · pendiente 38min',time:'hace 38min',read:true},
-  {id:7,level:'medium',type:'PENDIENTE',msg:'OP-0015 · $34M · Omega Fund · sin respuesta 2hs',time:'hace 52min',read:true},
+  {id:6,level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 · $178M · Cliente 2 · pendiente 38min',time:'hace 38min',read:true},
+  {id:7,level:'medium',type:'PENDIENTE',msg:'OP-0015 · $34M · Cliente 5 · sin respuesta 2hs',time:'hace 52min',read:true},
 ];
 function toggleNotifPanel(){
   notifOpen=!notifOpen;
@@ -786,37 +1334,48 @@ function renderNotifList(){
       </div>`).join('')
     :'<div style="padding:20px;text-align:center;font-size:12px;color:var(--text-light)">Sin notificaciones en esta categoría</div>';
 }
-function markNotifRead(id){const n=notifData.find(x=>x.id===id);if(n){n.read=true;renderNotifList()}}
-function markAllRead(){notifData.forEach(n=>n.read=true);renderNotifList()}
+function markNotifRead(id){const n=notifData.find(x=>x.id===id);if(n){n.read=true;renderNotifList();}}
+function markAllRead(){notifData.forEach(n=>n.read=true);renderNotifList();}
 document.addEventListener('click',e=>{
   const panel=document.getElementById('notifPanel');
-  const bell=document.querySelector('.bell-btn');
-  if(notifOpen&&!panel.contains(e.target)&&!bell.contains(e.target)){notifOpen=false;panel.classList.remove('open')}
+  const bell=document.querySelector('.hbtn[onclick*="Notif"]');
+  if(notifOpen&&panel&&!panel.contains(e.target)&&!e.target.closest('.hbtn[onclick*="Notif"]')&&!e.target.closest('[onclick*="toggleNotifPanel"]'))
+    {notifOpen=false;panel.classList.remove('open');}
 });
 
+// ════════════════════════════════════════
+// CLOCK & LIVE
+// ════════════════════════════════════════
 function updateClock(){
   const now=new Date();
   document.getElementById('clock').textContent=now.toLocaleTimeString('es-AR',{hour12:false});
   document.getElementById('lastUpdate').textContent=now.toLocaleTimeString('es-AR',{hour12:false});
 }
 function toggleAutoScroll(){
-  autoScroll=!autoScroll;
-  document.getElementById('autoBtn').classList.toggle('on',autoScroll);
-  document.getElementById('autoIcon').textContent=autoScroll?'⏸':'▶';
+  autoScrollOn=!autoScrollOn;
+  document.getElementById('autoBtn').classList.toggle('on',autoScrollOn);
+  document.getElementById('autoIcon').textContent=autoScrollOn?'⏸':'▶';
 }
 function liveUpdate(){
-  if(autoScroll&&Math.random()<0.3){
+  if(autoScrollOn&&Math.random()<0.3){
     const op=generateOp();op.isNew=true;
-    allOps.unshift(op);if(allOps.length>50)allOps.pop();
+    allOps.unshift(op);if(allOps.length>60)allOps.pop();
     filteredOps=[...allOps];
     renderTable();updateKPIs();renderProducers();
+    if(prodMetricsOpen)renderProdMetrics();
     document.querySelector('.live-dot').style.background='#fff';
     setTimeout(()=>document.querySelector('.live-dot').style.background='#f87171',300);
   }
 }
 
-seedData();updateKPIs();renderTable();renderAlerts();renderProducers();renderRiskEvo();renderCompliance();updateClock();
-setInterval(updateClock,1000);setInterval(liveUpdate,3500);
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+seedData();
+populateFilterSelects();
+updateKPIs();renderTable();renderAlerts();renderProducers();renderRiskEvo();renderCompliance();updateClock();
+setInterval(updateClock,1000);
+setInterval(liveUpdate,3500);
 </script>
 </body>
 </html>
