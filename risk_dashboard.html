@@ -504,7 +504,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
           </div>
         </div>
         <div class="chart-pad" style="padding:14px 16px">
-          <div id="riskEvoChart" style="width:100%;overflow:hidden"></div>
+          <div id="riskEvoChart" style="width:100%;min-height:130px"></div>
         </div>
       </div>
       <div class="card">
@@ -1519,8 +1519,8 @@ function updateGmailStatus(state, count) {
 seedData();
 populateFilterSelects();
 updateKPIs();renderTable();renderAlerts();renderProducers();renderCompliance();updateClock();
-// Renderizar gráfico tras el primer paint para que el SVG tenga espacio
-requestAnimationFrame(()=>{ renderRiskEvo(); });
+renderRiskEvo();
+setTimeout(renderRiskEvo, 200);
 window.addEventListener('resize',renderRiskEvo);
 
 // Inicializar estado Gmail en el header
