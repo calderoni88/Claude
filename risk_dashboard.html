@@ -828,50 +828,31 @@ const riskHours=['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00'
 function renderRiskEvo(){
   const el=document.getElementById('riskEvoChart');
   if(!el)return;
+  // viewBox fijo — SVG se escala con width:100%, no depende de offsetWidth
+  const W=560,H=130,pad={l:30,r:24,t:22,b:26};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
   const max=Math.max(...riskHistory,1);
-  const W=el.offsetWidth||540, H=120;
-  const pad={l:32,r:12,t:20,b:28};
-  const chartW=W-pad.l-pad.r, chartH=H-pad.t-pad.b;
-  const barW=Math.max(Math.floor(chartW/riskHistory.length)-4,8);
-
-  // Línea de referencia en 60 (umbral crítico)
-  const yRef=pad.t+chartH-(60/max*chartH);
-
-  let bars='', labels='', xLabels='';
+  const slotW=cW/riskHistory.length,barW=Math.max(slotW-6,8);
+  const yRef=pad.t+cH-(60/max*cH);
+  let bars='',vals='',xLbls='',yAxis='';
+  [0,25,50,75,100].forEach(t=>{
+    const y=pad.t+cH-(t/max*cH);
+    yAxis+=`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="${t?'4,3':'0'}"/>`;
+    yAxis+=`<text x="${pad.l-4}" y="${y+3.5}" text-anchor="end" font-size="9" fill="#94a3b8">${t}</text>`;
+  });
   riskHistory.forEach((v,i)=>{
-    const x=pad.l+i*(chartW/riskHistory.length)+(chartW/riskHistory.length-barW)/2;
-    const barH=Math.round(v/max*chartH);
-    const y=pad.t+chartH-barH;
-    const color=v>60?'#dc2626':v>40?'#d97706':'#059669';
-    const isLast=i===riskHistory.length-1;
-    bars+=`<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="${color}" opacity="${isLast?'1':'0.6'}" rx="3">
-      <title>Score: ${v} — ${riskHours[i]||''}</title>
-    </rect>`;
-    if(isLast){
-      labels+=`<text x="${x+barW/2}" y="${y-5}" text-anchor="middle" font-size="10" font-weight="700" fill="${color}">${v}</text>`;
-    }
-    // Etiquetas eje X cada 2 horas
-    if(i%2===0||isLast){
-      xLabels+=`<text x="${x+barW/2}" y="${H-4}" text-anchor="middle" font-size="9" fill="var(--text-light)">${riskHours[i]||''}</text>`;
-    }
+    const x=pad.l+i*slotW+(slotW-barW)/2;
+    const bh=Math.max(Math.round(v/max*cH),3);
+    const y=pad.t+cH-bh;
+    const col=v>60?'#dc2626':v>40?'#d97706':'#059669';
+    const last=i===riskHistory.length-1;
+    bars+=`<rect x="${x}" y="${y}" width="${barW}" height="${bh}" fill="${col}" opacity="${last?1:0.55}" rx="3"><title>${riskHours[i]}: ${v}</title></rect>`;
+    if(last) vals+=`<text x="${x+barW/2}" y="${y-6}" text-anchor="middle" font-size="10" font-weight="700" fill="${col}">${v}</text>`;
+    if(i%2===0||last) xLbls+=`<text x="${x+barW/2}" y="${H-3}" text-anchor="middle" font-size="9" fill="#94a3b8">${riskHours[i]}</text>`;
   });
-
-  // Eje Y
-  const yTicks=[0,25,50,75,100].filter(t=>t<=max+10);
-  let yAxis='';
-  yTicks.forEach(t=>{
-    const y=pad.t+chartH-(t/max*chartH);
-    yAxis+=`<line x1="${pad.l-4}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="var(--border)" stroke-width="1" stroke-dasharray="${t===0?'0':'4,3'}"/>`;
-    yAxis+=`<text x="${pad.l-6}" y="${y+4}" text-anchor="end" font-size="9" fill="var(--text-light)">${t}</text>`;
-  });
-
-  // Línea de umbral crítico
-  const refLine=`<line x1="${pad.l}" y1="${yRef}" x2="${W-pad.r}" y2="${yRef}" stroke="#dc2626" stroke-width="1" stroke-dasharray="5,3" opacity="0.5"/>
-    <text x="${W-pad.r+2}" y="${yRef+4}" font-size="9" fill="#dc2626" opacity="0.7">60</text>`;
-
-  el.innerHTML=`<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
-    ${yAxis}${refLine}${bars}${labels}${xLabels}
-  </svg>`;
+  const ref=`<line x1="${pad.l}" y1="${yRef}" x2="${W-pad.r}" y2="${yRef}" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.55"/>
+    <text x="${W-pad.r+2}" y="${yRef+4}" font-size="9" fill="#dc2626" font-weight="600">60</text>`;
+  el.innerHTML=`<svg width="100%" height="130" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">${yAxis}${ref}${bars}${vals}${xLbls}</svg>`;
 }
 
 function renderCompliance(){
@@ -890,14 +871,13 @@ function renderCompliance(){
   document.getElementById('complianceRow').innerHTML=metrics.map(m=>{
     const v=Math.min(Math.max(m.val,0),100);
     const dash=circ*v/100;
-    const textColor=v>=70?m.color:v>=40?'#d97706':'#dc2626';
+    const tc=v>=70?m.color:v>=40?'#d97706':'#dc2626';
     return`<div class="donut-block" style="padding:16px 8px">
-      <svg width="80" height="80" viewBox="0 0 80 80">
-        <circle cx="40" cy="40" r="${r}" fill="none" stroke="var(--border)" stroke-width="7"/>
+      <svg width="80" height="80" viewBox="0 0 80 80" style="display:block">
+        <circle cx="40" cy="40" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="7"/>
         <circle cx="40" cy="40" r="${r}" fill="none" stroke="${m.color}" stroke-width="7"
-          stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ*0.25}" stroke-linecap="round"
-          style="transition:stroke-dasharray 0.8s ease"/>
-        <text x="40" y="44" text-anchor="middle" fill="${textColor}" font-family="DM Sans,sans-serif" font-size="14" font-weight="700">${v}%</text>
+          stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ*0.25}" stroke-linecap="round"/>
+        <text x="40" y="44" text-anchor="middle" fill="${tc}" font-family="DM Sans,sans-serif" font-size="14" font-weight="700">${v}%</text>
       </svg>
       <div class="donut-label" style="font-size:10px;max-width:80px">${m.label}</div>
     </div>`;
@@ -1384,7 +1364,7 @@ document.addEventListener('click',e=>{
 function updateClock(){
   const now=new Date();
   document.getElementById('clock').textContent=now.toLocaleTimeString('es-AR',{hour12:false});
-  document.getElementById('lastUpdate').textContent=now.toLocaleTimeString('es-AR',{hour12:false});
+  document.getElementById('lastUpdate').textContent=now.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+now.toLocaleTimeString('es-AR',{hour12:false});
 }
 function toggleAutoScroll(){
   autoScrollOn=!autoScrollOn;
@@ -1539,9 +1519,9 @@ function updateGmailStatus(state, count) {
 seedData();
 populateFilterSelects();
 updateKPIs();renderTable();renderAlerts();renderProducers();renderCompliance();updateClock();
-// Renderizar gráfico después de que el DOM tenga dimensiones
-setTimeout(renderRiskEvo, 50);
-window.addEventListener('resize', renderRiskEvo);
+// Renderizar gráfico tras el primer paint para que el SVG tenga espacio
+requestAnimationFrame(()=>{ renderRiskEvo(); });
+window.addEventListener('resize',renderRiskEvo);
 
 // Inicializar estado Gmail en el header
 const gmailStatusEl = document.createElement('div');
