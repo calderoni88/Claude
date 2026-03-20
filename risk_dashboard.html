@@ -148,7 +148,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .kpi-card:hover .kpi-cta{opacity:1}
 
 /* ── MID GRID ── */
-.mid-grid{display:grid;grid-template-columns:1fr 298px;gap:12px}
+.mid-grid{display:grid;grid-template-columns:1fr;gap:12px}
 
 /* ── CARD ── */
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);transition:background 0.3s,border-color 0.3s}
@@ -495,13 +495,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
           </table>
         </div>
       </div>
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Alertas Activas</div>
-          <span class="count-badge" id="alertsCount">7</span>
-        </div>
-        <div class="alerts-list" id="alertsList"></div>
-      </div>
     </div>
 
     <!-- CHARTS -->
@@ -591,8 +584,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 // ════════════════════════════════════════
 let PRODUCERS = ['Manager 139'];
 let INSTRUMENTS = ['ON','FCI','CEDEAR','BONO','ACCIÓN','OPCIONES','FUTUROS','CAUCIÓN'];
-let STATUS_OPTIONS = ['pending','confirmed','critical','invalid','late','observed'];
-let STATUS_LABELS = {pending:'Pendiente',confirmed:'Confirmada',critical:'Riesgo Alto',invalid:'Inválida',late:'Fuera SLA',observed:'Observada'};
+let STATUS_OPTIONS = ['pending','confirmed','critical','invalid','observed'];
+let STATUS_LABELS = {pending:'Pendiente',confirmed:'Confirmada',critical:'Riesgo Alto',invalid:'Inválida',observed:'Observada'};
 
 const CLIENT_COUNT = 10;
 const CLIENT_NAMES = Array.from({length:CLIENT_COUNT},(_,i)=>`Cliente ${i+1}`);
@@ -647,7 +640,6 @@ function generateOp(ov={}){
   if(!status){
     if(!authorized)status='invalid';
     else if(monto>100_000_000&&minutesAgo>30)status='critical';
-    else if(minutesAgo>360)status='late';
     else if(Math.random()<0.35)status='confirmed';
     else if(Math.random()<0.12)status='observed';
     else status='pending';
@@ -759,7 +751,7 @@ function filterByKpi(type){
   document.getElementById('filterAmount').value='';
   if(type==='unconfirmed') filteredOps=allOps.filter(o=>['pending','critical'].includes(o.status));
   else if(type==='highrisk'){filteredOps=allOps.filter(o=>o.monto>100_000_000&&o.status!=='confirmed');document.getElementById('filterAmount').value='high';}
-  else if(type==='outsla') filteredOps=allOps.filter(o=>o.status==='late');
+  else if(type==='outsla') filteredOps=allOps.filter(o=>o.status==='critical');
   else if(type==='total') filteredOps=allOps.filter(o=>o.status!=='confirmed');
   else if(type==='compliance'){filteredOps=allOps.filter(o=>o.status==='confirmed');document.getElementById('filterStatus').value='confirmed';}
   activeRiskFilter='all';
@@ -773,7 +765,7 @@ function filterByKpi(type){
 // ════════════════════════════════════════
 function updateKPIs(){
   const total=allOps.length;
-  const unconf=allOps.filter(o=>['pending','critical','late'].includes(o.status)).length;
+  const unconf=allOps.filter(o=>['pending','critical'].includes(o.status)).length;
   const highAmt=allOps.filter(o=>o.monto>100_000_000&&o.status!=='confirmed').reduce((s,o)=>s+o.monto,0);
   const outSLA=allOps.filter(o=>o.status==='late').length;
   const totalUnconf=allOps.filter(o=>o.status!=='confirmed').reduce((s,o)=>s+o.monto,0);
@@ -853,7 +845,7 @@ function renderCompliance(){
   const c1=Math.round(allOps.filter(o=>o.status==='confirmed'&&o.minutesAgo<=360).length/total*100);
   const c2=Math.round(allOps.filter(o=>o.status==='confirmed').length/total*100);
   const c3=Math.round(allOps.filter(o=>o.authorized).length/total*100);
-  const c4=Math.round((total-allOps.filter(o=>o.status==='late').length)/total*100);
+  const c4=Math.round((total-allOps.filter(o=>o.status==='critical').length)/total*100);
   const metrics=[{label:'Conf. en tiempo',val:c1,color:'#059669'},{label:'Conformidad expresa',val:c2,color:'#1e5bc6'},{label:'Operadores auth.',val:c3,color:'#b45309'},{label:'SLA cumplido',val:c4,color:'#7c3aed'}];
   const r=28,circ=2*Math.PI*r;
   document.getElementById('complianceRow').innerHTML=metrics.map(m=>{
@@ -1369,13 +1361,160 @@ function liveUpdate(){
 }
 
 // ════════════════════════════════════════
+// GMAIL / APPS SCRIPT INTEGRATION
+// ════════════════════════════════════════
+
+// ── CONFIGURACIÓN ── Reemplazá con tu URL real del Apps Script ──
+const APPS_SCRIPT_URL = "REEMPLAZAR_CON_TU_URL";
+// Ejemplo: "https://script.google.com/macros/s/AKfycbxXXXXXX/exec"
+// ────────────────────────────────────────────────────────────────
+
+let gmailSyncEnabled = APPS_SCRIPT_URL !== "REEMPLAZAR_CON_TU_URL";
+let lastGmailSync = null;
+let gmailOpsCount = 0;
+
+// Mapeo comitente → Cliente N para anonimizar en el dashboard
+const comitentMap = {};
+let comitentCounter = 1;
+
+function getClienteLabel(comitente, nombre) {
+  const key = comitente || nombre;
+  if (!comitentMap[key]) {
+    comitentMap[key] = `Cliente ${comitentCounter++}`;
+  }
+  return comitentMap[key];
+}
+
+// Convierte una fila del Sheet en una operación del dashboard
+function sheetRowToOp(row) {
+  const clienteLabel = getClienteLabel(row['Comitente'], row['Nombre']);
+
+  // Asegurarse que el productor existe en la lista
+  const producer = row['Manager 139'] || PRODUCERS[0];
+  if (!PRODUCERS.includes(producer) && producer) PRODUCERS.push(producer);
+
+  // Mapear instrumento — si no existe en la lista, agregarlo
+  const instrument = (row['Instrumento'] || '').toUpperCase();
+  if (instrument && !INSTRUMENTS.includes(instrument)) INSTRUMENTS.push(instrument);
+
+  const monto = parseFloat(row['Monto']) || 0;
+  const authorized = isAuth(clienteLabel, producer);
+
+  const op = {
+    id: row['ID'] || `OP-${String(opId++).padStart(4,'0')}`,
+    client: clienteLabel,
+    clienteReal: row['Nombre'] || '',
+    comitente: row['Comitente'] || '',
+    producer: PRODUCERS[0],
+    authorized,
+    instrument: instrument || 'ON',
+    monto,
+    minutesAgo: calcMinutesAgo(row['Fecha'], row['Hora']),
+    status: row['Estado'] || 'pending',
+    score: 0, riskLevel: 'low', scoreBreakdown: [],
+    isNew: true,
+    fromGmail: true,
+    tipoOp: row['Tipo Op'] || '',
+    cantidad: parseFloat(row['Cantidad']) || 0,
+    precio: parseFloat(row['Precio']) || 0,
+    rawText: row['Texto original'] || '',
+  };
+  computeScore(op);
+  op.riskLevel = rl(op.score);
+  return op;
+}
+
+function calcMinutesAgo(fecha, hora) {
+  try {
+    const [d, m, y] = (fecha || '').split('/');
+    const dt = new Date(`${y}-${m}-${d}T${hora || '09:00:00'}`);
+    const diff = (Date.now() - dt.getTime()) / 60000;
+    return Math.max(1, Math.round(diff));
+  } catch { return rnd(1, 60); }
+}
+
+// Fetch desde el Apps Script endpoint
+async function fetchFromGmail() {
+  if (!gmailSyncEnabled) return;
+
+  updateGmailStatus('syncing');
+  try {
+    const res = await fetch(APPS_SCRIPT_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (data.operaciones && data.operaciones.length > 0) {
+      const existingIds = new Set(allOps.map(o => o.id));
+      let newCount = 0;
+
+      data.operaciones.forEach(row => {
+        if (!existingIds.has(row['ID'])) {
+          const op = sheetRowToOp(row);
+          allOps.unshift(op);
+          newCount++;
+        }
+      });
+
+      if (newCount > 0) {
+        gmailOpsCount += newCount;
+        filteredOps = [...allOps];
+        populateFilterSelects();
+        renderTable(); updateKPIs(); renderProducers(); renderCompliance();
+        if (prodMetricsOpen) renderProdMetrics();
+        showToast(`📧 ${newCount} operación${newCount>1?'es':''} importada${newCount>1?'s':''} desde Gmail`, 'success');
+        document.querySelector('.live-dot').style.background = '#fff';
+        setTimeout(() => document.querySelector('.live-dot').style.background = '#f87171', 400);
+      }
+
+      lastGmailSync = new Date();
+      updateGmailStatus('ok', newCount);
+    } else {
+      updateGmailStatus('ok', 0);
+    }
+  } catch(err) {
+    console.error('Gmail sync error:', err);
+    updateGmailStatus('error');
+  }
+}
+
+function updateGmailStatus(state, count) {
+  const el = document.getElementById('gmailStatus');
+  if (!el) return;
+  const configs = {
+    syncing: { text:'Sincronizando...', color:'rgba(255,255,255,0.5)', dot:'#eab308' },
+    ok:      { text: count > 0 ? `${count} nueva${count>1?'s':''} op.` : 'Sincronizado', color:'rgba(255,255,255,0.5)', dot:'#10b981' },
+    error:   { text:'Error de sync', color:'#fca5a5', dot:'#ef4444' },
+    disabled:{ text:'Gmail: no configurado', color:'rgba(255,255,255,0.3)', dot:'#64748b' },
+  };
+  const cfg = configs[state] || configs.disabled;
+  el.innerHTML = `<span style="width:6px;height:6px;border-radius:50%;background:${cfg.dot};display:inline-block;margin-right:5px"></span><span style="color:${cfg.color};font-size:11px">📧 ${cfg.text}</span>`;
+}
+
+// ════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════
 seedData();
 populateFilterSelects();
 updateKPIs();renderTable();renderAlerts();renderProducers();renderRiskEvo();renderCompliance();updateClock();
-setInterval(updateClock,1000);
-setInterval(liveUpdate,3500);
+
+// Inicializar estado Gmail en el header
+const gmailStatusEl = document.createElement('div');
+gmailStatusEl.id = 'gmailStatus';
+gmailStatusEl.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;';
+gmailStatusEl.title = 'Sincronización con Gmail';
+gmailStatusEl.onclick = () => { if(gmailSyncEnabled) fetchFromGmail(); };
+document.querySelector('.header-center').appendChild(gmailStatusEl);
+
+if (gmailSyncEnabled) {
+  updateGmailStatus('syncing');
+  fetchFromGmail();
+  setInterval(fetchFromGmail, 5 * 60 * 1000); // cada 5 minutos
+} else {
+  updateGmailStatus('disabled');
+}
+
+setInterval(updateClock, 1000);
+setInterval(liveUpdate, 3500);
 </script>
 </body>
 </html>
