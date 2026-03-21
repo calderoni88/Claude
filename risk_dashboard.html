@@ -182,6 +182,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .pill-invalid .pill-dot{background:var(--purple)}
 .pill-observed{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)}
 .pill-observed .pill-dot{background:var(--orange)}
+
+/* Mail / Confirmación pills */
+.pill-mail-sent{background:#f0fdf4;color:#059669;border:1px solid #bbf7d0}
+.pill-mail-sent .pill-dot{background:#059669}
+.pill-mail-pending{background:#fefce8;color:#b45309;border:1px solid #fde68a}
+.pill-mail-pending .pill-dot{background:#eab308;animation:blink 1.5s infinite}
+.pill-conf-ok{background:#eff6ff;color:#1e5bc6;border:1px solid #bfdbfe}
+.pill-conf-ok .pill-dot{background:#1e5bc6}
+.pill-conf-pending{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.pill-conf-pending .pill-dot{background:#dc2626;animation:blink 1s infinite}
 .rbadge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px}
 .rbadge-low{background:var(--green-bg);color:var(--green)}
 .rbadge-medium{background:var(--yellow-bg);color:var(--yellow)}
@@ -387,15 +397,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
         <div class="risk-gauge-wrap">
           <svg width="64" height="64" viewBox="0 0 64 64">
             <circle cx="32" cy="32" r="24" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
-            <circle cx="32" cy="32" r="24" fill="none" stroke="#f87171" stroke-width="6"
-              stroke-dasharray="113 38" stroke-dashoffset="38" stroke-linecap="round"/>
+            <circle id="gaugeArc" cx="32" cy="32" r="24" fill="none" stroke="#f87171" stroke-width="6"
+              stroke-dasharray="0 151" stroke-dashoffset="38" stroke-linecap="round"/>
           </svg>
-          <div class="risk-num-overlay"><div class="risk-num">74</div><div class="risk-num-sub">/100</div></div>
+          <div class="risk-num-overlay">
+            <div class="risk-num" id="globalScoreNum">0</div>
+            <div class="risk-num-sub">pts</div>
+          </div>
         </div>
         <div>
-          <div class="risk-info-label">NIVEL ACTUAL</div>
-          <div class="risk-info-band">🔴 ALTO</div>
-          <div class="risk-info-desc">Acción requerida en operaciones críticas</div>
+          <div class="risk-info-label">RIESGO GLOBAL</div>
+          <div class="risk-info-band" id="globalRiskBand">🟢 BAJO</div>
+          <div class="risk-info-desc" id="globalRiskDesc">Sin operaciones pendientes</div>
         </div>
       </div>
     </div>
@@ -478,13 +491,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
           <div style="display:flex;gap:7px;align-items:center">
             <button class="auto-btn on" id="autoBtn" onclick="toggleAutoScroll()"><span id="autoIcon">⏸</span> Auto-refresh</button>
             <button class="tbl-btn" onclick="openNewOpModal()">+ Nueva op.</button>
-            <button class="tbl-btn danger active" onclick="setRiskFilter('critical',this)">Críticas</button>
-            <button class="tbl-btn" onclick="setRiskFilter('all',this)">Todas</button>
+            <button class="tbl-btn danger" onclick="setRiskFilter('critical',this)">Críticas</button>
+            <button class="tbl-btn active" onclick="setRiskFilter('all',this)">Todas</button>
           </div>
         </div>
         <div style="overflow-x:auto">
           <table class="ops-table">
-            <thead><tr><th>ID</th><th>Cliente</th><th>Productor</th><th>Instrumento</th><th>Monto (ARS)</th><th>Estado</th><th>Tiempo</th><th>Riesgo</th><th></th></tr></thead>
+            <thead><tr><th>ID</th><th>Cliente</th><th>Productor</th><th>Instrumento</th><th>Monto (ARS)</th><th>Mail</th><th>Confirmación</th><th>Tiempo</th><th>Riesgo</th><th></th></tr></thead>
             <tbody id="opsTableBody"></tbody>
           </table>
         </div>
@@ -570,309 +583,387 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
   </div>
 </div>
 
+</script></body></html>
 <script>
-// ════════════════════════════════════════
-// STATE
-// ════════════════════════════════════════
-let PRODUCERS = ['Manager 139'];
+'use strict';
+// ═══════════════════════════════════════════════════════
+// CENTINELA — JS limpio y completo
+// Modelo único de estado: mailStatus + confirmStatus
+// ═══════════════════════════════════════════════════════
+
+// ── CONFIGURACIÓN EDITABLE ──
+let PRODUCERS  = ['Manager 139'];
 let INSTRUMENTS = ['ON','FCI','CEDEAR','BONO','ACCIÓN','OPCIONES','FUTUROS','CAUCIÓN'];
-let STATUS_OPTIONS = ['pending','confirmed','critical','invalid','observed'];
-let STATUS_LABELS = {pending:'Pendiente',confirmed:'Confirmada',critical:'Riesgo Alto',invalid:'Inválida',observed:'Observada'};
-
-const CLIENT_COUNT = 10;
-const CLIENT_NAMES = Array.from({length:CLIENT_COUNT},(_,i)=>`Cliente ${i+1}`);
-
+const CLIENT_NAMES = Array.from({length:10},(_,i)=>`Cliente ${i+1}`);
 const AUTHORIZED_MAP = {};
 CLIENT_NAMES.forEach(c => { AUTHORIZED_MAP[c] = [...PRODUCERS]; });
 
-let allOps=[], filteredOps=[], autoScrollOn=true, activeRiskFilter='critical';
-let opId=1;
-let selectedProdFilter='__all__';
-let prodMetricsOpen=false;
+// ── ESTADO GLOBAL ──
+let allOps = [], filteredOps = [];
+let autoScrollOn = true, activeRiskFilter = 'all';  // ← arranca en "Todas"
+let opId = 1, darkMode = false;
+let selectedProdFilter = '__all__', prodMetricsOpen = false;
+let notifOpen = false, currentNotifTab = 'all';
 
-// ════════════════════════════════════════
-// DARK MODE
-// ════════════════════════════════════════
-let darkMode = false;
+// ── UTILS ──
+const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const isAuth = (c,p) => (AUTHORIZED_MAP[c]||[]).includes(p);
+const fmt = m => m>=1e9 ? `$${(m/1e9).toFixed(2)}B` : m>=1e6 ? `$${(m/1e6).toFixed(1)}M` : `$${m.toLocaleString('es-AR')}`;
+const fmtT = min => min<60 ? `${min}m` : `${Math.floor(min/60)}h ${min%60}m`;
+
+// ── TEMA ──
 function toggleTheme(){
-  darkMode=!darkMode;
+  darkMode = !darkMode;
   document.documentElement.setAttribute('data-theme', darkMode?'dark':'light');
   document.getElementById('themeBtn').textContent = darkMode ? '☀️' : '🌙';
 }
 
-// ════════════════════════════════════════
-// SCORING
-// ════════════════════════════════════════
-function computeScore(op){
-  let s=0; const bd=[];
-  if(!op.authorized){s+=150;bd.push({r:'Operado por no autorizado',p:150})}
-  if(op.monto>100_000_000&&op.status!=='confirmed'){s+=100;bd.push({r:'Monto >100M sin confirmación',p:100})}
-  if(op.status==='pending'){s+=50;bd.push({r:'Sin confirmación',p:50})}
-  if(op.status==='late'){s+=70;bd.push({r:'Fuera de SLA',p:70})}
-  if(op.status==='observed'){s+=30;bd.push({r:'Confirmación incompleta',p:30})}
-  op.scoreBreakdown=bd; op.score=s; return s;
+// ═══════════════════════════════════════════════════════
+// MODELO DE OPERACIÓN
+// mailStatus:    'sent' | 'pending'
+// confirmStatus: 'confirmed' | 'pending'
+// riskLevel:     'critical' | 'high' | 'medium' | 'low'  (visual de fila)
+// ═══════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════
+// LÓGICA DE RIESGO — explicación completa:
+//
+// NIVEL DE FILA (cada operación individual):
+//   CRÍTICO  → op no autorizada, O monto >100M sin confirmación del cliente
+//   ALTO     → monto >100M con mail enviado pero sin confirmación aún
+//   MEDIO    → cualquier op autorizada sin confirmación (independiente del monto)
+//   BAJO     → op confirmada correctamente
+//
+// SCORE DE PRODUCTOR (acumulado):
+//   -1 punto por cada op pendiente de confirmación
+//   0  si la op está confirmada (se anula el -1)
+//   Nunca positivo. Nunca más negativo que la cantidad de ops pendientes.
+//   Ejemplo: 8 ops pendientes → score mínimo -8, máximo 0
+//
+// NIVEL DE PRODUCTOR (basado en score acumulado):
+//   BAJO     → 0 pts      (todas confirmadas)
+//   MEDIO    → -1 a -4    (pocas pendientes)
+//   ALTO     → -5 a -9    (acumulación importante)
+//   CRÍTICO  → -10 o menos (situación grave)
+//
+// RIESGO GLOBAL (sidebar):
+//   Suma de scores de todos los productores.
+//   Sin tope — puede ser -150 si hay 150 ops pendientes.
+//   El gauge muestra el número real. El arco se llena
+//   proporcionalmente al total de ops autorizadas.
+// ═══════════════════════════════════════════════════════
+
+function calcRiskLevel(op){
+  // NULO: autorizada y confirmada
+  if (op.authorized && op.confirmStatus === 'confirmed') return 'low';
+  // CRÍTICO: no autorizado en ops >$100M
+  if (!op.authorized && op.monto > 100_000_000)         return 'critical';
+  // ALTO: monto >$100M (autorizado sin confirmar), O no autorizado entre $50M y $100M
+  if (op.monto > 100_000_000)                           return 'high';
+  if (!op.authorized && op.monto > 50_000_000)          return 'high';
+  // MEDIO: autorizada, sin confirmar, entre $5M y $50M
+  if (op.authorized && op.monto > 5_000_000)            return 'medium';
+  // BAJO: autorizada, sin confirmar, <$5M O no autorizado <$50M
+  return 'low';
 }
-function rl(s){return s>=150?'critical':s>=100?'high':s>=50?'medium':'low'}
-function rlabel(l){return{critical:'CRÍTICO',high:'ALTO',medium:'MEDIO',low:'BAJO'}[l]}
 
-// ════════════════════════════════════════
-// GENERATE OPS
-// ════════════════════════════════════════
-function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
-function isAuth(c,p){return (AUTHORIZED_MAP[c]||[]).includes(p)}
+function calcOpScore(op){
+  if (!op.authorized)                      return 0;
+  if (op.confirmStatus === 'confirmed')    return 0;
+  return -1;
+}
 
-function generateOp(ov={}){
-  const client=ov.client||pick(CLIENT_NAMES);
-  const producer=ov.producer||pick(PRODUCERS);
-  const authorized=isAuth(client,producer);
-  const monto=ov.monto||(Math.random()<0.3?rnd(100_000_001,500_000_000):rnd(1_000_000,99_999_999));
-  const minutesAgo=ov.minutesAgo||rnd(1,480);
-  let status=ov.status;
-  if(!status){
-    if(!authorized)status='invalid';
-    else if(monto>100_000_000&&minutesAgo>30)status='critical';
-    else if(Math.random()<0.35)status='confirmed';
-    else if(Math.random()<0.12)status='observed';
-    else status='pending';
+function producerScore(name){
+  const ops      = allOps.filter(o => o.producer === name && o.authorized);
+  const pendientes = ops.filter(o => o.confirmStatus !== 'confirmed').length;
+  const raw      = ops.reduce((s,o) => s + o.score, 0);
+  return Math.max(Math.min(raw, 0), -pendientes);
+}
+
+function producerRiskLevel(score){
+  if (score === 0)  return 'perfect';
+  if (score >= -2)  return 'low';
+  if (score >= -6)  return 'medium';
+  if (score >= -10) return 'high';
+  return 'critical';
+}
+
+// Riesgo global: suma de todos los scores de productores, sin tope
+function globalScore(){
+  return PRODUCERS.reduce((s, name) => s + producerScore(name), 0);
+}
+
+function renderGlobalRisk(){
+  const score    = globalScore();
+  const absScore = Math.abs(score);
+  const totalAut = Math.max(allOps.filter(o => o.authorized).length, 1);
+
+  const circ = 2 * Math.PI * 24;
+  const pct  = Math.min(absScore / totalAut, 1);
+  const dash = circ * pct;
+  const arc  = document.getElementById('gaugeArc');
+  if (arc) {
+    const color = score === 0 ? '#34d399' : absScore <= totalAut*0.3 ? '#fbbf24' : absScore <= totalAut*0.6 ? '#f97316' : '#f87171';
+    arc.style.stroke = color;
+    arc.setAttribute('stroke-dasharray', `${dash} ${circ - dash}`);
   }
-  const op={id:ov.id||`OP-${String(opId++).padStart(4,'0')}`,client,producer,authorized,instrument:ov.instrument||pick(INSTRUMENTS),monto,minutesAgo,status,score:0,riskLevel:'low',scoreBreakdown:[],isNew:true};
-  computeScore(op); op.riskLevel=rl(op.score); return op;
+
+  const numEl = document.getElementById('globalScoreNum');
+  if (numEl) numEl.textContent = score;
+
+  const level = producerRiskLevel(score);
+  const icons = {perfect:'⭐', low:'🟢', medium:'🟡', high:'🟠', critical:'🔴'};
+  const descs = {
+    perfect:  'Sin operaciones pendientes — perfecto',
+    low:      `${absScore} op(s) pendiente(s) — bajo impacto`,
+    medium:   `${absScore} op(s) pendientes — seguimiento recomendado`,
+    high:     `${absScore} op(s) pendientes — acción requerida`,
+    critical: `${absScore} op(s) pendientes — atención urgente`
+  };
+  const band = document.getElementById('globalRiskBand');
+  const desc = document.getElementById('globalRiskDesc');
+  if (band) band.textContent = `${icons[level]} ${RISK_LABEL[level]}`;
+  if (desc) desc.textContent = descs[level];
+}
+
+const RISK_LABEL = {perfect:'PERFECTO', critical:'CRÍTICO', high:'ALTO', medium:'MEDIO', low:'BAJO'};
+const RISK_COLOR = {perfect:'#059669', critical:'#dc2626', high:'#d97706', medium:'#b45309', low:'#16a34a'};
+const RISK_BG    = {perfect:'#f0fdf4', critical:'#fef2f2', high:'#fffbeb', medium:'#fefce8', low:'#f0fdf4'};
+
+function buildOp(overrides = {}){
+  const client   = overrides.client   || pick(CLIENT_NAMES);
+  const producer = overrides.producer || pick(PRODUCERS);
+  const authorized = isAuth(client, producer);
+  const monto    = overrides.monto    || (Math.random()<0.3 ? rnd(100_000_001,500_000_000) : rnd(1_000_000,99_999_999));
+  const minutesAgo = overrides.minutesAgo || rnd(1, 480);
+  const mailStatus    = overrides.mailStatus    || (authorized && Math.random()<0.6 ? 'sent' : 'pending');
+  const confirmStatus = overrides.confirmStatus || (authorized && Math.random()<0.4 ? 'confirmed' : 'pending');
+
+  const op = {
+    id: overrides.id || `OP-${String(opId++).padStart(4,'0')}`,
+    client, producer, authorized,
+    instrument:  overrides.instrument || pick(INSTRUMENTS),
+    monto, minutesAgo,
+    mailStatus, confirmStatus,
+    score: 0, riskLevel: 'low',
+    isNew: true
+  };
+  op.score     = calcOpScore(op);
+  op.riskLevel = calcRiskLevel(op);
+  return op;
 }
 
 function seedData(){
-  allOps=[];
-  allOps.push(generateOp({monto:245_000_000,client:'Cliente 1'}));
-  allOps.push(generateOp({monto:178_000_000,client:'Cliente 2'}));
-  for(let i=0;i<26;i++) allOps.push(generateOp());
-  filteredOps=[...allOps];
+  allOps = [];
+  allOps.push(buildOp({monto:245_000_000, client:'Cliente 1', mailStatus:'pending', confirmStatus:'pending'}));
+  allOps.push(buildOp({monto:178_000_000, client:'Cliente 2', mailStatus:'sent',    confirmStatus:'pending'}));
+  allOps.push(buildOp({monto:320_000_000, client:'Cliente 3', mailStatus:'pending', confirmStatus:'pending'}));
+  for(let i=0; i<25; i++) allOps.push(buildOp());
+  filteredOps = [...allOps];
 }
 
-// ════════════════════════════════════════
-// FORMAT
-// ════════════════════════════════════════
-function fmt(m){
-  if(m>=1e9)return`$${(m/1e9).toFixed(2)}B`;
-  if(m>=1e6)return`$${(m/1e6).toFixed(1)}M`;
-  return`$${m.toLocaleString('es-AR')}`;
+// ═══════════════════════════════════════════════════════
+// PILLS
+// ═══════════════════════════════════════════════════════
+function mailPill(op){
+  if (!op.authorized) return `<span class="pill pill-invalid"><span class="pill-dot"></span>N/A</span>`;
+  if (op.mailStatus === 'sent')
+    return `<span class="pill pill-mail-sent" style="cursor:pointer" onclick="event.stopPropagation();toggleMail('${op.id}')" title="Click para cambiar"><span class="pill-dot"></span>Enviado ✓</span>`;
+  return `<span class="pill pill-mail-pending" style="cursor:pointer" onclick="event.stopPropagation();toggleMail('${op.id}')" title="Click para marcar enviado"><span class="pill-dot"></span>Pendiente</span>`;
 }
-function fmtT(min){return min<60?`${min}m`:`${Math.floor(min/60)}h ${min%60}m`}
 
-function statusPill(status,authorized){
-  if(!authorized||status==='invalid')return`<span class="pill pill-invalid"><span class="pill-dot"></span>INVÁLIDA</span>`;
-  const m={confirmed:`<span class="pill pill-confirmed"><span class="pill-dot"></span>Confirmada</span>`,pending:`<span class="pill pill-pending"><span class="pill-dot"></span>Pendiente</span>`,late:`<span class="pill pill-late"><span class="pill-dot"></span>Fuera SLA</span>`,critical:`<span class="pill pill-critical"><span class="pill-dot"></span>Riesgo Alto</span>`,observed:`<span class="pill pill-observed"><span class="pill-dot"></span>Observada</span>`};
-  return m[status]||m.pending;
+function confirmPill(op){
+  if (!op.authorized) return `<span class="pill pill-invalid"><span class="pill-dot"></span>N/A</span>`;
+  if (op.confirmStatus === 'confirmed')
+    return `<span class="pill pill-conf-ok"><span class="pill-dot"></span>Confirmada</span>`;
+  return `<span class="pill pill-conf-pending"><span class="pill-dot"></span>Pendiente</span>`;
 }
-function rbadge(l){return`<span class="rbadge rbadge-${l}">${rlabel(l)}</span>`}
-function tcls(op){return op.minutesAgo>360?'time-crit':op.minutesAgo>60?'time-warn':'time-ok'}
 
-// ════════════════════════════════════════
-// RENDER TABLE
-// ════════════════════════════════════════
+function riskBadge(op){
+  // Operación confirmada = NULO (sin riesgo)
+  if (op.authorized && op.confirmStatus === 'confirmed'){
+    return `<span class="rbadge" style="background:#f0fdf4;color:#059669">NULO</span>`;
+  }
+  const level = op.riskLevel;
+  const cls = {critical:'rbadge-critical', high:'rbadge-high', medium:'rbadge-medium', low:'rbadge-low'}[level]||'rbadge-low';
+  return `<span class="rbadge ${cls}">${RISK_LABEL[level]||'BAJO'}</span>`;
+}
+
+function timeClass(op){
+  return op.minutesAgo > 360 ? 'time-crit' : op.minutesAgo > 60 ? 'time-warn' : 'time-ok';
+}
+
+// ═══════════════════════════════════════════════════════
+// TABLA
+// ═══════════════════════════════════════════════════════
 function renderTable(){
-  let ops=filteredOps;
-  if(activeRiskFilter==='critical') ops=ops.filter(o=>o.riskLevel==='critical'||o.riskLevel==='high');
-  const ord={critical:0,high:1,medium:2,low:3};
-  ops=[...ops].sort((a,b)=>ord[a.riskLevel]-ord[b.riskLevel]);
-  document.getElementById('opsTableBody').innerHTML=ops.slice(0,25).map(op=>`
+  let ops = [...filteredOps];
+  if (activeRiskFilter === 'critical') ops = ops.filter(o => o.riskLevel==='critical' || o.riskLevel==='high');
+  const ord = {critical:0, high:1, medium:2, low:3};
+  ops.sort((a,b) => ord[a.riskLevel] - ord[b.riskLevel]);
+
+  document.getElementById('opsTableBody').innerHTML = ops.slice(0,25).map(op => `
     <tr class="${op.isNew?'is-new':''}" onclick="showOpDetail('${op.id}')">
       <td class="op-id">${op.id}</td>
       <td style="font-size:11px">${op.client}</td>
       <td style="font-size:12px;color:var(--navy);font-weight:500">${op.producer}</td>
       <td style="font-size:11px;font-weight:600;color:var(--blue)">${op.instrument}</td>
       <td style="font-variant-numeric:tabular-nums;font-weight:600" class="${op.monto>100_000_000?'amount-big':''}">${fmt(op.monto)}</td>
-      <td>${statusPill(op.status,op.authorized)}</td>
-      <td class="${tcls(op)}">${fmtT(op.minutesAgo)}</td>
-      <td>${rbadge(op.riskLevel)}</td>
+      <td>${mailPill(op)}</td>
+      <td>${confirmPill(op)}</td>
+      <td class="${timeClass(op)}">${fmtT(op.minutesAgo)}</td>
+      <td>${riskBadge(op)}</td>
       <td onclick="event.stopPropagation()"><button class="edit-btn" onclick="openEditModal('${op.id}')">✏️ Editar</button></td>
     </tr>`).join('');
-  setTimeout(()=>ops.forEach(o=>o.isNew=false),500);
+
+  setTimeout(() => ops.forEach(o => o.isNew = false), 500);
 }
 
-// ════════════════════════════════════════
-// FILTERS
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// FILTROS
+// ═══════════════════════════════════════════════════════
 function populateFilterSelects(){
-  // Status
-  const fs=document.getElementById('filterStatus');
-  const fsVal=fs.value;
-  fs.innerHTML='<option value="">Todos</option>';
-  STATUS_OPTIONS.forEach(s=>{ if(s!=='late'&&s!=='observed'){ const o=document.createElement('option'); o.value=s; o.textContent=STATUS_LABELS[s]; fs.appendChild(o); } });
-  fs.value=fsVal;
-  // Producer
-  const fp=document.getElementById('filterProducer');
-  const fpVal=fp.value;
-  fp.innerHTML='<option value="">Todos</option>';
-  PRODUCERS.forEach(p=>{ const o=document.createElement('option'); o.value=p; o.textContent=p; fp.appendChild(o); });
-  fp.value=fpVal;
-  // Instrument
-  const fi=document.getElementById('filterInstrument');
-  const fiVal=fi.value;
-  fi.innerHTML='<option value="">Todos</option>';
-  INSTRUMENTS.forEach(i=>{ const o=document.createElement('option'); o.value=i; o.textContent=i; fi.appendChild(o); });
-  fi.value=fiVal;
+  const fs = document.getElementById('filterStatus');
+  const fv = fs.value;
+  fs.innerHTML = `<option value="">Todos</option>
+    <option value="mail_pending">Mail pendiente</option>
+    <option value="confirm_pending">Confirmación pendiente</option>
+    <option value="confirmed">Confirmada</option>
+    <option value="invalid">Inválida</option>
+    <option value="critical_amount">Monto crítico &gt;100M</option>`;
+  fs.value = fv;
+
+  const fp = document.getElementById('filterProducer');
+  const fpv = fp.value;
+  fp.innerHTML = '<option value="">Todos</option>' + PRODUCERS.map(p=>`<option value="${p}">${p}</option>`).join('');
+  fp.value = fpv;
+
+  const fi = document.getElementById('filterInstrument');
+  const fiv = fi.value;
+  fi.innerHTML = '<option value="">Todos</option>' + INSTRUMENTS.map(i=>`<option value="${i}">${i}</option>`).join('');
+  fi.value = fiv;
 }
 
 function applyFilters(){
-  const s=document.getElementById('filterStatus').value;
-  const p=document.getElementById('filterProducer').value;
-  const ins=document.getElementById('filterInstrument').value;
-  const amt=document.getElementById('filterAmount').value;
-  filteredOps=allOps.filter(op=>{
-    if(s&&op.status!==s)return false;
-    if(p&&op.producer!==p)return false;
-    if(ins&&op.instrument!==ins)return false;
-    if(amt==='high'&&op.monto<=100_000_000)return false;
-    if(amt==='low'&&op.monto>100_000_000)return false;
+  const s   = document.getElementById('filterStatus').value;
+  const p   = document.getElementById('filterProducer').value;
+  const ins = document.getElementById('filterInstrument').value;
+  const amt = document.getElementById('filterAmount').value;
+
+  filteredOps = allOps.filter(op => {
+    if (s==='mail_pending'     && !(op.authorized && op.mailStatus!=='sent'))           return false;
+    if (s==='confirm_pending'  && !(op.authorized && op.confirmStatus!=='confirmed'))   return false;
+    if (s==='confirmed'        && op.confirmStatus!=='confirmed')                       return false;
+    if (s==='invalid'          && op.authorized)                                        return false;
+    if (s==='critical_amount'  && !(op.authorized && op.monto>100_000_000 && op.confirmStatus!=='confirmed')) return false;
+    if (p   && op.producer  !== p)   return false;
+    if (ins && op.instrument !== ins) return false;
+    if (amt==='high' && op.monto <= 100_000_000) return false;
+    if (amt==='low'  && op.monto >  100_000_000) return false;
     return true;
   });
   renderTable();
 }
 
-function setRiskFilter(type,el){
-  activeRiskFilter=type;
-  document.querySelectorAll('.tbl-btn').forEach(b=>b.classList.remove('active'));
+function setRiskFilter(type, el){
+  activeRiskFilter = type;
+  document.querySelectorAll('.tbl-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderTable();
 }
 
 function filterByKpi(type){
-  document.getElementById('filterStatus').value='';
-  document.getElementById('filterProducer').value='';
-  document.getElementById('filterInstrument').value='';
-  document.getElementById('filterAmount').value='';
-  if(type==='unconfirmed') filteredOps=allOps.filter(o=>['pending','critical'].includes(o.status));
-  else if(type==='highrisk'){filteredOps=allOps.filter(o=>o.monto>100_000_000&&o.status!=='confirmed');document.getElementById('filterAmount').value='high';}
-  else if(type==='outsla') filteredOps=allOps.filter(o=>o.status==='critical');
-  else if(type==='total') filteredOps=allOps.filter(o=>o.status!=='confirmed');
-  else if(type==='compliance'){filteredOps=allOps.filter(o=>o.status==='confirmed');document.getElementById('filterStatus').value='confirmed';}
-  activeRiskFilter='all';
-  document.querySelectorAll('.tbl-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.content').scrollTo({top:300,behavior:'smooth'});
+  ['filterStatus','filterProducer','filterInstrument','filterAmount'].forEach(id => document.getElementById(id).value='');
+  const a = allOps;
+  if      (type==='unconfirmed') filteredOps = a.filter(o => o.authorized && o.confirmStatus!=='confirmed');
+  else if (type==='highrisk')    filteredOps = a.filter(o => o.authorized && o.monto>100_000_000 && o.confirmStatus!=='confirmed');
+  else if (type==='total')       filteredOps = a.filter(o => o.authorized && o.confirmStatus!=='confirmed');
+  else if (type==='compliance')  filteredOps = a.filter(o => o.authorized && o.confirmStatus==='confirmed');
+  activeRiskFilter = 'all';
+  document.querySelectorAll('.tbl-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.content').scrollTo({top:300, behavior:'smooth'});
   renderTable();
 }
 
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // KPIs
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function updateKPIs(){
-  const total=allOps.length;
-  const unconf=allOps.filter(o=>['pending','critical'].includes(o.status)).length;
-  const highAmt=allOps.filter(o=>o.monto>100_000_000&&o.status!=='confirmed').reduce((s,o)=>s+o.monto,0);
-  const outSLA=allOps.filter(o=>o.status==='late').length;
-  const totalUnconf=allOps.filter(o=>o.status!=='confirmed').reduce((s,o)=>s+o.monto,0);
-  const conf=allOps.filter(o=>o.status==='confirmed').length;
-  document.getElementById('kpiUnconfirmed').textContent=Math.round(unconf/total*100)+'%';
-  document.getElementById('kpiUnconfirmedCount').textContent=unconf+' operaciones';
-  document.getElementById('kpiHighRisk').textContent=fmt(highAmt);
-  document.getElementById('kpiOutSLA').textContent=outSLA;
-  document.getElementById('kpiTotalUnconf').textContent=fmt(totalUnconf);
-  document.getElementById('kpiCompliance').textContent=Math.round(conf/total*100)+'%';
+  const aut   = allOps.filter(o => o.authorized);
+  const total = Math.max(aut.length, 1);
+  const sinConf   = aut.filter(o => o.confirmStatus !== 'confirmed');
+  const sinMail   = aut.filter(o => o.mailStatus    !== 'sent');
+  const highRisk  = aut.filter(o => o.monto > 100_000_000 && o.confirmStatus !== 'confirmed');
+  const confirmed = aut.filter(o => o.confirmStatus === 'confirmed');
+
+  document.getElementById('kpiUnconfirmed').textContent    = Math.round(sinConf.length/total*100) + '%';
+  document.getElementById('kpiUnconfirmedCount').textContent = sinConf.length + ' operaciones';
+  document.getElementById('kpiHighRisk').textContent        = fmt(highRisk.reduce((s,o)=>s+o.monto,0));
+  document.getElementById('kpiTotalUnconf').textContent     = fmt(sinConf.reduce((s,o)=>s+o.monto,0));
+  document.getElementById('kpiCompliance').textContent      = Math.round(confirmed.length/total*100) + '%';
 }
 
-// ════════════════════════════════════════
-// ALERTS
-// ════════════════════════════════════════
-const STATIC_ALERTS=[
-  {level:'critical',type:'MONTO CRÍTICO',msg:'OP-0001 · $245M sin confirmación · 47 minutos transcurridos',time:'hace 2min'},
-  {level:'critical',type:'ACUMULACIÓN',msg:'Manager 139 acumula score 320pts en múltiples operaciones',time:'hace 5min'},
-  {level:'high',type:'FUERA DE SLA',msg:'OP-0018 · $42M · 6hs sin confirmación del cliente',time:'hace 12min'},
-  {level:'high',type:'CIERRE CERCANO',msg:'8 ops < $100M pendientes de resumen diario · cierre en 2hs',time:'hace 25min'},
-  {level:'medium',type:'CONFIRMACIÓN PARCIAL',msg:'OP-0011 · conformidad no expresa por operación individual',time:'hace 31min'},
-  {level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 · $178M · Cliente 2 · pendiente 38min',time:'hace 38min'},
-  {level:'medium',type:'PENDIENTE',msg:'OP-0015 · $34M · Cliente 5 · sin respuesta 2hs',time:'hace 52min'},
-];
-function renderAlerts(){
-  document.getElementById('alertsList').innerHTML=STATIC_ALERTS.map(a=>`
-    <div class="alert-item ${a.level}">
-      <div class="alert-type">${a.type}</div>
-      <div class="alert-msg">${a.msg}</div>
-      <div class="alert-time">${a.time}</div>
-    </div>`).join('');
-}
-
-// ════════════════════════════════════════
-// PRODUCERS
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// PRODUCTORES
+// ═══════════════════════════════════════════════════════
 function renderProducers(){
-  const scores={},ops={};
-  PRODUCERS.forEach(p=>{scores[p]=0;ops[p]=0;});
-  allOps.forEach(op=>{scores[op.producer]=(scores[op.producer]||0)+op.score;ops[op.producer]=(ops[op.producer]||0)+1;});
-  const sorted=PRODUCERS.map(p=>({name:p,score:scores[p]||0,ops:ops[p]||0})).sort((a,b)=>b.score-a.score);
-  const maxScore=Math.max(...sorted.map(p=>p.score),1);
-  const rColors={critical:'#dc2626',high:'#d97706',medium:'#b45309',low:'#059669'};
-  const rBgs={critical:'#fef2f2',high:'#fffbeb',medium:'#fefce8',low:'#f0fdf4'};
-  document.getElementById('producerList').innerHTML=sorted.map(p=>{
-    const lv=rl(p.score/Math.max(p.ops,1));
-    return`<div class="producer-item" onclick="document.getElementById('filterProducer').value='${p.name}';applyFilters()">
+  const data = PRODUCERS.map(name => {
+    const ops      = allOps.filter(o => o.producer===name && o.authorized);
+    const pend     = ops.filter(o => o.confirmStatus !== 'confirmed').length;
+    const conf     = ops.filter(o => o.confirmStatus === 'confirmed').length;
+    const sinMail  = ops.filter(o => o.mailStatus    !== 'sent').length;
+    const score    = producerScore(name);
+    const level    = producerRiskLevel(score);
+    return {name, total:ops.length, pend, conf, sinMail, score, level};
+  }).sort((a,b) => a.score - b.score); // más negativo primero
+
+  // Sidebar ranking
+  document.getElementById('producerList').innerHTML = data.map((p,i) => `
+    <div class="producer-item" onclick="document.getElementById('filterProducer').value='${p.name}';applyFilters()">
+      <div style="width:18px;height:18px;border-radius:50%;background:var(--navy);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>
       <div class="p-avatar">${p.name.charAt(0)}</div>
-      <div><div class="p-name">${p.name}</div><div class="p-ops">${p.ops} ops · ${p.score}pts</div></div>
-      <div class="p-risk-badge" style="color:${rColors[lv]};background:${rBgs[lv]}">${rlabel(lv)}</div>
-    </div>`;}).join('');
-  document.getElementById('producerChart').innerHTML=sorted.map(p=>{
-    const pct=Math.round(p.score/maxScore*100);
-    const color=p.score>200?'var(--red)':p.score>100?'var(--orange)':'var(--green)';
-    return`<div class="prod-row">
+      <div style="flex:1;min-width:0">
+        <div class="p-name">${p.name}</div>
+        <div class="p-ops">${p.total} ops · ${p.pend} pendientes · ${p.conf} conf.</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:12px;font-weight:700;color:${RISK_COLOR[p.level]};background:${RISK_BG[p.level]};padding:2px 8px;border-radius:4px">${p.score} pts</div>
+        <div style="font-size:9px;color:var(--text-light);margin-top:2px">${RISK_LABEL[p.level]}</div>
+      </div>
+    </div>`).join('');
+
+  // Bar chart
+  const maxAbs = Math.max(...data.map(p => Math.abs(p.score)), 1);
+  document.getElementById('producerChart').innerHTML = data.map(p => {
+    const pct   = Math.round(Math.abs(p.score)/maxAbs*100);
+    const color = RISK_COLOR[p.level];
+    return `<div class="prod-row">
       <div class="prod-label">${p.name}</div>
-      <div class="prod-track"><div class="prod-fill" style="width:${pct}%;background:${color}"></div></div>
+      <div class="prod-track"><div class="prod-fill" style="width:${Math.max(pct,3)}%;background:${color}"></div></div>
       <div class="prod-val" style="color:${color}">${p.score}</div>
-    </div>`;}).join('');
+    </div>`;
+  }).join('');
 }
 
-// ════════════════════════════════════════
-// CHARTS
-// ════════════════════════════════════════
-const riskHistory=[18,22,31,28,45,52,68,74,71,78,74];
-const riskHours=['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
-
-function renderRiskEvo(){
-  const el=document.getElementById('riskEvoChart');
-  if(!el)return;
-  // viewBox fijo — SVG se escala con width:100%, no depende de offsetWidth
-  const W=560,H=130,pad={l:30,r:24,t:22,b:26};
-  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
-  const max=Math.max(...riskHistory,1);
-  const slotW=cW/riskHistory.length,barW=Math.max(slotW-6,8);
-  const yRef=pad.t+cH-(60/max*cH);
-  let bars='',vals='',xLbls='',yAxis='';
-  [0,25,50,75,100].forEach(t=>{
-    const y=pad.t+cH-(t/max*cH);
-    yAxis+=`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="${t?'4,3':'0'}"/>`;
-    yAxis+=`<text x="${pad.l-4}" y="${y+3.5}" text-anchor="end" font-size="9" fill="#94a3b8">${t}</text>`;
-  });
-  riskHistory.forEach((v,i)=>{
-    const x=pad.l+i*slotW+(slotW-barW)/2;
-    const bh=Math.max(Math.round(v/max*cH),3);
-    const y=pad.t+cH-bh;
-    const col=v>60?'#dc2626':v>40?'#d97706':'#059669';
-    const last=i===riskHistory.length-1;
-    bars+=`<rect x="${x}" y="${y}" width="${barW}" height="${bh}" fill="${col}" opacity="${last?1:0.55}" rx="3"><title>${riskHours[i]}: ${v}</title></rect>`;
-    if(last) vals+=`<text x="${x+barW/2}" y="${y-6}" text-anchor="middle" font-size="10" font-weight="700" fill="${col}">${v}</text>`;
-    if(i%2===0||last) xLbls+=`<text x="${x+barW/2}" y="${H-3}" text-anchor="middle" font-size="9" fill="#94a3b8">${riskHours[i]}</text>`;
-  });
-  const ref=`<line x1="${pad.l}" y1="${yRef}" x2="${W-pad.r}" y2="${yRef}" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.55"/>
-    <text x="${W-pad.r+2}" y="${yRef+4}" font-size="9" fill="#dc2626" font-weight="600">60</text>`;
-  el.innerHTML=`<svg width="100%" height="130" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">${yAxis}${ref}${bars}${vals}${xLbls}</svg>`;
-}
-
+// ═══════════════════════════════════════════════════════
+// COMPLIANCE DONUTS
+// ═══════════════════════════════════════════════════════
 function renderCompliance(){
-  const total=Math.max(allOps.length,1);
-  const c1=Math.round(allOps.filter(o=>o.status==='confirmed'&&o.minutesAgo<=360).length/total*100);
-  const c2=Math.round(allOps.filter(o=>o.status==='confirmed').length/total*100);
-  const c3=Math.round(allOps.filter(o=>o.authorized).length/total*100);
-  const c4=Math.round((total-allOps.filter(o=>o.status==='critical').length)/total*100);
-  const metrics=[
-    {label:'Confirmadas en tiempo',val:c1,color:'#059669'},
-    {label:'Conformidad expresa',val:c2,color:'#1e5bc6'},
-    {label:'Operadores autorizados',val:c3,color:'#b45309'},
-    {label:'Ops. sin riesgo crítico',val:c4,color:'#7c3aed'}
+  const aut   = allOps.filter(o => o.authorized);
+  const total = Math.max(aut.length, 1);
+  const metrics = [
+    {label:'Mail enviado',           val:Math.round(aut.filter(o=>o.mailStatus==='sent').length/total*100),               color:'#059669'},
+    {label:'Confirmadas por cliente',val:Math.round(aut.filter(o=>o.confirmStatus==='confirmed').length/total*100),        color:'#1e5bc6'},
+    {label:'Ops. autorizadas',       val:Math.round(aut.length/Math.max(allOps.length,1)*100),                            color:'#b45309'},
+    {label:'Mail + Confirm. OK',     val:Math.round(aut.filter(o=>o.mailStatus==='sent'&&o.confirmStatus==='confirmed').length/total*100), color:'#7c3aed'}
   ];
-  const r=30,circ=2*Math.PI*r;
-  document.getElementById('complianceRow').innerHTML=metrics.map(m=>{
-    const v=Math.min(Math.max(m.val,0),100);
-    const dash=circ*v/100;
-    const tc=v>=70?m.color:v>=40?'#d97706':'#dc2626';
-    return`<div class="donut-block" style="padding:16px 8px">
+  const r = 30, circ = 2*Math.PI*r;
+  document.getElementById('complianceRow').innerHTML = metrics.map(m => {
+    const v    = Math.min(Math.max(m.val,0),100);
+    const dash = circ*v/100;
+    const tc   = v>=70 ? m.color : v>=40 ? '#d97706' : '#dc2626';
+    return `<div class="donut-block" style="padding:16px 8px">
       <svg width="80" height="80" viewBox="0 0 80 80" style="display:block">
         <circle cx="40" cy="40" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="7"/>
         <circle cx="40" cy="40" r="${r}" fill="none" stroke="${m.color}" stroke-width="7"
@@ -884,178 +975,137 @@ function renderCompliance(){
   }).join('');
 }
 
-// ════════════════════════════════════════
-// PRODUCER METRICS SECTION
-// ════════════════════════════════════════
-function toggleProdMetrics(){
-  prodMetricsOpen=!prodMetricsOpen;
-  document.getElementById('prodMetricsBody').style.display=prodMetricsOpen?'block':'none';
-  document.getElementById('prodMetricsChevron').classList.toggle('open',prodMetricsOpen);
-  if(prodMetricsOpen) renderProdMetrics();
+// ═══════════════════════════════════════════════════════
+// GRÁFICO EVOLUCIÓN RIESGO
+// ═══════════════════════════════════════════════════════
+const riskHistory = [18,22,31,28,45,52,68,74,71,78,74];
+const riskHours   = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
+
+function renderRiskEvo(){
+  const el = document.getElementById('riskEvoChart');
+  if (!el) return;
+  const W=560, H=130, pad={l:30,r:24,t:22,b:26};
+  const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+  const max = Math.max(...riskHistory, 1);
+  const slotW = cW/riskHistory.length, barW = Math.max(slotW-6, 8);
+  const yRef = pad.t + cH - (60/max*cH);
+  let bars='', vals='', xLbls='', yAxis='';
+
+  [0,25,50,75,100].forEach(t => {
+    const y = pad.t + cH - (t/max*cH);
+    yAxis += `<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="${t?'4,3':'0'}"/>`;
+    yAxis += `<text x="${pad.l-4}" y="${y+3.5}" text-anchor="end" font-size="9" fill="#94a3b8">${t}</text>`;
+  });
+
+  riskHistory.forEach((v,i) => {
+    const x   = pad.l + i*slotW + (slotW-barW)/2;
+    const bh  = Math.max(Math.round(v/max*cH), 3);
+    const y   = pad.t + cH - bh;
+    const col = v>60 ? '#dc2626' : v>40 ? '#d97706' : '#059669';
+    const last = i === riskHistory.length-1;
+    bars  += `<rect x="${x}" y="${y}" width="${barW}" height="${bh}" fill="${col}" opacity="${last?1:0.55}" rx="3"><title>${riskHours[i]}: ${v}</title></rect>`;
+    if (last)        vals  += `<text x="${x+barW/2}" y="${y-6}" text-anchor="middle" font-size="10" font-weight="700" fill="${col}">${v}</text>`;
+    if (i%2===0||last) xLbls += `<text x="${x+barW/2}" y="${H-3}" text-anchor="middle" font-size="9" fill="#94a3b8">${riskHours[i]}</text>`;
+  });
+
+  const ref = `<line x1="${pad.l}" y1="${yRef}" x2="${W-pad.r}" y2="${yRef}" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.55"/>
+    <text x="${W-pad.r+2}" y="${yRef+4}" font-size="9" fill="#dc2626" font-weight="600">60</text>`;
+
+  el.innerHTML = `<svg width="100%" height="130" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">
+    ${yAxis}${ref}${bars}${vals}${xLbls}</svg>`;
 }
 
-function renderProdMetrics(){
-  // Selector buttons
-  const row=document.getElementById('prodSelectorRow');
-  row.innerHTML=`<button class="prod-selector-btn ${selectedProdFilter==='__all__'?'active':''}" onclick="selectProd('__all__')">Todos los productores</button>`
-    +PRODUCERS.map(p=>`<button class="prod-selector-btn ${selectedProdFilter===p?'active':''}" onclick="selectProd('${p}')">${p}</button>`).join('');
-
-  // Filter ops
-  const ops=selectedProdFilter==='__all__'?allOps:allOps.filter(o=>o.producer===selectedProdFilter);
-  const producers=selectedProdFilter==='__all__'?PRODUCERS:[selectedProdFilter];
-
-  // KPIs
-  const totalOps=ops.length;
-  const confirmedOps=ops.filter(o=>o.status==='confirmed').length;
-  const criticalOps=ops.filter(o=>o.riskLevel==='critical'||o.riskLevel==='high').length;
-  const totalMonto=ops.reduce((s,o)=>s+o.monto,0);
-  document.getElementById('prodMetricsKpis').innerHTML=`
-    <div class="metric-card"><div class="metric-card-label">Total Operaciones</div><div class="metric-card-value">${totalOps}</div><div class="metric-card-sub">${producers.join(', ')}</div></div>
-    <div class="metric-card"><div class="metric-card-label">Confirmadas</div><div class="metric-card-value" style="color:var(--green)">${confirmedOps}</div><div class="metric-card-sub">${Math.round(confirmedOps/Math.max(totalOps,1)*100)}% del total</div></div>
-    <div class="metric-card"><div class="metric-card-label">En Riesgo</div><div class="metric-card-value" style="color:var(--red)">${criticalOps}</div><div class="metric-card-sub">críticas + altas</div></div>
-    <div class="metric-card"><div class="metric-card-label">Monto Total</div><div class="metric-card-value" style="font-size:18px">${fmt(totalMonto)}</div><div class="metric-card-sub">ARS operado</div></div>`;
-
-  // Tables
-  const grid=document.getElementById('prodDetailGrid');
-
-  // Clients per producer
-  if(selectedProdFilter==='__all__'){
-    // Cross table: producers vs clients
-    let clientOpMap={};
-    ops.forEach(o=>{
-      if(!clientOpMap[o.client]) clientOpMap[o.client]={};
-      clientOpMap[o.client][o.producer]=(clientOpMap[o.client][o.producer]||0)+1;
-    });
-    const clientTotals=CLIENT_NAMES.map(c=>({client:c,total:ops.filter(o=>o.client===c).length})).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
-    const maxC=Math.max(...clientTotals.map(x=>x.total),1);
-
-    // Ops per client
-    const clientHtml=`<div class="prod-detail-card">
-      <div class="prod-detail-card-title">Operaciones por Cliente</div>
-      <table class="prod-mini-table">
-        <thead><tr><th>Cliente</th><th>Ops</th><th>Monto total</th><th>Distribución</th></tr></thead>
-        <tbody>${clientTotals.slice(0,10).map(x=>{
-          const monto=ops.filter(o=>o.client===x.client).reduce((s,o)=>s+o.monto,0);
-          const pct=Math.round(x.total/maxC*100);
-          return`<tr><td>${x.client}</td><td><strong>${x.total}</strong></td><td>${fmt(monto)}</td>
-            <td><div style="display:flex;align-items:center;gap:6px"><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${pct}%"></div></div></div></td></tr>`;
-        }).join('')}</tbody>
-      </table>
-    </div>`;
-
-    // Ops per producer
-    const prodTotals=PRODUCERS.map(p=>({
-      prod:p,
-      total:ops.filter(o=>o.producer===p).length,
-      confirmed:ops.filter(o=>o.producer===p&&o.status==='confirmed').length,
-      critical:ops.filter(o=>o.producer===p&&(o.riskLevel==='critical'||o.riskLevel==='high')).length,
-      monto:ops.filter(o=>o.producer===p).reduce((s,o)=>s+o.monto,0)
-    })).sort((a,b)=>b.total-a.total);
-    const maxP=Math.max(...prodTotals.map(x=>x.total),1);
-
-    const prodHtml=`<div class="prod-detail-card">
-      <div class="prod-detail-card-title">Resumen por Productor</div>
-      <table class="prod-mini-table">
-        <thead><tr><th>Productor</th><th>Ops</th><th>Confirmadas</th><th>En riesgo</th><th>Monto</th></tr></thead>
-        <tbody>${prodTotals.map(x=>{
-          return`<tr><td><strong>${x.prod}</strong></td><td>${x.total}</td>
-            <td style="color:var(--green)">${x.confirmed}</td>
-            <td style="color:var(--red)">${x.critical}</td>
-            <td>${fmt(x.monto)}</td></tr>`;
-        }).join('')}</tbody>
-      </table>
-    </div>`;
-    grid.innerHTML=clientHtml+prodHtml;
-
-  } else {
-    // Single producer view
-    const pOps=ops;
-    const clientBreakdown=CLIENT_NAMES.map(c=>({
-      client:c,
-      total:pOps.filter(o=>o.client===c).length,
-      confirmed:pOps.filter(o=>o.client===c&&o.status==='confirmed').length,
-      critical:pOps.filter(o=>o.client===c&&(o.riskLevel==='critical'||o.riskLevel==='high')).length,
-      monto:pOps.filter(o=>o.client===c).reduce((s,o)=>s+o.monto,0)
-    })).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
-    const maxC=Math.max(...clientBreakdown.map(x=>x.total),1);
-
-    const clientHtml=`<div class="prod-detail-card">
-      <div class="prod-detail-card-title">Clientes de ${selectedProdFilter}</div>
-      <table class="prod-mini-table">
-        <thead><tr><th>Cliente</th><th>Ops</th><th>Confirmadas</th><th>En riesgo</th><th>Monto total</th></tr></thead>
-        <tbody>${clientBreakdown.map(x=>{
-          return`<tr><td>${x.client}</td><td><strong>${x.total}</strong></td>
-            <td style="color:var(--green)">${x.confirmed}</td>
-            <td style="color:${x.critical>0?'var(--red)':'var(--text-muted)'}">${x.critical}</td>
-            <td>${fmt(x.monto)}</td></tr>`;
-        }).join('')}</tbody>
-      </table>
-    </div>`;
-
-    // Status breakdown
-    const statusBreakdown=Object.entries(STATUS_LABELS).map(([s,l])=>({
-      status:s, label:l, count:pOps.filter(o=>o.status===s).length
-    })).filter(x=>x.count>0).sort((a,b)=>b.count-a.count);
-    const maxS=Math.max(...statusBreakdown.map(x=>x.count),1);
-
-    const statusHtml=`<div class="prod-detail-card">
-      <div class="prod-detail-card-title">Distribución de Estados — ${selectedProdFilter}</div>
-      <table class="prod-mini-table">
-        <thead><tr><th>Estado</th><th>Cantidad</th><th>% del total</th><th>Distribución</th></tr></thead>
-        <tbody>${statusBreakdown.map(x=>{
-          const pct=Math.round(x.count/pOps.length*100);
-          const barPct=Math.round(x.count/maxS*100);
-          return`<tr><td>${statusPill(x.status,x.status!=='invalid')}</td><td><strong>${x.count}</strong></td>
-            <td>${pct}%</td>
-            <td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${barPct}%"></div></div></td></tr>`;
-        }).join('')}</tbody>
-      </table>
-    </div>`;
-    grid.innerHTML=clientHtml+statusHtml;
-  }
+// ═══════════════════════════════════════════════════════
+// TOGGLE MAIL (click en pill de tabla)
+// ═══════════════════════════════════════════════════════
+function toggleMail(id){
+  const op = allOps.find(o => o.id===id);
+  if (!op) return;
+  op.mailStatus = op.mailStatus==='sent' ? 'pending' : 'sent';
+  if (op.mailStatus==='pending') op.confirmStatus = 'pending';
+  op.score     = calcOpScore(op);
+  op.riskLevel = calcRiskLevel(op);
+  renderTable(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderCompliance();
+  showToast(op.mailStatus==='sent' ? '✉️ Mail marcado como enviado' : '📭 Mail marcado como pendiente', op.mailStatus==='sent'?'success':'danger');
 }
 
-function selectProd(p){
-  selectedProdFilter=p;
-  renderProdMetrics();
+// ═══════════════════════════════════════════════════════
+// MODAL DETALLE
+// ═══════════════════════════════════════════════════════
+function showOpDetail(id){
+  const op = allOps.find(o => o.id===id);
+  if (!op) return;
+  document.getElementById('modalTitle').textContent = `${op.id} — ${op.instrument}`;
+  document.getElementById('modalEl').style.maxWidth = '580px';
+  const rc = RISK_COLOR[op.riskLevel];
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-grid">
+      <div><div class="detail-key">Cliente</div><div class="detail-val">${op.client}</div></div>
+      <div><div class="detail-key">Productor</div><div class="detail-val">${op.producer}</div></div>
+      <div><div class="detail-key">Monto</div><div class="detail-val" style="color:${op.monto>100_000_000?'var(--red)':'var(--text)'}">${fmt(op.monto)}</div></div>
+      <div><div class="detail-key">Instrumento</div><div class="detail-val" style="color:var(--blue)">${op.instrument}</div></div>
+      <div><div class="detail-key">Mail conformidad</div><div class="detail-val">${mailPill(op)}</div></div>
+      <div><div class="detail-key">Confirmación cliente</div><div class="detail-val">${confirmPill(op)}</div></div>
+      <div><div class="detail-key">Tiempo</div><div class="detail-val">${fmtT(op.minutesAgo)}</div></div>
+      <div><div class="detail-key">Nivel de riesgo</div><div class="detail-val" style="color:${rc}">${RISK_LABEL[op.riskLevel]}</div></div>
+      <div><div class="detail-key">Score op.</div><div class="detail-val" style="color:${rc}">${op.score} pts</div></div>
+      <div><div class="detail-key">Autorizado</div><div class="detail-val" style="color:${op.authorized?'var(--green)':'var(--red)'}">${op.authorized?'✓ Sí':'✗ No'}</div></div>
+    </div>
+    <div class="rec-box" style="margin-bottom:14px">
+      <div class="rec-title">Recomendación</div>
+      <div class="rec-text">${
+        !op.authorized                                                          ? '🔴 Operador no autorizado. Escalar a Compliance inmediatamente.' :
+        op.monto>100_000_000 && op.confirmStatus!=='confirmed'                  ? '🔴 Monto >100M sin confirmación. Contactar al cliente de inmediato.' :
+        op.mailStatus!=='sent'                                                  ? '🟠 Mail de conformidad no enviado. Enviar y aguardar respuesta del cliente.' :
+        op.confirmStatus!=='confirmed'                                          ? '🟡 Mail enviado. Pendiente de confirmación del cliente.' :
+        '🟢 Operación dentro de parámetros. Sin acción requerida.'
+      }</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);padding-top:14px">
+      <button class="btn-secondary" onclick="closeModal()">Cerrar</button>
+      <button class="btn-primary" onclick="closeModal();openEditModal('${op.id}')">✏️ Editar</button>
+    </div>`;
+  openModal();
 }
 
-// ════════════════════════════════════════
-// EDIT MODAL
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// MODAL EDITAR
+// ═══════════════════════════════════════════════════════
 function openEditModal(id){
-  const op=allOps.find(o=>o.id===id);
-  if(!op) return;
-  document.getElementById('modalTitle').textContent=`✏️ Editar Operación — ${op.id}`;
-  document.getElementById('modalEl').style.maxWidth='580px';
-  document.getElementById('modalBody').innerHTML=`
+  const op = allOps.find(o => o.id===id);
+  if (!op) return;
+  document.getElementById('modalTitle').textContent = `✏️ Editar — ${op.id}`;
+  document.getElementById('modalEl').style.maxWidth = '580px';
+  document.getElementById('modalBody').innerHTML = `
     <div class="edit-form">
       <div class="form-group">
         <label class="form-label">Cliente</label>
-        <select class="form-select" id="ef-client">
-          ${CLIENT_NAMES.map(c=>`<option value="${c}" ${op.client===c?'selected':''}>${c}</option>`).join('')}
-        </select>
+        <select class="form-select" id="ef-client">${CLIENT_NAMES.map(c=>`<option value="${c}" ${op.client===c?'selected':''}>${c}</option>`).join('')}</select>
       </div>
       <div class="form-group">
         <label class="form-label">Productor</label>
-        <select class="form-select" id="ef-producer">
-          ${PRODUCERS.map(p=>`<option value="${p}" ${op.producer===p?'selected':''}>${p}</option>`).join('')}
-        </select>
+        <select class="form-select" id="ef-producer">${PRODUCERS.map(p=>`<option value="${p}" ${op.producer===p?'selected':''}>${p}</option>`).join('')}</select>
       </div>
       <div class="form-group">
         <label class="form-label">Instrumento</label>
-        <select class="form-select" id="ef-instrument">
-          ${INSTRUMENTS.map(i=>`<option value="${i}" ${op.instrument===i?'selected':''}>${i}</option>`).join('')}
-        </select>
+        <select class="form-select" id="ef-instrument">${INSTRUMENTS.map(i=>`<option value="${i}" ${op.instrument===i?'selected':''}>${i}</option>`).join('')}</select>
       </div>
       <div class="form-group">
         <label class="form-label">Monto (ARS)</label>
         <input class="form-input" id="ef-monto" type="number" value="${op.monto}" min="1"/>
       </div>
       <div class="form-group">
-        <label class="form-label">Estado</label>
-        <select class="form-select" id="ef-status">
-          ${Object.entries(STATUS_LABELS).map(([s,l])=>`<option value="${s}" ${op.status===s?'selected':''}>${l}</option>`).join('')}
+        <label class="form-label">Mail de conformidad</label>
+        <select class="form-select" id="ef-mail">
+          <option value="pending" ${op.mailStatus!=='sent'?'selected':''}>📭 Pendiente</option>
+          <option value="sent"    ${op.mailStatus==='sent'?'selected':''}>✉️ Enviado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmación del cliente</label>
+        <select class="form-select" id="ef-confirm">
+          <option value="pending"   ${op.confirmStatus!=='confirmed'?'selected':''}>⏳ Pendiente</option>
+          <option value="confirmed" ${op.confirmStatus==='confirmed'?'selected':''}>✅ Confirmada</option>
         </select>
       </div>
       <div class="form-group">
@@ -1064,73 +1114,80 @@ function openEditModal(id){
       </div>
     </div>
     <div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">
-      <button class="btn-danger" onclick="deleteOp('${op.id}')">🗑 Eliminar</button>
-      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
-      <button class="btn-primary" onclick="saveEdit('${op.id}')">Guardar cambios</button>
+      <button class="btn-danger"     onclick="deleteOp('${op.id}')">🗑 Eliminar</button>
+      <button class="btn-secondary"  onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary"    onclick="saveEdit('${op.id}')">Guardar</button>
     </div>`;
   openModal();
 }
 
 function saveEdit(id){
-  const op=allOps.find(o=>o.id===id);
-  if(!op) return;
-  op.client=document.getElementById('ef-client').value;
-  op.producer=document.getElementById('ef-producer').value;
-  op.instrument=document.getElementById('ef-instrument').value;
-  op.monto=parseInt(document.getElementById('ef-monto').value)||op.monto;
-  op.status=document.getElementById('ef-status').value;
-  op.minutesAgo=parseInt(document.getElementById('ef-minutes').value)||op.minutesAgo;
-  op.authorized=isAuth(op.client,op.producer);
-  computeScore(op); op.riskLevel=rl(op.score);
-  filteredOps=[...allOps]; applyFilters(); updateKPIs(); renderProducers(); renderCompliance();
-  if(prodMetricsOpen) renderProdMetrics();
+  const op = allOps.find(o => o.id===id);
+  if (!op) return;
+  op.client        = document.getElementById('ef-client').value;
+  op.producer      = document.getElementById('ef-producer').value;
+  op.instrument    = document.getElementById('ef-instrument').value;
+  op.monto         = parseInt(document.getElementById('ef-monto').value)    || op.monto;
+  op.mailStatus    = document.getElementById('ef-mail').value;
+  op.confirmStatus = document.getElementById('ef-confirm').value;
+  op.minutesAgo    = parseInt(document.getElementById('ef-minutes').value) || op.minutesAgo;
+  op.authorized    = isAuth(op.client, op.producer);
+  // si se revierte mail, confirmación vuelve a pendiente
+  if (op.mailStatus==='pending') op.confirmStatus = 'pending';
+  op.score     = calcOpScore(op);
+  op.riskLevel = calcRiskLevel(op);
+  filteredOps = [...allOps];
+  applyFilters(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderCompliance();
+  if (prodMetricsOpen) renderProdMetrics();
   closeModal();
-  showToast('Operación actualizada correctamente','success');
+  showToast('Operación actualizada','success');
 }
 
 function deleteOp(id){
-  if(!confirm('¿Eliminar esta operación?')) return;
-  allOps=allOps.filter(o=>o.id!==id);
-  filteredOps=filteredOps.filter(o=>o.id!==id);
-  renderTable(); updateKPIs(); renderProducers();
+  if (!confirm('¿Eliminar esta operación?')) return;
+  allOps     = allOps.filter(o => o.id!==id);
+  filteredOps = filteredOps.filter(o => o.id!==id);
+  renderTable(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderCompliance();
   closeModal();
   showToast('Operación eliminada','danger');
 }
 
-// ════════════════════════════════════════
-// NEW OP MODAL
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// MODAL NUEVA OPERACIÓN
+// ═══════════════════════════════════════════════════════
 function openNewOpModal(){
-  document.getElementById('modalTitle').textContent='➕ Nueva Operación';
-  document.getElementById('modalEl').style.maxWidth='580px';
-  document.getElementById('modalBody').innerHTML=`
+  document.getElementById('modalTitle').textContent = '➕ Nueva Operación';
+  document.getElementById('modalEl').style.maxWidth = '580px';
+  document.getElementById('modalBody').innerHTML = `
     <div class="edit-form">
       <div class="form-group">
         <label class="form-label">Cliente</label>
-        <select class="form-select" id="nf-client">
-          ${CLIENT_NAMES.map(c=>`<option value="${c}">${c}</option>`).join('')}
-        </select>
+        <select class="form-select" id="nf-client">${CLIENT_NAMES.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
       </div>
       <div class="form-group">
         <label class="form-label">Productor</label>
-        <select class="form-select" id="nf-producer">
-          ${PRODUCERS.map(p=>`<option value="${p}">${p}</option>`).join('')}
-        </select>
+        <select class="form-select" id="nf-producer">${PRODUCERS.map(p=>`<option value="${p}">${p}</option>`).join('')}</select>
       </div>
       <div class="form-group">
         <label class="form-label">Instrumento</label>
-        <select class="form-select" id="nf-instrument">
-          ${INSTRUMENTS.map(i=>`<option value="${i}">${i}</option>`).join('')}
-        </select>
+        <select class="form-select" id="nf-instrument">${INSTRUMENTS.map(i=>`<option value="${i}">${i}</option>`).join('')}</select>
       </div>
       <div class="form-group">
         <label class="form-label">Monto (ARS)</label>
         <input class="form-input" id="nf-monto" type="number" placeholder="Ej: 50000000" min="1"/>
       </div>
       <div class="form-group">
-        <label class="form-label">Estado</label>
-        <select class="form-select" id="nf-status">
-          ${Object.entries(STATUS_LABELS).map(([s,l])=>`<option value="${s}">${l}</option>`).join('')}
+        <label class="form-label">Mail de conformidad</label>
+        <select class="form-select" id="nf-mail">
+          <option value="pending">📭 Pendiente</option>
+          <option value="sent">✉️ Enviado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmación del cliente</label>
+        <select class="form-select" id="nf-confirm">
+          <option value="pending">⏳ Pendiente</option>
+          <option value="confirmed">✅ Confirmada</option>
         </select>
       </div>
       <div class="form-group">
@@ -1140,405 +1197,383 @@ function openNewOpModal(){
     </div>
     <div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">
       <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
-      <button class="btn-primary" onclick="saveNewOp()">Crear operación</button>
+      <button class="btn-primary"   onclick="saveNewOp()">Crear</button>
     </div>`;
   openModal();
 }
 
 function saveNewOp(){
-  const monto=parseInt(document.getElementById('nf-monto').value);
-  if(!monto||monto<1){showToast('Ingresá un monto válido','danger');return;}
-  const op=generateOp({
-    client:document.getElementById('nf-client').value,
-    producer:document.getElementById('nf-producer').value,
-    instrument:document.getElementById('nf-instrument').value,
+  const monto = parseInt(document.getElementById('nf-monto').value);
+  if (!monto||monto<1){ showToast('Ingresá un monto válido','danger'); return; }
+  const op = buildOp({
+    client:        document.getElementById('nf-client').value,
+    producer:      document.getElementById('nf-producer').value,
+    instrument:    document.getElementById('nf-instrument').value,
     monto,
-    status:document.getElementById('nf-status').value,
-    minutesAgo:parseInt(document.getElementById('nf-minutes').value)||5
+    mailStatus:    document.getElementById('nf-mail').value,
+    confirmStatus: document.getElementById('nf-confirm').value,
+    minutesAgo:    parseInt(document.getElementById('nf-minutes').value)||5
   });
   allOps.unshift(op);
-  filteredOps=[...allOps]; applyFilters(); updateKPIs(); renderProducers(); renderCompliance();
-  if(prodMetricsOpen) renderProdMetrics();
+  filteredOps = [...allOps];
+  applyFilters(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderCompliance();
+  if (prodMetricsOpen) renderProdMetrics();
   closeModal();
-  showToast('Operación creada correctamente','success');
+  showToast('Operación creada','success');
 }
 
-// ════════════════════════════════════════
-// OP DETAIL MODAL
-// ════════════════════════════════════════
-function showOpDetail(id){
-  const op=allOps.find(o=>o.id===id);if(!op)return;
-  document.getElementById('modalTitle').textContent=`${op.id} — ${op.instrument}`;
-  document.getElementById('modalEl').style.maxWidth='580px';
-  const rColors={critical:'var(--red)',high:'var(--orange)',medium:'var(--yellow)',low:'var(--green)'};
-  document.getElementById('modalBody').innerHTML=`
-    <div class="detail-grid">
-      <div><div class="detail-key">Cliente</div><div class="detail-val">${op.client}</div></div>
-      <div><div class="detail-key">Productor</div><div class="detail-val">${op.producer}</div></div>
-      <div><div class="detail-key">Monto</div><div class="detail-val" style="color:${op.monto>100_000_000?'var(--red)':'var(--text)'}">${fmt(op.monto)}</div></div>
-      <div><div class="detail-key">Instrumento</div><div class="detail-val" style="color:var(--blue)">${op.instrument}</div></div>
-      <div><div class="detail-key">Estado</div><div class="detail-val">${statusPill(op.status,op.authorized)}</div></div>
-      <div><div class="detail-key">Tiempo</div><div class="detail-val">${fmtT(op.minutesAgo)}</div></div>
-      <div><div class="detail-key">Autorizado</div><div class="detail-val" style="color:${op.authorized?'var(--green)':'var(--red)'}">${op.authorized?'✓ Sí':'✗ No'}</div></div>
-      <div><div class="detail-key">Nivel de riesgo</div><div class="detail-val" style="color:${rColors[op.riskLevel]}">${rlabel(op.riskLevel)}</div></div>
-    </div>
-    <div class="score-breakdown">
-      <div class="score-title">Desglose de Scoring</div>
-      ${op.scoreBreakdown.map(b=>`<div class="score-row"><span>${b.r}</span><span class="score-pts" style="color:var(--red)">+${b.p} pts</span></div>`).join('')}
-      ${op.scoreBreakdown.length===0?'<div class="score-row" style="color:var(--green)">Sin factores de riesgo</div>':''}
-      <div class="score-total"><span>Score total</span><span style="color:${rColors[op.riskLevel]}">${op.score} pts</span></div>
-    </div>
-    <div class="rec-box" style="margin-bottom:14px">
-      <div class="rec-title">Recomendación</div>
-      <div class="rec-text">${op.riskLevel==='critical'&&!op.authorized?'🔴 Escalar inmediatamente a Compliance. Suspender operaciones del productor.':op.riskLevel==='critical'?'🔴 Contactar al cliente de inmediato para confirmación expresa.':op.riskLevel==='high'?'🟠 Enviar recordatorio. Sin respuesta en 30min, escalar a supervisor.':op.riskLevel==='medium'?'🟡 Monitorear. Incluir en resumen de cierre.':'🟢 Operación dentro de parámetros normales.'}</div>
-    </div>
-    <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);padding-top:14px">
-      <button class="btn-secondary" onclick="closeModal()">Cerrar</button>
-      <button class="btn-primary" onclick="closeModal();openEditModal('${op.id}')">✏️ Editar esta operación</button>
-    </div>`;
-  openModal();
-}
-
-// ════════════════════════════════════════
-// FILTER EDITOR
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// EDITOR DE FILTROS / CONFIG
+// ═══════════════════════════════════════════════════════
 function openFilterEditor(){
-  document.getElementById('modalTitle').textContent='⚙️ Configuración de Filtros y Datos';
-  document.getElementById('modalEl').style.maxWidth='640px';
-  document.getElementById('modalBody').innerHTML=`
+  document.getElementById('modalTitle').textContent = '⚙️ Configuración';
+  document.getElementById('modalEl').style.maxWidth = '620px';
+  document.getElementById('modalBody').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:20px">
-
-      <!-- PRODUCERS -->
       <div>
         <div class="score-title" style="margin-bottom:10px">Productores</div>
-        <div id="fe-producers-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
           ${PRODUCERS.map(p=>`<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600">
-            ${p}
-            ${PRODUCERS.length>1?`<span onclick="removeProducer('${p}')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px;line-height:1">×</span>`:''}
+            ${p}${PRODUCERS.length>1?`<span onclick="removeProducer('${p}')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px">×</span>`:''}
           </div>`).join('')}
         </div>
         <div style="display:flex;gap:8px">
-          <input class="form-input" id="fe-new-producer" placeholder="Nombre del nuevo productor" style="flex:1"/>
-          <button class="btn-primary" onclick="addProducer()" style="white-space:nowrap">+ Agregar</button>
+          <input class="form-input" id="fe-new-producer" placeholder="Nuevo productor" style="flex:1"/>
+          <button class="btn-primary" onclick="addProducer()">+ Agregar</button>
         </div>
       </div>
-
-      <!-- INSTRUMENTS -->
       <div>
-        <div class="score-title" style="margin-bottom:10px">Instrumentos disponibles</div>
-        <div id="fe-instruments-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div class="score-title" style="margin-bottom:10px">Instrumentos</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
           ${INSTRUMENTS.map(i=>`<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600">
-            ${i}
-            <span onclick="removeInstrument('${i}')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px;line-height:1">×</span>
+            ${i}<span onclick="removeInstrument('${i}')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px">×</span>
           </div>`).join('')}
         </div>
         <div style="display:flex;gap:8px">
-          <input class="form-input" id="fe-new-instrument" placeholder="Nuevo instrumento (ej: SWAP)"/>
+          <input class="form-input" id="fe-new-instrument" placeholder="Nuevo instrumento"/>
           <button class="btn-primary" onclick="addInstrument()">+ Agregar</button>
         </div>
       </div>
-
-      <!-- STATUS OPTIONS -->
-      <div>
-        <div class="score-title" style="margin-bottom:10px">Estados visibles en filtros</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px">
-          ${Object.entries(STATUS_LABELS).map(([s,l])=>`
-            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px">
-              <input type="checkbox" ${STATUS_OPTIONS.includes(s)?'checked':''} onchange="toggleStatus('${s}',this.checked)" style="cursor:pointer"/>
-              ${l}
-            </label>`).join('')}
-        </div>
-      </div>
-
     </div>
-    <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);padding-top:14px;margin-top:20px">
+    <div style="display:flex;justify-content:flex-end;margin-top:20px;border-top:1px solid var(--border);padding-top:14px">
       <button class="btn-secondary" onclick="closeModal()">Cerrar</button>
     </div>`;
   openModal();
 }
 
 function addProducer(){
-  const val=document.getElementById('fe-new-producer').value.trim();
-  if(!val){showToast('Ingresá un nombre válido','danger');return;}
-  if(PRODUCERS.includes(val)){showToast('Ese productor ya existe','danger');return;}
-  PRODUCERS.push(val);
-  CLIENT_NAMES.forEach(c=>{ if(!AUTHORIZED_MAP[c]) AUTHORIZED_MAP[c]=[]; AUTHORIZED_MAP[c].push(val); });
+  const v = document.getElementById('fe-new-producer').value.trim();
+  if (!v){ showToast('Nombre requerido','danger'); return; }
+  if (PRODUCERS.includes(v)){ showToast('Ya existe','danger'); return; }
+  PRODUCERS.push(v);
+  CLIENT_NAMES.forEach(c => { if(!AUTHORIZED_MAP[c]) AUTHORIZED_MAP[c]=[]; AUTHORIZED_MAP[c].push(v); });
   populateFilterSelects(); renderProducers(); openFilterEditor();
-  showToast(`Productor "${val}" agregado`,'success');
+  showToast(`Productor "${v}" agregado`,'success');
 }
 function removeProducer(p){
-  if(PRODUCERS.length<=1){showToast('Debe haber al menos un productor','danger');return;}
-  PRODUCERS=PRODUCERS.filter(x=>x!==p);
-  CLIENT_NAMES.forEach(c=>{ AUTHORIZED_MAP[c]=(AUTHORIZED_MAP[c]||[]).filter(x=>x!==p); });
+  if (PRODUCERS.length<=1){ showToast('Debe haber al menos un productor','danger'); return; }
+  PRODUCERS = PRODUCERS.filter(x=>x!==p);
+  CLIENT_NAMES.forEach(c => { AUTHORIZED_MAP[c]=(AUTHORIZED_MAP[c]||[]).filter(x=>x!==p); });
   populateFilterSelects(); renderProducers(); openFilterEditor();
 }
 function addInstrument(){
-  const val=document.getElementById('fe-new-instrument').value.trim().toUpperCase();
-  if(!val){showToast('Ingresá un nombre válido','danger');return;}
-  if(INSTRUMENTS.includes(val)){showToast('Ese instrumento ya existe','danger');return;}
-  INSTRUMENTS.push(val);
+  const v = document.getElementById('fe-new-instrument').value.trim().toUpperCase();
+  if (!v){ showToast('Nombre requerido','danger'); return; }
+  if (INSTRUMENTS.includes(v)){ showToast('Ya existe','danger'); return; }
+  INSTRUMENTS.push(v);
   populateFilterSelects(); openFilterEditor();
-  showToast(`Instrumento "${val}" agregado`,'success');
+  showToast(`Instrumento "${v}" agregado`,'success');
 }
 function removeInstrument(i){
-  if(INSTRUMENTS.length<=1){showToast('Debe haber al menos un instrumento','danger');return;}
-  INSTRUMENTS=INSTRUMENTS.filter(x=>x!==i);
+  if (INSTRUMENTS.length<=1){ showToast('Debe haber al menos uno','danger'); return; }
+  INSTRUMENTS = INSTRUMENTS.filter(x=>x!==i);
   populateFilterSelects(); openFilterEditor();
 }
-function toggleStatus(s,checked){
-  if(checked){if(!STATUS_OPTIONS.includes(s))STATUS_OPTIONS.push(s);}
-  else{STATUS_OPTIONS=STATUS_OPTIONS.filter(x=>x!==s);}
-  populateFilterSelects();
+
+// ═══════════════════════════════════════════════════════
+// MÉTRICAS POR PRODUCTOR
+// ═══════════════════════════════════════════════════════
+function toggleProdMetrics(){
+  prodMetricsOpen = !prodMetricsOpen;
+  document.getElementById('prodMetricsBody').style.display = prodMetricsOpen ? 'block' : 'none';
+  document.getElementById('prodMetricsChevron').classList.toggle('open', prodMetricsOpen);
+  if (prodMetricsOpen) renderProdMetrics();
 }
 
-// ════════════════════════════════════════
-// MODAL HELPERS
-// ════════════════════════════════════════
-function openModal(){document.getElementById('modalOverlay').classList.add('open')}
-function closeModal(){document.getElementById('modalOverlay').classList.remove('open')}
-function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal()}
+function selectProd(p){ selectedProdFilter=p; renderProdMetrics(); }
 
-// ════════════════════════════════════════
-// TOAST
-// ════════════════════════════════════════
-function showToast(msg,type='success'){
-  const t=document.createElement('div');
-  t.style.cssText=`position:fixed;bottom:24px;right:24px;z-index:999;background:${type==='success'?'var(--green)':'var(--red)'};color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:var(--shadow-lg);animation:notif-drop 0.2s ease-out`;
-  t.textContent=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),2800);
+function renderProdMetrics(){
+  // Selector
+  document.getElementById('prodSelectorRow').innerHTML =
+    `<button class="prod-selector-btn ${selectedProdFilter==='__all__'?'active':''}" onclick="selectProd('__all__')">Todos</button>` +
+    PRODUCERS.map(p=>`<button class="prod-selector-btn ${selectedProdFilter===p?'active':''}" onclick="selectProd('${p}')">${p}</button>`).join('');
+
+  const ops  = selectedProdFilter==='__all__' ? allOps : allOps.filter(o=>o.producer===selectedProdFilter);
+  const aut  = ops.filter(o=>o.authorized);
+  const conf = aut.filter(o=>o.confirmStatus==='confirmed').length;
+  const sinM = aut.filter(o=>o.mailStatus!=='sent').length;
+
+  document.getElementById('prodMetricsKpis').innerHTML = `
+    <div class="metric-card"><div class="metric-card-label">Total Ops</div><div class="metric-card-value">${ops.length}</div></div>
+    <div class="metric-card"><div class="metric-card-label">Confirmadas</div><div class="metric-card-value" style="color:var(--green)">${conf}</div><div class="metric-card-sub">${Math.round(conf/Math.max(aut.length,1)*100)}%</div></div>
+    <div class="metric-card"><div class="metric-card-label">Sin mail</div><div class="metric-card-value" style="color:var(--red)">${sinM}</div></div>
+    <div class="metric-card"><div class="metric-card-label">Monto Total</div><div class="metric-card-value" style="font-size:18px">${fmt(ops.reduce((s,o)=>s+o.monto,0))}</div></div>`;
+
+  const grid = document.getElementById('prodDetailGrid');
+
+  if (selectedProdFilter==='__all__'){
+    const clientRows = CLIENT_NAMES.map(c=>({
+      c, total:ops.filter(o=>o.client===c).length,
+      monto:ops.filter(o=>o.client===c).reduce((s,o)=>s+o.monto,0)
+    })).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
+    const maxC = Math.max(...clientRows.map(x=>x.total),1);
+
+    const prodRows = PRODUCERS.map(p=>({
+      p,
+      total:ops.filter(o=>o.producer===p).length,
+      conf:ops.filter(o=>o.producer===p&&o.confirmStatus==='confirmed').length,
+      sinMail:ops.filter(o=>o.producer===p&&o.authorized&&o.mailStatus!=='sent').length,
+      monto:ops.filter(o=>o.producer===p).reduce((s,o)=>s+o.monto,0)
+    }));
+
+    grid.innerHTML = `
+      <div class="prod-detail-card">
+        <div class="prod-detail-card-title">Operaciones por Cliente</div>
+        <table class="prod-mini-table">
+          <thead><tr><th>Cliente</th><th>Ops</th><th>Monto</th><th>Dist.</th></tr></thead>
+          <tbody>${clientRows.slice(0,10).map(x=>`
+            <tr><td>${x.c}</td><td><strong>${x.total}</strong></td><td>${fmt(x.monto)}</td>
+            <td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round(x.total/maxC*100)}%"></div></div></td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="prod-detail-card">
+        <div class="prod-detail-card-title">Resumen por Productor</div>
+        <table class="prod-mini-table">
+          <thead><tr><th>Productor</th><th>Ops</th><th>Confirm.</th><th>Sin mail</th><th>Monto</th></tr></thead>
+          <tbody>${prodRows.map(x=>`
+            <tr><td><strong>${x.p}</strong></td><td>${x.total}</td>
+            <td style="color:var(--green)">${x.conf}</td>
+            <td style="color:${x.sinMail>0?'var(--red)':'var(--text-muted)'}">${x.sinMail}</td>
+            <td>${fmt(x.monto)}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } else {
+    const pAut = aut;
+    const clientRows = CLIENT_NAMES.map(c=>({
+      c, total:pAut.filter(o=>o.client===c).length,
+      conf:pAut.filter(o=>o.client===c&&o.confirmStatus==='confirmed').length,
+      sinMail:pAut.filter(o=>o.client===c&&o.mailStatus!=='sent').length,
+      monto:pAut.filter(o=>o.client===c).reduce((s,o)=>s+o.monto,0)
+    })).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
+
+    const mailSent = pAut.filter(o=>o.mailStatus==='sent').length;
+    const confOk   = pAut.filter(o=>o.confirmStatus==='confirmed').length;
+    const n        = Math.max(pAut.length,1);
+
+    grid.innerHTML = `
+      <div class="prod-detail-card">
+        <div class="prod-detail-card-title">Clientes de ${selectedProdFilter}</div>
+        <table class="prod-mini-table">
+          <thead><tr><th>Cliente</th><th>Ops</th><th>Confirm.</th><th>Sin mail</th><th>Monto</th></tr></thead>
+          <tbody>${clientRows.map(x=>`
+            <tr><td>${x.c}</td><td><strong>${x.total}</strong></td>
+            <td style="color:var(--green)">${x.conf}</td>
+            <td style="color:${x.sinMail>0?'var(--red)':'var(--text-muted)'}">${x.sinMail}</td>
+            <td>${fmt(x.monto)}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="prod-detail-card">
+        <div class="prod-detail-card-title">Mail y Confirmación</div>
+        <table class="prod-mini-table">
+          <thead><tr><th>Concepto</th><th>Cant.</th><th>%</th><th>Barra</th></tr></thead>
+          <tbody>
+            <tr><td>✉️ Mail enviado</td><td><strong>${mailSent}</strong></td><td>${Math.round(mailSent/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round(mailSent/n*100)}%;background:#059669"></div></div></td></tr>
+            <tr><td>📭 Mail pendiente</td><td><strong>${n-mailSent}</strong></td><td>${Math.round((n-mailSent)/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round((n-mailSent)/n*100)}%;background:#eab308"></div></div></td></tr>
+            <tr><td>✅ Confirmada</td><td><strong>${confOk}</strong></td><td>${Math.round(confOk/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round(confOk/n*100)}%;background:#1e5bc6"></div></div></td></tr>
+            <tr><td>⏳ Pend. confirm.</td><td><strong>${n-confOk}</strong></td><td>${Math.round((n-confOk)/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round((n-confOk)/n*100)}%;background:#dc2626"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>`;
+  }
 }
 
-// ════════════════════════════════════════
-// NOTIFICATIONS
-// ════════════════════════════════════════
-let notifOpen=false,currentTab='all';
-const notifData=[
-  {id:1,level:'critical',type:'MONTO CRÍTICO',msg:'OP-0001 · $245M sin confirmación · 47 min transcurridos',time:'hace 2min',read:false},
-  {id:2,level:'critical',type:'ACUMULACIÓN',msg:'Manager 139 acumula score 320pts · umbral superado',time:'hace 5min',read:false},
-  {id:3,level:'high',type:'FUERA DE SLA',msg:'OP-0018 · $42M · 6hs sin confirmación del cliente',time:'hace 12min',read:false},
-  {id:4,level:'high',type:'CIERRE CERCANO',msg:'8 operaciones < $100M pendientes · cierre en 2hs',time:'hace 25min',read:false},
-  {id:5,level:'medium',type:'CONFIRMACIÓN PARCIAL',msg:'OP-0011 · conformidad no expresa por operación individual',time:'hace 31min',read:false},
-  {id:6,level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 · $178M · Cliente 2 · pendiente 38min',time:'hace 38min',read:true},
-  {id:7,level:'medium',type:'PENDIENTE',msg:'OP-0015 · $34M · Cliente 5 · sin respuesta 2hs',time:'hace 52min',read:true},
+// ═══════════════════════════════════════════════════════
+// NOTIFICACIONES
+// ═══════════════════════════════════════════════════════
+const notifData = [
+  {id:1,level:'critical',type:'MONTO CRÍTICO',     msg:'OP-0001 · $245M sin confirmación · 47 min transcurridos', time:'hace 2min',  read:false},
+  {id:2,level:'critical',type:'ACUMULACIÓN',        msg:'Manager 139 · score acumulado elevado · umbral superado',  time:'hace 5min',  read:false},
+  {id:3,level:'high',    type:'MAIL PENDIENTE',      msg:'OP-0018 · $42M · 6hs sin enviar mail al cliente',         time:'hace 12min', read:false},
+  {id:4,level:'high',    type:'CIERRE CERCANO',      msg:'8 ops < $100M sin confirmar · cierre en 2hs',             time:'hace 25min', read:false},
+  {id:5,level:'medium',  type:'CONFIRMACIÓN PARCIAL',msg:'OP-0011 · mail enviado pero sin respuesta del cliente',   time:'hace 31min', read:false},
+  {id:6,level:'high',    type:'SIN CONFIRMAR',       msg:'OP-0022 · $178M · Cliente 2 · pendiente 38min',           time:'hace 38min', read:true},
+  {id:7,level:'medium',  type:'PENDIENTE',            msg:'OP-0015 · $34M · Cliente 5 · sin respuesta 2hs',         time:'hace 52min', read:true},
 ];
+
 function toggleNotifPanel(){
-  notifOpen=!notifOpen;
-  document.getElementById('notifPanel').classList.toggle('open',notifOpen);
-  if(notifOpen)renderNotifList();
+  notifOpen = !notifOpen;
+  document.getElementById('notifPanel').classList.toggle('open', notifOpen);
+  if (notifOpen) renderNotifList();
 }
 function switchNotifTab(tab){
-  currentTab=tab;
+  currentNotifTab = tab;
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
   document.getElementById('ntab-'+tab).classList.add('active');
   renderNotifList();
 }
 function renderNotifList(){
-  let items=notifData;
-  if(currentTab==='critical')items=notifData.filter(n=>n.level==='critical');
-  if(currentTab==='unread')items=notifData.filter(n=>!n.read);
-  const unread=notifData.filter(n=>!n.read).length;
-  document.getElementById('notifCount').textContent=unread;
-  document.getElementById('bellBadge').textContent=unread;
-  document.getElementById('notifList').innerHTML=items.length
-    ?items.map(n=>`<div class="notif-item ${n.level} ${n.read?'read':''}" onclick="markNotifRead(${n.id})">
+  let items = notifData;
+  if (currentNotifTab==='critical') items = notifData.filter(n=>n.level==='critical');
+  if (currentNotifTab==='unread')   items = notifData.filter(n=>!n.read);
+  const unread = notifData.filter(n=>!n.read).length;
+  document.getElementById('notifCount').textContent  = unread;
+  document.getElementById('bellBadge').textContent   = unread;
+  document.getElementById('notifList').innerHTML = items.length
+    ? items.map(n=>`<div class="notif-item ${n.level} ${n.read?'read':''}" onclick="markNotifRead(${n.id})">
         ${!n.read?'<div class="notif-unread-dot"></div>':''}
         <div class="notif-type">${n.type}</div>
         <div class="notif-msg">${n.msg}</div>
         <div class="notif-time">${n.time}</div>
       </div>`).join('')
-    :'<div style="padding:20px;text-align:center;font-size:12px;color:var(--text-light)">Sin notificaciones en esta categoría</div>';
+    : '<div style="padding:20px;text-align:center;font-size:12px;color:var(--text-light)">Sin notificaciones</div>';
 }
-function markNotifRead(id){const n=notifData.find(x=>x.id===id);if(n){n.read=true;renderNotifList();}}
-function markAllRead(){notifData.forEach(n=>n.read=true);renderNotifList();}
-document.addEventListener('click',e=>{
-  const panel=document.getElementById('notifPanel');
-  const bell=document.querySelector('.hbtn[onclick*="Notif"]');
-  if(notifOpen&&panel&&!panel.contains(e.target)&&!e.target.closest('.hbtn[onclick*="Notif"]')&&!e.target.closest('[onclick*="toggleNotifPanel"]'))
-    {notifOpen=false;panel.classList.remove('open');}
+function markNotifRead(id){ const n=notifData.find(x=>x.id===id); if(n){n.read=true;renderNotifList();} }
+function markAllRead(){ notifData.forEach(n=>n.read=true); renderNotifList(); }
+
+document.addEventListener('click', e => {
+  if (notifOpen &&
+      !document.getElementById('notifPanel').contains(e.target) &&
+      !e.target.closest('[onclick*="toggleNotifPanel"]')){
+    notifOpen = false;
+    document.getElementById('notifPanel').classList.remove('open');
+  }
 });
 
-// ════════════════════════════════════════
-// CLOCK & LIVE
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// MODAL HELPERS
+// ═══════════════════════════════════════════════════════
+function openModal(){ document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+function closeModalOutside(e){ if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+
+// ═══════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════
+function showToast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;background:${type==='success'?'#059669':'#dc2626'};color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.2)`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2800);
+}
+
+// ═══════════════════════════════════════════════════════
+// RELOJ Y LIVE UPDATE
+// ═══════════════════════════════════════════════════════
 function updateClock(){
-  const now=new Date();
-  document.getElementById('clock').textContent=now.toLocaleTimeString('es-AR',{hour12:false});
-  document.getElementById('lastUpdate').textContent=now.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+now.toLocaleTimeString('es-AR',{hour12:false});
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('es-AR',{hour12:false});
+  document.getElementById('lastUpdate').textContent =
+    now.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' +
+    now.toLocaleTimeString('es-AR',{hour12:false});
 }
+
 function toggleAutoScroll(){
-  autoScrollOn=!autoScrollOn;
-  document.getElementById('autoBtn').classList.toggle('on',autoScrollOn);
-  document.getElementById('autoIcon').textContent=autoScrollOn?'⏸':'▶';
+  autoScrollOn = !autoScrollOn;
+  document.getElementById('autoBtn').classList.toggle('on', autoScrollOn);
+  document.getElementById('autoIcon').textContent = autoScrollOn ? '⏸' : '▶';
 }
+
 function liveUpdate(){
-  if(autoScrollOn&&Math.random()<0.3){
-    const op=generateOp();op.isNew=true;
-    allOps.unshift(op);if(allOps.length>60)allOps.pop();
-    filteredOps=[...allOps];
-    renderTable();updateKPIs();renderProducers();
-    if(prodMetricsOpen)renderProdMetrics();
-    document.querySelector('.live-dot').style.background='#fff';
-    setTimeout(()=>document.querySelector('.live-dot').style.background='#f87171',300);
-  }
+  if (!autoScrollOn || Math.random()>=0.3) return;
+  const op = buildOp();
+  op.isNew = true;
+  allOps.unshift(op);
+  if (allOps.length > 60) allOps.pop();
+  filteredOps = [...allOps];
+  renderTable(); updateKPIs(); renderProducers(); renderGlobalRisk();
+  if (prodMetricsOpen) renderProdMetrics();
+  document.querySelector('.live-dot').style.background = '#fff';
+  setTimeout(()=>document.querySelector('.live-dot').style.background='#f87171', 300);
 }
 
-// ════════════════════════════════════════
-// GMAIL / APPS SCRIPT INTEGRATION
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// GMAIL INTEGRATION (placeholder — completar con tu URL)
+// ═══════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = 'REEMPLAZAR_CON_TU_URL';
+const gmailEnabled = APPS_SCRIPT_URL !== 'REEMPLAZAR_CON_TU_URL';
 
-// ── CONFIGURACIÓN ── Reemplazá con tu URL real del Apps Script ──
-const APPS_SCRIPT_URL = "REEMPLAZAR_CON_TU_URL";
-// Ejemplo: "https://script.google.com/macros/s/AKfycbxXXXXXX/exec"
-// ────────────────────────────────────────────────────────────────
-
-let gmailSyncEnabled = APPS_SCRIPT_URL !== "REEMPLAZAR_CON_TU_URL";
-let lastGmailSync = null;
-let gmailOpsCount = 0;
-
-// Mapeo comitente → Cliente N para anonimizar en el dashboard
-const comitentMap = {};
-let comitentCounter = 1;
-
-function getClienteLabel(comitente, nombre) {
-  const key = comitente || nombre;
-  if (!comitentMap[key]) {
-    comitentMap[key] = `Cliente ${comitentCounter++}`;
-  }
-  return comitentMap[key];
-}
-
-// Convierte una fila del Sheet en una operación del dashboard
-function sheetRowToOp(row) {
-  const clienteLabel = getClienteLabel(row['Comitente'], row['Nombre']);
-
-  // Asegurarse que el productor existe en la lista
-  const producer = row['Manager 139'] || PRODUCERS[0];
-  if (!PRODUCERS.includes(producer) && producer) PRODUCERS.push(producer);
-
-  // Mapear instrumento — si no existe en la lista, agregarlo
-  const instrument = (row['Instrumento'] || '').toUpperCase();
-  if (instrument && !INSTRUMENTS.includes(instrument)) INSTRUMENTS.push(instrument);
-
-  const monto = parseFloat(row['Monto']) || 0;
-  const authorized = isAuth(clienteLabel, producer);
-
-  const op = {
-    id: row['ID'] || `OP-${String(opId++).padStart(4,'0')}`,
-    client: clienteLabel,
-    clienteReal: row['Nombre'] || '',
-    comitente: row['Comitente'] || '',
-    producer: PRODUCERS[0],
-    authorized,
-    instrument: instrument || 'ON',
-    monto,
-    minutesAgo: calcMinutesAgo(row['Fecha'], row['Hora']),
-    status: row['Estado'] || 'pending',
-    score: 0, riskLevel: 'low', scoreBreakdown: [],
-    isNew: true,
-    fromGmail: true,
-    tipoOp: row['Tipo Op'] || '',
-    cantidad: parseFloat(row['Cantidad']) || 0,
-    precio: parseFloat(row['Precio']) || 0,
-    rawText: row['Texto original'] || '',
-  };
-  computeScore(op);
-  op.riskLevel = rl(op.score);
-  return op;
-}
-
-function calcMinutesAgo(fecha, hora) {
+async function fetchFromGmail(){
+  if (!gmailEnabled) return;
   try {
-    const [d, m, y] = (fecha || '').split('/');
-    const dt = new Date(`${y}-${m}-${d}T${hora || '09:00:00'}`);
-    const diff = (Date.now() - dt.getTime()) / 60000;
-    return Math.max(1, Math.round(diff));
-  } catch { return rnd(1, 60); }
-}
-
-// Fetch desde el Apps Script endpoint
-async function fetchFromGmail() {
-  if (!gmailSyncEnabled) return;
-
-  updateGmailStatus('syncing');
-  try {
-    const res = await fetch(APPS_SCRIPT_URL);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res  = await fetch(APPS_SCRIPT_URL);
     const data = await res.json();
-
-    if (data.operaciones && data.operaciones.length > 0) {
-      const existingIds = new Set(allOps.map(o => o.id));
-      let newCount = 0;
-
-      data.operaciones.forEach(row => {
-        if (!existingIds.has(row['ID'])) {
-          const op = sheetRowToOp(row);
-          allOps.unshift(op);
-          newCount++;
+    if (!data.operaciones?.length) return;
+    const existingIds = new Set(allOps.map(o=>o.id));
+    let added = 0;
+    data.operaciones.forEach(row => {
+      if (existingIds.has(row.ID_Operacion)) return;
+      const label = (() => {
+        const key = row.Nro_Comitente || row.Nombre_Comitente;
+        if (!key) return `Cliente ${opId}`;
+        if (!fetchFromGmail._map) fetchFromGmail._map = {};
+        if (!fetchFromGmail._ctr) fetchFromGmail._ctr = CLIENT_NAMES.length+1;
+        if (!fetchFromGmail._map[key]){
+          const lbl = `Cliente ${fetchFromGmail._ctr++}`;
+          fetchFromGmail._map[key] = lbl;
+          if (!CLIENT_NAMES.includes(lbl)) CLIENT_NAMES.push(lbl);
+          AUTHORIZED_MAP[lbl] = [...PRODUCERS];
         }
+        return fetchFromGmail._map[key];
+      })();
+      const op = buildOp({
+        id:            row.ID_Operacion,
+        client:        label,
+        producer:      row.Productor_Detectado || PRODUCERS[0],
+        instrument:    (row.Instrumento||'ON').toUpperCase(),
+        monto:         parseFloat(row.Monto_Estimado)||0,
+        mailStatus:    'sent',
+        confirmStatus: row.Estado_Confirmacion==='Confirmada' ? 'confirmed' : 'pending',
+        minutesAgo:    5
       });
-
-      if (newCount > 0) {
-        gmailOpsCount += newCount;
-        filteredOps = [...allOps];
-        populateFilterSelects();
-        renderTable(); updateKPIs(); renderProducers(); renderCompliance();
-        if (prodMetricsOpen) renderProdMetrics();
-        showToast(`📧 ${newCount} operación${newCount>1?'es':''} importada${newCount>1?'s':''} desde Gmail`, 'success');
-        document.querySelector('.live-dot').style.background = '#fff';
-        setTimeout(() => document.querySelector('.live-dot').style.background = '#f87171', 400);
-      }
-
-      lastGmailSync = new Date();
-      updateGmailStatus('ok', newCount);
-    } else {
-      updateGmailStatus('ok', 0);
+      allOps.unshift(op);
+      added++;
+    });
+    if (added>0){
+      filteredOps=[...allOps];
+      renderTable(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderCompliance();
+      showToast(`📧 ${added} operación(es) importadas desde Gmail`,'success');
     }
-  } catch(err) {
-    console.error('Gmail sync error:', err);
-    updateGmailStatus('error');
-  }
+  } catch(e){ console.error('Gmail sync error:',e); }
 }
 
-function updateGmailStatus(state, count) {
-  const el = document.getElementById('gmailStatus');
-  if (!el) return;
-  const configs = {
-    syncing: { text:'Sincronizando...', color:'rgba(255,255,255,0.5)', dot:'#eab308' },
-    ok:      { text: count > 0 ? `${count} nueva${count>1?'s':''} op.` : 'Sincronizado', color:'rgba(255,255,255,0.5)', dot:'#10b981' },
-    error:   { text:'Error de sync', color:'#fca5a5', dot:'#ef4444' },
-    disabled:{ text:'Gmail: no configurado', color:'rgba(255,255,255,0.3)', dot:'#64748b' },
-  };
-  const cfg = configs[state] || configs.disabled;
-  el.innerHTML = `<span style="width:6px;height:6px;border-radius:50%;background:${cfg.dot};display:inline-block;margin-right:5px"></span><span style="color:${cfg.color};font-size:11px">📧 ${cfg.text}</span>`;
-}
-
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // INIT
-// ════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 seedData();
 populateFilterSelects();
-updateKPIs();renderTable();renderAlerts();renderProducers();renderCompliance();updateClock();
+updateKPIs();
+renderTable();
+renderProducers();
+renderGlobalRisk();
+renderCompliance();
+updateClock();
 renderRiskEvo();
 setTimeout(renderRiskEvo, 200);
-window.addEventListener('resize',renderRiskEvo);
+window.addEventListener('resize', renderRiskEvo);
 
-// Inicializar estado Gmail en el header
-const gmailStatusEl = document.createElement('div');
-gmailStatusEl.id = 'gmailStatus';
-gmailStatusEl.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;';
-gmailStatusEl.title = 'Sincronización con Gmail';
-gmailStatusEl.onclick = () => { if(gmailSyncEnabled) fetchFromGmail(); };
-document.querySelector('.header-center').appendChild(gmailStatusEl);
+// Estado Gmail en header
+const gmailEl = document.createElement('div');
+gmailEl.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;';
+gmailEl.title = 'Sincronizar con Gmail';
+gmailEl.innerHTML = `<span style="width:6px;height:6px;border-radius:50%;background:${gmailEnabled?'#10b981':'#64748b'};display:inline-block"></span><span style="color:rgba(255,255,255,0.45)">${gmailEnabled?'Gmail activo':'Gmail: no configurado'}</span>`;
+gmailEl.onclick = () => { if(gmailEnabled) fetchFromGmail(); };
+document.querySelector('.header-center').appendChild(gmailEl);
 
-if (gmailSyncEnabled) {
-  updateGmailStatus('syncing');
-  fetchFromGmail();
-  setInterval(fetchFromGmail, 5 * 60 * 1000); // cada 5 minutos
-} else {
-  updateGmailStatus('disabled');
-}
-
+if (gmailEnabled){ fetchFromGmail(); setInterval(fetchFromGmail, 5*60*1000); }
 setInterval(updateClock, 1000);
 setInterval(liveUpdate, 3500);
 </script>
