@@ -8,48 +8,52 @@
 <style>
 /* ── LIGHT THEME ── */
 :root {
-  --navy: #0d1b3e;
-  --blue: #1e5bc6;
-  --blue-light: #3b82f6;
-  --blue-pale: #eff6ff;
-  --bg: #f4f6fb;
-  --bg2: #eef1f8;
+  --veta-blue: #1a1fe8;
+  --veta-blue-dark: #1318c0;
+  --veta-blue-light: #4a4fff;
+  --veta-green: #22c55e;
+  --navy: #1a1fe8;
+  --blue: #1a1fe8;
+  --blue-light: #4a4fff;
+  --blue-pale: #eef0ff;
+  --bg: #f5f6ff;
+  --bg2: #eaebff;
   --white: #ffffff;
-  --border: #e2e8f0;
-  --border-dark: #cbd5e1;
-  --text: #0f172a;
-  --text-mid: #334155;
-  --text-muted: #64748b;
-  --text-light: #94a3b8;
+  --border: #e0e2f5;
+  --border-dark: #c7caee;
+  --text: #0a0b2e;
+  --text-mid: #1e2260;
+  --text-muted: #5c60a0;
+  --text-light: #9498c8;
   --card-bg: #ffffff;
   --sidebar-bg: #ffffff;
-  --input-bg: #f4f6fb;
+  --input-bg: #f5f6ff;
   --red: #dc2626; --red-bg: #fef2f2; --red-border: #fecaca;
   --orange: #d97706; --orange-bg: #fffbeb; --orange-border: #fde68a;
   --green: #059669; --green-bg: #f0fdf4; --green-border: #bbf7d0;
   --yellow: #b45309; --yellow-bg: #fefce8;
   --purple: #7c3aed; --purple-bg: #f5f3ff;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-  --shadow: 0 4px 12px rgba(0,0,0,0.08);
-  --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+  --shadow-sm: 0 1px 3px rgba(26,31,232,0.07);
+  --shadow: 0 4px 12px rgba(26,31,232,0.1);
+  --shadow-lg: 0 10px 30px rgba(26,31,232,0.15);
   --radius: 10px; --radius-sm: 6px;
   --font: 'DM Sans', sans-serif;
 }
 /* ── DARK THEME ── */
 [data-theme="dark"] {
-  --bg: #0f1117;
-  --bg2: #1a1d27;
-  --white: #1e2130;
-  --border: #2d3348;
-  --border-dark: #3d4460;
-  --text: #e8ecf4;
-  --text-mid: #b0b8d0;
-  --text-muted: #7480a0;
-  --text-light: #4a5470;
-  --card-bg: #1e2130;
-  --sidebar-bg: #181c2a;
-  --input-bg: #0f1117;
-  --blue-pale: #1a2540;
+  --bg: #07081a;
+  --bg2: #0d0f2e;
+  --white: #10133a;
+  --border: #1e2260;
+  --border-dark: #2a2f80;
+  --text: #e8eaff;
+  --text-mid: #a8acde;
+  --text-muted: #6870b0;
+  --text-light: #3a4080;
+  --card-bg: #10133a;
+  --sidebar-bg: #0d0f2e;
+  --input-bg: #07081a;
+  --blue-pale: #0f1255;
   --red-bg: #2a1010; --red-border: #5a1a1a;
   --orange-bg: #261a08; --orange-border: #5a3a08;
   --green-bg: #0a2010; --green-border: #1a4a1a;
@@ -60,7 +64,7 @@
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh;transition:background 0.3s,color 0.3s}
 
 /* ── HEADER ── */
-.header{background:var(--navy);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,0.3)}
+.header{background:#1a1fe8;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(26,31,232,0.35)}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-icon{width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:16px solid var(--blue-light);flex-shrink:0}
 .logo-name{font-size:16px;font-weight:700;color:#fff}
@@ -94,7 +98,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .sidebar::-webkit-scrollbar-thumb{background:var(--border-dark);border-radius:2px}
 .sidebar-logo-block{padding:16px;border-bottom:1px solid var(--border)}
 .sidebar-brand{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
-.risk-score-block{display:flex;align-items:center;gap:12px;background:var(--navy);border-radius:var(--radius-sm);padding:12px}
+.risk-score-block{display:flex;align-items:center;gap:12px;background:#1a1fe8;border-radius:var(--radius-sm);padding:12px}
 .risk-gauge-wrap{position:relative;flex-shrink:0}
 .risk-num-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
 .risk-num{font-size:17px;font-weight:700;color:#fff;line-height:1}
@@ -107,10 +111,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .filter-group{margin-bottom:8px}
 .filter-label{font-size:11px;font-weight:500;color:var(--text-muted);margin-bottom:3px}
 .filter-select{width:100%;background:var(--input-bg);border:1px solid var(--border-dark);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:12px;padding:7px 10px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:border-color 0.15s}
-.filter-select:focus{border-color:var(--blue)}
+.filter-select:focus{border-color:#1a1fe8}
 .producer-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s;margin-bottom:2px}
 .producer-item:hover{background:var(--bg)}
-.p-avatar{width:28px;height:28px;border-radius:7px;background:var(--navy);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.p-avatar{width:28px;height:28px;border-radius:7px;background:#1a1fe8;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .p-name{font-size:12px;font-weight:600;color:var(--text)}
 .p-ops{font-size:10px;color:var(--text-muted)}
 .p-risk-badge{margin-left:auto;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;flex-shrink:0}
@@ -121,7 +125,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .content::-webkit-scrollbar-thumb{background:var(--border-dark);border-radius:2px}
 .section-header{display:flex;align-items:center;justify-content:space-between}
 .section-title{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:7px}
-.section-title::before{content:'';display:block;width:3px;height:14px;background:var(--blue);border-radius:2px}
+.section-title::before{content:'';display:block;width:3px;height:14px;background:#22c55e;border-radius:2px}
 
 /* ── KPI ── */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -144,7 +148,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .kpi-card.caution .kpi-value{color:var(--yellow)}
 .kpi-card.success .kpi-value{color:var(--green)}
 .kpi-sub{font-size:10px;color:var(--text-light)}
-.kpi-cta{margin-top:6px;font-size:10px;color:var(--blue);font-weight:600;opacity:0;transition:opacity 0.15s}
+.kpi-cta{margin-top:6px;font-size:10px;color:#1a1fe8;font-weight:600;opacity:0;transition:opacity 0.15s}
 .kpi-card:hover .kpi-cta{opacity:1}
 
 /* ── MID GRID ── */
@@ -165,7 +169,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .ops-table td{padding:9px 13px;font-size:12px;color:var(--text-mid);white-space:nowrap}
 .op-id{font-size:10px;color:var(--text-light);font-weight:500}
 .edit-btn{font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;border:1px solid var(--border-dark);background:var(--bg);color:var(--text-muted);cursor:pointer;font-family:var(--font);transition:all 0.15s;white-space:nowrap}
-.edit-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-pale)}
+.edit-btn:hover{border-color:#1a1fe8;color:#1a1fe8;background:var(--blue-pale)}
 
 /* ── PILLS ── */
 .pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
@@ -189,7 +193,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .pill-mail-pending{background:#fefce8;color:#b45309;border:1px solid #fde68a}
 .pill-mail-pending .pill-dot{background:#eab308;animation:blink 1.5s infinite}
 .pill-conf-ok{background:#eff6ff;color:#1e5bc6;border:1px solid #bfdbfe}
-.pill-conf-ok .pill-dot{background:#1e5bc6}
+.pill-conf-ok .pill-dot{background:#1a1fe8}
 .pill-conf-pending{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
 .pill-conf-pending .pill-dot{background:#dc2626;animation:blink 1s infinite}
 .rbadge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px}
@@ -204,11 +208,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 
 /* ── TABLE CONTROLS ── */
 .tbl-btn{font-size:10px;font-weight:600;padding:5px 11px;border-radius:20px;cursor:pointer;border:1px solid var(--border-dark);background:transparent;color:var(--text-muted);transition:all 0.15s;font-family:var(--font)}
-.tbl-btn:hover{border-color:var(--blue);color:var(--blue)}
-.tbl-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tbl-btn:hover{border-color:#1a1fe8;color:#1a1fe8}
+.tbl-btn.active{background:#1a1fe8;color:#fff;border-color:#1a1fe8}
 .tbl-btn.danger.active{background:var(--red);border-color:var(--red);color:#fff}
 .auto-btn{font-size:10px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border-dark);background:var(--bg);color:var(--text-muted);display:flex;align-items:center;gap:5px;font-family:var(--font);transition:all 0.15s}
-.auto-btn.on{background:var(--blue-pale);border-color:var(--blue-light);color:var(--blue)}
+.auto-btn.on{background:var(--blue-pale);border-color:var(--blue-light);color:#1a1fe8}
 
 /* ── ALERTS ── */
 .alerts-list{overflow-y:auto;max-height:350px;padding:8px;display:flex;flex-direction:column;gap:6px}
@@ -254,7 +258,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .prod-metrics-body{padding:20px}
 .prod-selector-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
 .prod-selector-btn{font-size:12px;font-weight:600;padding:7px 16px;border-radius:20px;cursor:pointer;border:1px solid var(--border-dark);background:var(--bg);color:var(--text-muted);transition:all 0.15s;font-family:var(--font)}
-.prod-selector-btn:hover{border-color:var(--blue);color:var(--blue)}
+.prod-selector-btn:hover{border-color:#1a1fe8;color:#1a1fe8}
 .prod-selector-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
 .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .metric-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px}
@@ -270,7 +274,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .prod-mini-table tr:last-child td{border:none}
 .prod-mini-table tr:hover td{background:var(--blue-pale)}
 .prod-bar-mini-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;min-width:50px}
-.prod-bar-mini{height:100%;border-radius:3px;background:var(--blue)}
+.prod-bar-mini{height:100%;border-radius:3px;background:#1a1fe8}
 
 /* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.55);z-index:400;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;backdrop-filter:blur(2px)}
@@ -292,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .score-pts{font-weight:700}
 .score-total{display:flex;justify-content:space-between;padding-top:9px;font-weight:700;font-size:14px;color:var(--text)}
 .rec-box{background:var(--blue-pale);border:1px solid #bfdbfe;border-radius:var(--radius);padding:12px 14px;margin-bottom:14px}
-.rec-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:5px}
+.rec-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1a1fe8;margin-bottom:5px}
 .rec-text{font-size:12px;color:var(--text-mid);line-height:1.6}
 
 /* ── EDIT FORM ── */
@@ -301,7 +305,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .form-group.full{grid-column:1/-1}
 .form-label{font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}
 .form-input,.form-select{background:var(--input-bg);border:1px solid var(--border-dark);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 10px;outline:none;transition:border-color 0.15s;width:100%}
-.form-input:focus,.form-select:focus{border-color:var(--blue)}
+.form-input:focus,.form-select:focus{border-color:#1a1fe8}
 .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
 .btn-primary{background:var(--blue);color:#fff;border:none;border-radius:var(--radius-sm);padding:9px 20px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s}
 .btn-primary:hover{background:#1a50b0}
@@ -323,7 +327,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .notif-tabs{display:flex;border-bottom:1px solid var(--border)}
 .ntab{flex:1;padding:8px;text-align:center;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s}
 .ntab:hover{color:var(--text)}
-.ntab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.ntab.active{color:#1a1fe8;border-bottom-color:#22c55e}
 .notif-list{max-height:360px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:5px}
 .notif-item{padding:9px 11px;border-radius:var(--radius-sm);border-left:3px solid;cursor:pointer;position:relative;transition:opacity 0.2s}
 .notif-item.read{opacity:0.45}
@@ -338,7 +342,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .notif-time{font-size:10px;color:var(--text-light)}
 .notif-unread-dot{position:absolute;top:10px;right:10px;width:7px;height:7px;background:var(--blue);border-radius:50%}
 .notif-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
-.notif-foot-btn{font-size:11px;font-weight:600;color:var(--blue);cursor:pointer;background:none;border:none;font-family:var(--font)}
+.notif-foot-btn{font-size:11px;font-weight:600;color:#1a1fe8;cursor:pointer;background:none;border:none;font-family:var(--font)}
 .notif-foot-close{font-size:11px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:var(--font)}
 
 /* ── DARK TOGGLE ── */
@@ -352,10 +356,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 <!-- HEADER -->
 <header class="header">
   <div class="logo">
-    <div class="logo-icon"></div>
-    <span class="logo-name">CENTINELA</span>
+    <!-- Logo estilo VetaCap con nombre CENTINELA -->
+    <div style="display:flex;align-items:center;gap:0">
+      <span style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.5px;font-family:'DM Sans',sans-serif">Cen</span>
+      <div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:13px solid #22c55e;margin:0 1px;transform:translateY(-1px)"></div>
+      <span style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.5px;font-family:'DM Sans',sans-serif">tinela</span>
+    </div>
     <div class="logo-sep"></div>
-    <span class="logo-sub">Monitor de Riesgo Operativo</span>
+    <span class="logo-sub">Monitor de Riesgo Operativo · VetaCap</span>
   </div>
   <div class="header-center">
     <div class="live-pill"><div class="live-dot"></div>EN VIVO</div>
@@ -371,20 +379,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
   </div>
 </header>
 
-<!-- ALERT BAR -->
+<!-- ALERT BAR — contenido generado dinámicamente desde ops reales -->
 <div class="alert-bar">
   <div class="alert-bar-label">⚡ ALERTAS</div>
   <div class="ticker-wrap">
-    <div class="ticker-content" id="tickerContent">
-      <div class="ticker-item"><div class="ticker-dot"></div>CRÍTICO · OP-0023 · Manager 139 · $245M sin confirmar · 47min transcurridos</div>
-      <div class="ticker-item"><div class="ticker-dot"></div>SLA VENCIDO · OP-0018 · $42M · 6hs sin confirmación del cliente</div>
-      <div class="ticker-item"><div class="ticker-dot"></div>ACUMULACIÓN · Manager 139 · Score de riesgo: 320 puntos · umbral superado</div>
-      <div class="ticker-item"><div class="ticker-dot"></div>CIERRE HOY · 8 operaciones pendientes de resumen diario · vencen a las 18hs</div>
-      <div class="ticker-item"><div class="ticker-dot"></div>CRÍTICO · OP-0023 · Manager 139 · $245M sin confirmar · 47min transcurridos</div>
-      <div class="ticker-item"><div class="ticker-dot"></div>SLA VENCIDO · OP-0018 · $42M · 6hs sin confirmación del cliente</div>
-      <div class="ticker-item"><div class="ticker-dot"></div>ACUMULACIÓN · Manager 139 · Score de riesgo: 320 puntos · umbral superado</div>
-      <div class="ticker-item"><div class="ticker-dot"></div>CIERRE HOY · 8 operaciones pendientes de resumen diario · vencen a las 18hs</div>
-    </div>
+    <div class="ticker-content" id="tickerContent"></div>
   </div>
 </div>
 
@@ -807,8 +806,8 @@ function renderTable(){
     <tr class="${op.isNew?'is-new':''}" onclick="showOpDetail('${op.id}')">
       <td class="op-id">${op.id}</td>
       <td style="font-size:11px">${op.client}</td>
-      <td style="font-size:12px;color:var(--navy);font-weight:500">${op.producer}</td>
-      <td style="font-size:11px;font-weight:600;color:var(--blue)">${op.instrument}</td>
+      <td style="font-size:12px;color:#1a1fe8;font-weight:500">${op.producer}</td>
+      <td style="font-size:11px;font-weight:600;color:#1a1fe8">${op.instrument}</td>
       <td style="font-variant-numeric:tabular-nums;font-weight:600" class="${op.monto>100_000_000?'amount-big':''}">${fmt(op.monto)}</td>
       <td>${mailPill(op)}</td>
       <td>${confirmPill(op)}</td>
@@ -921,7 +920,7 @@ function renderProducers(){
   // Sidebar ranking
   document.getElementById('producerList').innerHTML = data.map((p,i) => `
     <div class="producer-item" onclick="document.getElementById('filterProducer').value='${p.name}';applyFilters()">
-      <div style="width:18px;height:18px;border-radius:50%;background:var(--navy);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>
+      <div style="width:18px;height:18px;border-radius:50%;background:#1a1fe8;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>
       <div class="p-avatar">${p.name.charAt(0)}</div>
       <div style="flex:1;min-width:0">
         <div class="p-name">${p.name}</div>
@@ -1043,7 +1042,7 @@ function showOpDetail(id){
       <div><div class="detail-key">Cliente</div><div class="detail-val">${op.client}</div></div>
       <div><div class="detail-key">Productor</div><div class="detail-val">${op.producer}</div></div>
       <div><div class="detail-key">Monto</div><div class="detail-val" style="color:${op.monto>100_000_000?'var(--red)':'var(--text)'}">${fmt(op.monto)}</div></div>
-      <div><div class="detail-key">Instrumento</div><div class="detail-val" style="color:var(--blue)">${op.instrument}</div></div>
+      <div><div class="detail-key">Instrumento</div><div class="detail-val" style="color:#1a1fe8">${op.instrument}</div></div>
       <div><div class="detail-key">Mail conformidad</div><div class="detail-val">${mailPill(op)}</div></div>
       <div><div class="detail-key">Confirmación cliente</div><div class="detail-val">${confirmPill(op)}</div></div>
       <div><div class="detail-key">Tiempo</div><div class="detail-val">${fmtT(op.minutesAgo)}</div></div>
@@ -1392,7 +1391,7 @@ function renderProdMetrics(){
           <tbody>
             <tr><td>✉️ Mail enviado</td><td><strong>${mailSent}</strong></td><td>${Math.round(mailSent/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round(mailSent/n*100)}%;background:#059669"></div></div></td></tr>
             <tr><td>📭 Mail pendiente</td><td><strong>${n-mailSent}</strong></td><td>${Math.round((n-mailSent)/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round((n-mailSent)/n*100)}%;background:#eab308"></div></div></td></tr>
-            <tr><td>✅ Confirmada</td><td><strong>${confOk}</strong></td><td>${Math.round(confOk/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round(confOk/n*100)}%;background:#1e5bc6"></div></div></td></tr>
+            <tr><td>✅ Confirmada</td><td><strong>${confOk}</strong></td><td>${Math.round(confOk/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round(confOk/n*100)}%;background:#1a1fe8"></div></div></td></tr>
             <tr><td>⏳ Pend. confirm.</td><td><strong>${n-confOk}</strong></td><td>${Math.round((n-confOk)/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round((n-confOk)/n*100)}%;background:#dc2626"></div></div></td></tr>
           </tbody>
         </table>
@@ -1471,8 +1470,52 @@ function showToast(msg, type='success'){
 }
 
 // ═══════════════════════════════════════════════════════
-// RELOJ Y LIVE UPDATE
+// TICKER — generado desde ops reales
 // ═══════════════════════════════════════════════════════
+function renderTicker(){
+  const ticker = document.getElementById('tickerContent');
+  if (!ticker) return;
+
+  // Construir items desde ops reales con riesgo
+  const items = [];
+
+  // Ops críticas (>100M sin confirmar)
+  const criticas = allOps.filter(o => o.riskLevel === 'critical' && o.authorized && o.monto > 100_000_000);
+  criticas.slice(0,3).forEach(o => {
+    items.push(`CRÍTICO · ${o.id} · ${o.producer} · ${o.client} · ${fmt(o.monto)} sin confirmar`);
+  });
+
+  // Ops sin mail enviado
+  const sinMail = allOps.filter(o => o.authorized && o.mailStatus !== 'sent' && o.confirmStatus !== 'confirmed');
+  if (sinMail.length > 0) {
+    items.push(`MAIL PENDIENTE · ${sinMail.length} operación${sinMail.length>1?'es':''} sin conformidad enviada`);
+  }
+
+  // Score acumulado por productor
+  PRODUCERS.forEach(name => {
+    const score = producerScore(name);
+    if (score <= -3) {
+      items.push(`ACUMULACIÓN · ${name} · Score: ${score} pts · ${Math.abs(score)} ops pendientes`);
+    }
+  });
+
+  // Ops >50M sin confirmar (alto riesgo)
+  const altas = allOps.filter(o => o.riskLevel === 'high' && o.authorized);
+  if (altas.length > 0) {
+    items.push(`ALTO RIESGO · ${altas.length} operación${altas.length>1?'es':''} entre $50M y $100M sin confirmar`);
+  }
+
+  // Si no hay alertas reales
+  if (items.length === 0) {
+    items.push('✅ Sin alertas activas — todas las operaciones están confirmadas');
+  }
+
+  // Duplicar para loop continuo sin cortes
+  const all = [...items, ...items];
+  ticker.innerHTML = all.map(msg =>
+    `<div class="ticker-item"><div class="ticker-dot"></div>${msg}</div>`
+  ).join('');
+}
 function updateClock(){
   const now = new Date();
   document.getElementById('clock').textContent = now.toLocaleTimeString('es-AR',{hour12:false});
@@ -1494,7 +1537,7 @@ function liveUpdate(){
   allOps.unshift(op);
   if (allOps.length > 60) allOps.pop();
   filteredOps = [...allOps];
-  renderTable(); updateKPIs(); renderProducers(); renderGlobalRisk();
+  renderTable(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderTicker();
   if (prodMetricsOpen) renderProdMetrics();
   document.querySelector('.live-dot').style.background = '#fff';
   setTimeout(()=>document.querySelector('.live-dot').style.background='#f87171', 300);
@@ -1560,6 +1603,7 @@ renderTable();
 renderProducers();
 renderGlobalRisk();
 renderCompliance();
+renderTicker();
 updateClock();
 renderRiskEvo();
 setTimeout(renderRiskEvo, 200);
