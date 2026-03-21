@@ -1,70 +1,79 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CENTINELA — Monitor de Riesgo Operativo</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ── LIGHT THEME ── */
+/* ── VETACAP NEGATIVO — TEMA BASE ── */
 :root {
-  --veta-blue: #1a1fe8;
-  --veta-blue-dark: #1318c0;
-  --veta-blue-light: #4a4fff;
-  --veta-green: #22c55e;
-  --navy: #1a1fe8;
-  --blue: #1a1fe8;
-  --blue-light: #4a4fff;
-  --blue-pale: #eef0ff;
-  --bg: #f5f6ff;
-  --bg2: #eaebff;
-  --white: #ffffff;
-  --border: #e0e2f5;
-  --border-dark: #c7caee;
-  --text: #0a0b2e;
-  --text-mid: #1e2260;
-  --text-muted: #5c60a0;
-  --text-light: #9498c8;
-  --card-bg: #ffffff;
-  --sidebar-bg: #ffffff;
-  --input-bg: #f5f6ff;
-  --red: #dc2626; --red-bg: #fef2f2; --red-border: #fecaca;
-  --orange: #d97706; --orange-bg: #fffbeb; --orange-border: #fde68a;
-  --green: #059669; --green-bg: #f0fdf4; --green-border: #bbf7d0;
-  --yellow: #b45309; --yellow-bg: #fefce8;
-  --purple: #7c3aed; --purple-bg: #f5f3ff;
-  --shadow-sm: 0 1px 3px rgba(26,31,232,0.07);
-  --shadow: 0 4px 12px rgba(26,31,232,0.1);
-  --shadow-lg: 0 10px 30px rgba(26,31,232,0.15);
+  --veta-black: #0a0a0a;
+  --veta-surface: #111111;
+  --veta-surface2: #1a1a1a;
+  --veta-surface3: #222222;
+  --veta-green: #1ddb3a;
+  --veta-green-dim: rgba(29,219,58,0.12);
+  --veta-green-border: rgba(29,219,58,0.25);
+  --navy: #111111;
+  --blue: #1ddb3a;
+  --blue-light: #1ddb3a;
+  --blue-pale: rgba(29,219,58,0.08);
+  --bg: #0a0a0a;
+  --bg2: #111111;
+  --white: #111111;
+  --border: #242424;
+  --border-dark: #333333;
+  --text: #ffffff;
+  --text-mid: #d0d0d0;
+  --text-muted: #888888;
+  --text-light: #555555;
+  --card-bg: #111111;
+  --sidebar-bg: #0d0d0d;
+  --input-bg: #1a1a1a;
+  --red: #ef4444; --red-bg: #1a0808; --red-border: #5a1a1a;
+  --orange: #f97316; --orange-bg: #1a0e04; --orange-border: #5a3208;
+  --green: #1ddb3a; --green-bg: rgba(29,219,58,0.1); --green-border: rgba(29,219,58,0.3);
+  --yellow: #eab308; --yellow-bg: #1a1504;
+  --purple: #a855f7; --purple-bg: #160d24;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow: 0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.6);
   --radius: 10px; --radius-sm: 6px;
   --font: 'DM Sans', sans-serif;
 }
-/* ── DARK THEME ── */
-[data-theme="dark"] {
-  --bg: #07081a;
-  --bg2: #0d0f2e;
-  --white: #10133a;
-  --border: #1e2260;
-  --border-dark: #2a2f80;
-  --text: #e8eaff;
-  --text-mid: #a8acde;
-  --text-muted: #6870b0;
-  --text-light: #3a4080;
-  --card-bg: #10133a;
-  --sidebar-bg: #0d0f2e;
-  --input-bg: #07081a;
-  --blue-pale: #0f1255;
-  --red-bg: #2a1010; --red-border: #5a1a1a;
-  --orange-bg: #261a08; --orange-border: #5a3a08;
-  --green-bg: #0a2010; --green-border: #1a4a1a;
-  --yellow-bg: #221608;
-  --purple-bg: #1a1030;
+/* ── MODO CLARO (toggle) ── */
+[data-theme="light"] {
+  --veta-black: #f8f8f8;
+  --veta-surface: #ffffff;
+  --veta-surface2: #f0f0f0;
+  --bg: #f4f4f4;
+  --bg2: #ebebeb;
+  --white: #ffffff;
+  --border: #e0e0e0;
+  --border-dark: #cccccc;
+  --text: #111111;
+  --text-mid: #333333;
+  --text-muted: #666666;
+  --text-light: #999999;
+  --card-bg: #ffffff;
+  --sidebar-bg: #fafafa;
+  --input-bg: #f4f4f4;
+  --blue-pale: rgba(29,219,58,0.06);
+  --red-bg: #fef2f2; --red-border: #fecaca;
+  --orange-bg: #fffbeb; --orange-border: #fde68a;
+  --green-bg: #f0fdf4; --green-border: #bbf7d0;
+  --yellow-bg: #fefce8;
+  --purple-bg: #f5f3ff;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.14);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh;transition:background 0.3s,color 0.3s}
 
 /* ── HEADER ── */
-.header{background:#1a1fe8;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(26,31,232,0.35)}
+.header{background:#0a0a0a;border-bottom:2px solid #1ddb3a;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 20px rgba(0,0,0,0.8)}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-icon{width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:16px solid var(--blue-light);flex-shrink:0}
 .logo-name{font-size:16px;font-weight:700;color:#fff}
@@ -98,23 +107,23 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .sidebar::-webkit-scrollbar-thumb{background:var(--border-dark);border-radius:2px}
 .sidebar-logo-block{padding:16px;border-bottom:1px solid var(--border)}
 .sidebar-brand{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
-.risk-score-block{display:flex;align-items:center;gap:12px;background:#1a1fe8;border-radius:var(--radius-sm);padding:12px}
+.risk-score-block{display:flex;align-items:center;gap:12px;background:#1a1a1a;border:1px solid #1ddb3a;border-radius:var(--radius-sm);padding:12px}
 .risk-gauge-wrap{position:relative;flex-shrink:0}
 .risk-num-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
-.risk-num{font-size:17px;font-weight:700;color:#fff;line-height:1}
+.risk-num{font-size:17px;font-weight:700;color:#1ddb3a;line-height:1}
 .risk-num-sub{font-size:9px;color:rgba(255,255,255,0.4)}
 .risk-info-label{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-bottom:2px}
-.risk-info-band{font-size:13px;font-weight:700;color:#fca5a5}
-.risk-info-desc{font-size:10px;color:rgba(255,255,255,0.3);margin-top:3px;line-height:1.3}
+.risk-info-band{font-size:13px;font-weight:700;color:#ffffff}
+.risk-info-desc{font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px;line-height:1.3}
 .sidebar-section{padding:14px 16px;border-bottom:1px solid var(--border)}
 .sidebar-section-title{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
 .filter-group{margin-bottom:8px}
 .filter-label{font-size:11px;font-weight:500;color:var(--text-muted);margin-bottom:3px}
 .filter-select{width:100%;background:var(--input-bg);border:1px solid var(--border-dark);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:12px;padding:7px 10px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:border-color 0.15s}
-.filter-select:focus{border-color:#1a1fe8}
+.filter-select:focus{border-color:#1ddb3a}
 .producer-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s;margin-bottom:2px}
 .producer-item:hover{background:var(--bg)}
-.p-avatar{width:28px;height:28px;border-radius:7px;background:#1a1fe8;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.p-avatar{width:28px;height:28px;border-radius:7px;background:#1ddb3a;color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .p-name{font-size:12px;font-weight:600;color:var(--text)}
 .p-ops{font-size:10px;color:var(--text-muted)}
 .p-risk-badge{margin-left:auto;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;flex-shrink:0}
@@ -125,7 +134,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .content::-webkit-scrollbar-thumb{background:var(--border-dark);border-radius:2px}
 .section-header{display:flex;align-items:center;justify-content:space-between}
 .section-title{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:7px}
-.section-title::before{content:'';display:block;width:3px;height:14px;background:#22c55e;border-radius:2px}
+.section-title::before{content:'';display:block;width:3px;height:14px;background:#1ddb3a;border-radius:2px}
 
 /* ── KPI ── */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -148,7 +157,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .kpi-card.caution .kpi-value{color:var(--yellow)}
 .kpi-card.success .kpi-value{color:var(--green)}
 .kpi-sub{font-size:10px;color:var(--text-light)}
-.kpi-cta{margin-top:6px;font-size:10px;color:#1a1fe8;font-weight:600;opacity:0;transition:opacity 0.15s}
+.kpi-cta{margin-top:6px;font-size:10px;color:#1ddb3a;font-weight:600;opacity:0;transition:opacity 0.15s}
 .kpi-card:hover .kpi-cta{opacity:1}
 
 /* ── MID GRID ── */
@@ -169,10 +178,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .ops-table td{padding:9px 13px;font-size:12px;color:var(--text-mid);white-space:nowrap}
 .op-id{font-size:10px;color:var(--text-light);font-weight:500}
 .edit-btn{font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;border:1px solid var(--border-dark);background:var(--bg);color:var(--text-muted);cursor:pointer;font-family:var(--font);transition:all 0.15s;white-space:nowrap}
-.edit-btn:hover{border-color:#1a1fe8;color:#1a1fe8;background:var(--blue-pale)}
+.edit-btn:hover{border-color:#1ddb3a;color:#1ddb3a;background:var(--green-bg)}
 
 /* ── PILLS ── */
-.pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:500;padding:3px 9px;border-radius:20px;white-space:nowrap;letter-spacing:0.2px}
 .pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .pill-confirmed{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
 .pill-confirmed .pill-dot{background:var(--green)}
@@ -187,15 +196,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .pill-observed{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)}
 .pill-observed .pill-dot{background:var(--orange)}
 
-/* Mail / Confirmación pills */
-.pill-mail-sent{background:#f0fdf4;color:#059669;border:1px solid #bbf7d0}
-.pill-mail-sent .pill-dot{background:#059669}
-.pill-mail-pending{background:#fefce8;color:#b45309;border:1px solid #fde68a}
-.pill-mail-pending .pill-dot{background:#eab308;animation:blink 1.5s infinite}
-.pill-conf-ok{background:#eff6ff;color:#1e5bc6;border:1px solid #bfdbfe}
-.pill-conf-ok .pill-dot{background:#1a1fe8}
-.pill-conf-pending{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
-.pill-conf-pending .pill-dot{background:#dc2626;animation:blink 1s infinite}
+/* Mail / Confirmación pills — minimalistas, sin fondo */
+.pill-mail-sent{background:transparent;color:#1ddb3a;border:1px solid rgba(29,219,58,0.3);font-weight:600}
+.pill-mail-sent .pill-dot{background:#1ddb3a}
+.pill-mail-pending{background:transparent;color:#ef4444;border:1px solid rgba(239,68,68,0.35);font-weight:600}
+.pill-mail-pending .pill-dot{background:#ef4444;animation:blink 1.5s infinite}
+.pill-conf-ok{background:transparent;color:#1ddb3a;border:1px solid rgba(29,219,58,0.3);font-weight:600}
+.pill-conf-ok .pill-dot{background:#1ddb3a}
+.pill-conf-pending{background:transparent;color:#ef4444;border:1px solid rgba(239,68,68,0.35);font-weight:600}
+.pill-conf-pending .pill-dot{background:#ef4444;animation:blink 1.2s infinite}
 .rbadge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px}
 .rbadge-low{background:var(--green-bg);color:var(--green)}
 .rbadge-medium{background:var(--yellow-bg);color:var(--yellow)}
@@ -208,11 +217,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 
 /* ── TABLE CONTROLS ── */
 .tbl-btn{font-size:10px;font-weight:600;padding:5px 11px;border-radius:20px;cursor:pointer;border:1px solid var(--border-dark);background:transparent;color:var(--text-muted);transition:all 0.15s;font-family:var(--font)}
-.tbl-btn:hover{border-color:#1a1fe8;color:#1a1fe8}
-.tbl-btn.active{background:#1a1fe8;color:#fff;border-color:#1a1fe8}
+.tbl-btn:hover{border-color:#1ddb3a;color:#1ddb3a}
+.tbl-btn.active{background:#1ddb3a;color:#000;border-color:#1ddb3a}
 .tbl-btn.danger.active{background:var(--red);border-color:var(--red);color:#fff}
 .auto-btn{font-size:10px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border-dark);background:var(--bg);color:var(--text-muted);display:flex;align-items:center;gap:5px;font-family:var(--font);transition:all 0.15s}
-.auto-btn.on{background:var(--blue-pale);border-color:var(--blue-light);color:#1a1fe8}
+.auto-btn.on{background:var(--blue-pale);border-color:var(--blue-light);color:#1ddb3a}
 
 /* ── ALERTS ── */
 .alerts-list{overflow-y:auto;max-height:350px;padding:8px;display:flex;flex-direction:column;gap:6px}
@@ -258,7 +267,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .prod-metrics-body{padding:20px}
 .prod-selector-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
 .prod-selector-btn{font-size:12px;font-weight:600;padding:7px 16px;border-radius:20px;cursor:pointer;border:1px solid var(--border-dark);background:var(--bg);color:var(--text-muted);transition:all 0.15s;font-family:var(--font)}
-.prod-selector-btn:hover{border-color:#1a1fe8;color:#1a1fe8}
+.prod-selector-btn:hover{border-color:#1ddb3a;color:#1ddb3a}
 .prod-selector-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
 .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .metric-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px}
@@ -274,7 +283,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .prod-mini-table tr:last-child td{border:none}
 .prod-mini-table tr:hover td{background:var(--blue-pale)}
 .prod-bar-mini-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;min-width:50px}
-.prod-bar-mini{height:100%;border-radius:3px;background:#1a1fe8}
+.prod-bar-mini{height:100%;border-radius:3px;background:#1ddb3a}
 
 /* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.55);z-index:400;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;backdrop-filter:blur(2px)}
@@ -295,8 +304,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .score-row:last-child{border:none}
 .score-pts{font-weight:700}
 .score-total{display:flex;justify-content:space-between;padding-top:9px;font-weight:700;font-size:14px;color:var(--text)}
-.rec-box{background:var(--blue-pale);border:1px solid #bfdbfe;border-radius:var(--radius);padding:12px 14px;margin-bottom:14px}
-.rec-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1a1fe8;margin-bottom:5px}
+.rec-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px}
+.rec-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1ddb3a;margin-bottom:5px}
 .rec-text{font-size:12px;color:var(--text-mid);line-height:1.6}
 
 /* ── EDIT FORM ── */
@@ -305,10 +314,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .form-group.full{grid-column:1/-1}
 .form-label{font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}
 .form-input,.form-select{background:var(--input-bg);border:1px solid var(--border-dark);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 10px;outline:none;transition:border-color 0.15s;width:100%}
-.form-input:focus,.form-select:focus{border-color:#1a1fe8}
+.form-input:focus,.form-select:focus{border-color:#1ddb3a}
 .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
-.btn-primary{background:var(--blue);color:#fff;border:none;border-radius:var(--radius-sm);padding:9px 20px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s}
-.btn-primary:hover{background:#1a50b0}
+.btn-primary{background:#1ddb3a;color:#000;border:none;border-radius:var(--radius-sm);padding:9px 20px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s}
+.btn-primary:hover{background:#16c032}
 .btn-secondary{background:var(--bg);color:var(--text-muted);border:1px solid var(--border-dark);border-radius:var(--radius-sm);padding:9px 16px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
 .btn-secondary:hover{border-color:var(--text-muted);color:var(--text)}
 .btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:9px 16px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
@@ -327,7 +336,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .notif-tabs{display:flex;border-bottom:1px solid var(--border)}
 .ntab{flex:1;padding:8px;text-align:center;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s}
 .ntab:hover{color:var(--text)}
-.ntab.active{color:#1a1fe8;border-bottom-color:#22c55e}
+.ntab.active{color:#1ddb3a;border-bottom-color:#1ddb3a}
 .notif-list{max-height:360px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:5px}
 .notif-item{padding:9px 11px;border-radius:var(--radius-sm);border-left:3px solid;cursor:pointer;position:relative;transition:opacity 0.2s}
 .notif-item.read{opacity:0.45}
@@ -342,7 +351,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .notif-time{font-size:10px;color:var(--text-light)}
 .notif-unread-dot{position:absolute;top:10px;right:10px;width:7px;height:7px;background:var(--blue);border-radius:50%}
 .notif-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
-.notif-foot-btn{font-size:11px;font-weight:600;color:#1a1fe8;cursor:pointer;background:none;border:none;font-family:var(--font)}
+.notif-foot-btn{font-size:11px;font-weight:600;color:#1ddb3a;cursor:pointer;background:none;border:none;font-family:var(--font)}
 .notif-foot-close{font-size:11px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:var(--font)}
 
 /* ── DARK TOGGLE ── */
@@ -359,7 +368,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
     <!-- Logo estilo VetaCap con nombre CENTINELA -->
     <div style="display:flex;align-items:center;gap:0">
       <span style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.5px;font-family:'DM Sans',sans-serif">Cen</span>
-      <div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:13px solid #22c55e;margin:0 1px;transform:translateY(-1px)"></div>
+      <div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:13px solid #1ddb3a;margin:0 1px;transform:translateY(-1px)"></div>
       <span style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.5px;font-family:'DM Sans',sans-serif">tinela</span>
     </div>
     <div class="logo-sep"></div>
@@ -371,7 +380,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
   </div>
   <div class="header-right">
     <div class="clock" id="clock">—</div>
-    <div class="hbtn theme-toggle" onclick="toggleTheme()" title="Modo oscuro/claro" id="themeBtn">🌙</div>
+    <div class="hbtn theme-toggle" onclick="toggleTheme()" title="Modo claro/oscuro" id="themeBtn">☀️</div>
     <div class="hbtn" onclick="openFilterEditor()" title="Editar filtros y opciones">⚙️</div>
     <div class="hbtn" onclick="toggleNotifPanel()" title="Notificaciones">
       🔔<div class="bell-badge" id="bellBadge">7</div>
@@ -528,9 +537,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
       </div>
     </div>
 
-    <!-- COMPLIANCE -->
-    <div class="section-header"><div class="section-title">Cumplimiento Regulatorio</div></div>
-    <div class="card"><div class="compliance-grid" id="complianceRow" style="padding:8px 0"></div></div>
+    <!-- WEEKLY CHART -->
+    <div class="section-header"><div class="section-title">Evolución Semanal del Riesgo</div></div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Score de riesgo — Últimos 7 días</div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-muted)"><div style="width:10px;height:3px;background:#ef4444;border-radius:2px"></div>Score global</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-muted)"><div style="width:10px;height:3px;background:#1ddb3a;border-radius:2px;opacity:0.5"></div>Ops confirmadas</div>
+        </div>
+      </div>
+      <div class="chart-pad" style="padding:14px 18px">
+        <div id="weeklyRiskChart" style="width:100%;min-height:140px"></div>
+      </div>
+    </div>
 
     <!-- PRODUCER METRICS -->
     <div class="prod-metrics-section" id="prodMetricsSection">
@@ -582,1044 +602,769 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
   </div>
 </div>
 
-</script></body></html>
+
 <script>
 'use strict';
-// ═══════════════════════════════════════════════════════
-// CENTINELA — JS limpio y completo
-// Modelo único de estado: mailStatus + confirmStatus
-// ═══════════════════════════════════════════════════════
+let PRODUCERS=['Manager 139'];
+let INSTRUMENTS=['ON','FCI','CEDEAR','BONO','ACCIÓN','OPCIONES','FUTUROS','CAUCIÓN'];
+const CLIENT_NAMES=Array.from({length:10},(_,i)=>'Cliente '+(i+1));
+const AUTHORIZED_MAP={};
+// Clientes 1-8 autorizados, 9 y 10 sin productor asignado → generan ops CRÍTICO
+CLIENT_NAMES.forEach(function(c,i){AUTHORIZED_MAP[c]=i<8?[...PRODUCERS]:[];});
+let allOps=[],filteredOps=[],autoScrollOn=true,activeRiskFilter='all';
+let opId=1,darkMode=true,selectedProdFilter='__all__',prodMetricsOpen=false;
+let notifOpen=false,currentNotifTab='all';
 
-// ── CONFIGURACIÓN EDITABLE ──
-let PRODUCERS  = ['Manager 139'];
-let INSTRUMENTS = ['ON','FCI','CEDEAR','BONO','ACCIÓN','OPCIONES','FUTUROS','CAUCIÓN'];
-const CLIENT_NAMES = Array.from({length:10},(_,i)=>`Cliente ${i+1}`);
-const AUTHORIZED_MAP = {};
-CLIENT_NAMES.forEach(c => { AUTHORIZED_MAP[c] = [...PRODUCERS]; });
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
+const isAuth=(c,p)=>(AUTHORIZED_MAP[c]||[]).includes(p);
+const fmt=m=>m>=1e9?'$'+(m/1e9).toFixed(2)+'B':m>=1e6?'$'+(m/1e6).toFixed(1)+'M':'$'+m.toLocaleString('es-AR');
+const fmtT=min=>min<60?min+'m':Math.floor(min/60)+'h '+min%60+'m';
 
-// ── ESTADO GLOBAL ──
-let allOps = [], filteredOps = [];
-let autoScrollOn = true, activeRiskFilter = 'all';  // ← arranca en "Todas"
-let opId = 1, darkMode = false;
-let selectedProdFilter = '__all__', prodMetricsOpen = false;
-let notifOpen = false, currentNotifTab = 'all';
-
-// ── UTILS ──
-const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
-const pick = arr => arr[Math.floor(Math.random()*arr.length)];
-const isAuth = (c,p) => (AUTHORIZED_MAP[c]||[]).includes(p);
-const fmt = m => m>=1e9 ? `$${(m/1e9).toFixed(2)}B` : m>=1e6 ? `$${(m/1e6).toFixed(1)}M` : `$${m.toLocaleString('es-AR')}`;
-const fmtT = min => min<60 ? `${min}m` : `${Math.floor(min/60)}h ${min%60}m`;
-
-// ── TEMA ──
 function toggleTheme(){
-  darkMode = !darkMode;
-  document.documentElement.setAttribute('data-theme', darkMode?'dark':'light');
-  document.getElementById('themeBtn').textContent = darkMode ? '☀️' : '🌙';
+  darkMode=!darkMode;
+  document.documentElement.setAttribute('data-theme',darkMode?'':'light');
+  document.getElementById('themeBtn').textContent=darkMode?'☀️':'🌙';
 }
 
-// ═══════════════════════════════════════════════════════
-// MODELO DE OPERACIÓN
-// mailStatus:    'sent' | 'pending'
-// confirmStatus: 'confirmed' | 'pending'
-// riskLevel:     'critical' | 'high' | 'medium' | 'low'  (visual de fila)
-// ═══════════════════════════════════════════════════════
-
-// ═══════════════════════════════════════════════════════
-// LÓGICA DE RIESGO — explicación completa:
-//
-// NIVEL DE FILA (cada operación individual):
-//   CRÍTICO  → op no autorizada, O monto >100M sin confirmación del cliente
-//   ALTO     → monto >100M con mail enviado pero sin confirmación aún
-//   MEDIO    → cualquier op autorizada sin confirmación (independiente del monto)
-//   BAJO     → op confirmada correctamente
-//
-// SCORE DE PRODUCTOR (acumulado):
-//   -1 punto por cada op pendiente de confirmación
-//   0  si la op está confirmada (se anula el -1)
-//   Nunca positivo. Nunca más negativo que la cantidad de ops pendientes.
-//   Ejemplo: 8 ops pendientes → score mínimo -8, máximo 0
-//
-// NIVEL DE PRODUCTOR (basado en score acumulado):
-//   BAJO     → 0 pts      (todas confirmadas)
-//   MEDIO    → -1 a -4    (pocas pendientes)
-//   ALTO     → -5 a -9    (acumulación importante)
-//   CRÍTICO  → -10 o menos (situación grave)
-//
-// RIESGO GLOBAL (sidebar):
-//   Suma de scores de todos los productores.
-//   Sin tope — puede ser -150 si hay 150 ops pendientes.
-//   El gauge muestra el número real. El arco se llena
-//   proporcionalmente al total de ops autorizadas.
-// ═══════════════════════════════════════════════════════
-
+// ── RIESGO ──
 function calcRiskLevel(op){
-  // NULO: autorizada y confirmada
-  if (op.authorized && op.confirmStatus === 'confirmed') return 'low';
-  // CRÍTICO: no autorizado en ops >$100M
-  if (!op.authorized && op.monto > 100_000_000)         return 'critical';
-  // ALTO: monto >$100M (autorizado sin confirmar), O no autorizado entre $50M y $100M
-  if (op.monto > 100_000_000)                           return 'high';
-  if (!op.authorized && op.monto > 50_000_000)          return 'high';
-  // MEDIO: autorizada, sin confirmar, entre $5M y $50M
-  if (op.authorized && op.monto > 5_000_000)            return 'medium';
-  // BAJO: autorizada, sin confirmar, <$5M O no autorizado <$50M
+  if(op.authorized&&op.confirmStatus==='confirmed') return 'low';
+  if(!op.authorized&&op.monto>100000000) return 'critical';
+  if(op.monto>100000000&&op.confirmStatus!=='confirmed') return 'high';
+  if(!op.authorized&&op.monto>50000000) return 'high';
+  if(op.authorized&&op.monto>5000000) return 'medium';
   return 'low';
 }
-
-function calcOpScore(op){
-  if (!op.authorized)                      return 0;
-  if (op.confirmStatus === 'confirmed')    return 0;
-  return -1;
-}
-
+function calcOpScore(op){return(!op.authorized||op.confirmStatus==='confirmed')?0:-1;}
 function producerScore(name){
-  const ops      = allOps.filter(o => o.producer === name && o.authorized);
-  const pendientes = ops.filter(o => o.confirmStatus !== 'confirmed').length;
-  const raw      = ops.reduce((s,o) => s + o.score, 0);
-  return Math.max(Math.min(raw, 0), -pendientes);
+  var ops=allOps.filter(function(o){return o.producer===name&&o.authorized;});
+  var pend=ops.filter(function(o){return o.confirmStatus!=='confirmed';}).length;
+  var raw=ops.reduce(function(s,o){return s+o.score;},0);
+  return Math.max(Math.min(raw,0),-pend);
 }
+function globalScore(){return PRODUCERS.reduce(function(s,n){return s+producerScore(n);},0);}
+function producerRiskLevel(s){return s===0?'perfect':s>=-2?'low':s>=-6?'medium':s>=-10?'high':'critical';}
+var RISK_LABEL={perfect:'PERFECTO',low:'BAJO',medium:'MEDIO',high:'ALTO',critical:'CRÍTICO'};
+var RISK_COLOR={perfect:'#1ddb3a',low:'#1ddb3a',medium:'#eab308',high:'#f97316',critical:'#ef4444'};
+var RISK_BG={perfect:'rgba(29,219,58,0.1)',low:'rgba(29,219,58,0.1)',medium:'rgba(234,179,8,0.1)',high:'rgba(249,115,22,0.1)',critical:'rgba(239,68,68,0.1)'};
 
-function producerRiskLevel(score){
-  if (score === 0)  return 'perfect';
-  if (score >= -2)  return 'low';
-  if (score >= -6)  return 'medium';
-  if (score >= -10) return 'high';
-  return 'critical';
-}
-
-// Riesgo global: suma de todos los scores de productores, sin tope
-function globalScore(){
-  return PRODUCERS.reduce((s, name) => s + producerScore(name), 0);
-}
-
-function renderGlobalRisk(){
-  const score    = globalScore();
-  const absScore = Math.abs(score);
-  const totalAut = Math.max(allOps.filter(o => o.authorized).length, 1);
-
-  const circ = 2 * Math.PI * 24;
-  const pct  = Math.min(absScore / totalAut, 1);
-  const dash = circ * pct;
-  const arc  = document.getElementById('gaugeArc');
-  if (arc) {
-    const color = score === 0 ? '#34d399' : absScore <= totalAut*0.3 ? '#fbbf24' : absScore <= totalAut*0.6 ? '#f97316' : '#f87171';
-    arc.style.stroke = color;
-    arc.setAttribute('stroke-dasharray', `${dash} ${circ - dash}`);
-  }
-
-  const numEl = document.getElementById('globalScoreNum');
-  if (numEl) numEl.textContent = score;
-
-  const level = producerRiskLevel(score);
-  const icons = {perfect:'⭐', low:'🟢', medium:'🟡', high:'🟠', critical:'🔴'};
-  const descs = {
-    perfect:  'Sin operaciones pendientes — perfecto',
-    low:      `${absScore} op(s) pendiente(s) — bajo impacto`,
-    medium:   `${absScore} op(s) pendientes — seguimiento recomendado`,
-    high:     `${absScore} op(s) pendientes — acción requerida`,
-    critical: `${absScore} op(s) pendientes — atención urgente`
+function buildOp(ov){
+  ov=ov||{};
+  var client=ov.client||pick(CLIENT_NAMES);
+  var producer=ov.producer||pick(PRODUCERS);
+  var authorized=isAuth(client,producer);
+  var monto=ov.monto||(Math.random()<0.3?rnd(100000001,500000000):rnd(1000000,99999999));
+  var minutesAgo=ov.minutesAgo||rnd(1,480);
+  var mailStatus=ov.mailStatus!==undefined?ov.mailStatus:(authorized&&Math.random()<0.6?'sent':'pending');
+  var confirmStatus=ov.confirmStatus!==undefined?ov.confirmStatus:(authorized&&Math.random()<0.4?'confirmed':'pending');
+  var op={
+    id:ov.id||'OP-'+String(opId++).padStart(4,'0'),
+    client:client,producer:producer,authorized:authorized,
+    instrument:ov.instrument||pick(INSTRUMENTS),
+    monto:monto,minutesAgo:minutesAgo,
+    mailStatus:mailStatus,confirmStatus:confirmStatus,
+    score:0,riskLevel:'low',isNew:true
   };
-  const band = document.getElementById('globalRiskBand');
-  const desc = document.getElementById('globalRiskDesc');
-  if (band) band.textContent = `${icons[level]} ${RISK_LABEL[level]}`;
-  if (desc) desc.textContent = descs[level];
-}
-
-const RISK_LABEL = {perfect:'PERFECTO', critical:'CRÍTICO', high:'ALTO', medium:'MEDIO', low:'BAJO'};
-const RISK_COLOR = {perfect:'#059669', critical:'#dc2626', high:'#d97706', medium:'#b45309', low:'#16a34a'};
-const RISK_BG    = {perfect:'#f0fdf4', critical:'#fef2f2', high:'#fffbeb', medium:'#fefce8', low:'#f0fdf4'};
-
-function buildOp(overrides = {}){
-  const client   = overrides.client   || pick(CLIENT_NAMES);
-  const producer = overrides.producer || pick(PRODUCERS);
-  const authorized = isAuth(client, producer);
-  const monto    = overrides.monto    || (Math.random()<0.3 ? rnd(100_000_001,500_000_000) : rnd(1_000_000,99_999_999));
-  const minutesAgo = overrides.minutesAgo || rnd(1, 480);
-  const mailStatus    = overrides.mailStatus    || (authorized && Math.random()<0.6 ? 'sent' : 'pending');
-  const confirmStatus = overrides.confirmStatus || (authorized && Math.random()<0.4 ? 'confirmed' : 'pending');
-
-  const op = {
-    id: overrides.id || `OP-${String(opId++).padStart(4,'0')}`,
-    client, producer, authorized,
-    instrument:  overrides.instrument || pick(INSTRUMENTS),
-    monto, minutesAgo,
-    mailStatus, confirmStatus,
-    score: 0, riskLevel: 'low',
-    isNew: true
-  };
-  op.score     = calcOpScore(op);
-  op.riskLevel = calcRiskLevel(op);
+  op.score=calcOpScore(op);
+  op.riskLevel=calcRiskLevel(op);
   return op;
 }
 
 function seedData(){
-  allOps = [];
-  allOps.push(buildOp({monto:245_000_000, client:'Cliente 1', mailStatus:'pending', confirmStatus:'pending'}));
-  allOps.push(buildOp({monto:178_000_000, client:'Cliente 2', mailStatus:'sent',    confirmStatus:'pending'}));
-  allOps.push(buildOp({monto:320_000_000, client:'Cliente 3', mailStatus:'pending', confirmStatus:'pending'}));
-  for(let i=0; i<25; i++) allOps.push(buildOp());
-  filteredOps = [...allOps];
+  allOps=[];
+  // Ops garantizadas para cada nivel de riesgo
+  allOps.push(buildOp({monto:245000000,client:'Cliente 9',mailStatus:'pending',confirmStatus:'pending'}));  // CRÍTICO: no autorizado >100M
+  allOps.push(buildOp({monto:320000000,client:'Cliente 10',mailStatus:'pending',confirmStatus:'pending'})); // CRÍTICO: no autorizado >100M
+  allOps.push(buildOp({monto:178000000,client:'Cliente 1',mailStatus:'sent',confirmStatus:'pending'}));     // ALTO: >100M sin confirmar
+  allOps.push(buildOp({monto:130000000,client:'Cliente 2',mailStatus:'pending',confirmStatus:'pending'}));  // ALTO: >100M sin confirmar
+  allOps.push(buildOp({monto:42000000,client:'Cliente 3',mailStatus:'sent',confirmStatus:'pending'}));      // MEDIO
+  allOps.push(buildOp({monto:15000000,client:'Cliente 4',mailStatus:'sent',confirmStatus:'confirmed'}));    // NULO
+  for(var i=0;i<22;i++) allOps.push(buildOp());
+  filteredOps=allOps.slice();
 }
 
-// ═══════════════════════════════════════════════════════
-// PILLS
-// ═══════════════════════════════════════════════════════
+// ── PILLS ──
 function mailPill(op){
-  if (!op.authorized) return `<span class="pill pill-invalid"><span class="pill-dot"></span>N/A</span>`;
-  if (op.mailStatus === 'sent')
-    return `<span class="pill pill-mail-sent" style="cursor:pointer" onclick="event.stopPropagation();toggleMail('${op.id}')" title="Click para cambiar"><span class="pill-dot"></span>Enviado ✓</span>`;
-  return `<span class="pill pill-mail-pending" style="cursor:pointer" onclick="event.stopPropagation();toggleMail('${op.id}')" title="Click para marcar enviado"><span class="pill-dot"></span>Pendiente</span>`;
+  if(!op.authorized) return '<span class="pill pill-mail-pending"><span class="pill-dot"></span>Pendiente</span>';
+  if(op.mailStatus==='sent') return '<span class="pill pill-mail-sent" style="cursor:pointer" onclick="event.stopPropagation();toggleMail(\''+op.id+'\')"><span class="pill-dot"></span>Enviado</span>';
+  return '<span class="pill pill-mail-pending" style="cursor:pointer" onclick="event.stopPropagation();toggleMail(\''+op.id+'\')"><span class="pill-dot"></span>Pendiente</span>';
 }
-
 function confirmPill(op){
-  if (!op.authorized) return `<span class="pill pill-invalid"><span class="pill-dot"></span>N/A</span>`;
-  if (op.confirmStatus === 'confirmed')
-    return `<span class="pill pill-conf-ok"><span class="pill-dot"></span>Confirmada</span>`;
-  return `<span class="pill pill-conf-pending"><span class="pill-dot"></span>Pendiente</span>`;
+  if(!op.authorized) return '<span class="pill pill-conf-pending"><span class="pill-dot"></span>Pendiente</span>';
+  if(op.confirmStatus==='confirmed') return '<span class="pill pill-conf-ok"><span class="pill-dot"></span>Confirmada</span>';
+  return '<span class="pill pill-conf-pending"><span class="pill-dot"></span>Pendiente</span>';
 }
-
 function riskBadge(op){
-  // Operación confirmada = NULO (sin riesgo)
-  if (op.authorized && op.confirmStatus === 'confirmed'){
-    return `<span class="rbadge" style="background:#f0fdf4;color:#059669">NULO</span>`;
-  }
-  const level = op.riskLevel;
-  const cls = {critical:'rbadge-critical', high:'rbadge-high', medium:'rbadge-medium', low:'rbadge-low'}[level]||'rbadge-low';
-  return `<span class="rbadge ${cls}">${RISK_LABEL[level]||'BAJO'}</span>`;
+  if(op.authorized&&op.confirmStatus==='confirmed') return '<span class="rbadge" style="background:rgba(29,219,58,0.1);color:#1ddb3a">NULO</span>';
+  var l=op.riskLevel;
+  return '<span class="rbadge" style="background:'+RISK_BG[l]+';color:'+RISK_COLOR[l]+'">'+RISK_LABEL[l]+'</span>';
 }
+function timeClass(op){return op.minutesAgo>360?'time-crit':op.minutesAgo>60?'time-warn':'time-ok';}
 
-function timeClass(op){
-  return op.minutesAgo > 360 ? 'time-crit' : op.minutesAgo > 60 ? 'time-warn' : 'time-ok';
-}
-
-// ═══════════════════════════════════════════════════════
-// TABLA
-// ═══════════════════════════════════════════════════════
+// ── TABLA ──
 function renderTable(){
-  let ops = [...filteredOps];
-  if (activeRiskFilter === 'critical') ops = ops.filter(o => o.riskLevel==='critical' || o.riskLevel==='high');
-  const ord = {critical:0, high:1, medium:2, low:3};
-  ops.sort((a,b) => ord[a.riskLevel] - ord[b.riskLevel]);
-
-  document.getElementById('opsTableBody').innerHTML = ops.slice(0,25).map(op => `
-    <tr class="${op.isNew?'is-new':''}" onclick="showOpDetail('${op.id}')">
-      <td class="op-id">${op.id}</td>
-      <td style="font-size:11px">${op.client}</td>
-      <td style="font-size:12px;color:#1a1fe8;font-weight:500">${op.producer}</td>
-      <td style="font-size:11px;font-weight:600;color:#1a1fe8">${op.instrument}</td>
-      <td style="font-variant-numeric:tabular-nums;font-weight:600" class="${op.monto>100_000_000?'amount-big':''}">${fmt(op.monto)}</td>
-      <td>${mailPill(op)}</td>
-      <td>${confirmPill(op)}</td>
-      <td class="${timeClass(op)}">${fmtT(op.minutesAgo)}</td>
-      <td>${riskBadge(op)}</td>
-      <td onclick="event.stopPropagation()"><button class="edit-btn" onclick="openEditModal('${op.id}')">✏️ Editar</button></td>
-    </tr>`).join('');
-
-  setTimeout(() => ops.forEach(o => o.isNew = false), 500);
+  var ops=filteredOps.slice();
+  if(activeRiskFilter==='critical') ops=ops.filter(function(o){return o.riskLevel==='critical'||o.riskLevel==='high';});
+  var ord={critical:0,high:1,medium:2,low:3};
+  ops.sort(function(a,b){return ord[a.riskLevel]-ord[b.riskLevel];});
+  document.getElementById('opsTableBody').innerHTML=ops.slice(0,25).map(function(op){
+    return '<tr class="'+(op.isNew?'is-new':'')+'" onclick="showOpDetail(\''+op.id+'\')">'+
+      '<td class="op-id">'+op.id+'</td>'+
+      '<td style="font-size:11px">'+op.client+'</td>'+
+      '<td style="font-size:12px;color:var(--text);font-weight:500">'+op.producer+'</td>'+
+      '<td style="font-size:11px;font-weight:600;color:var(--text)">'+op.instrument+'</td>'+
+      '<td style="font-variant-numeric:tabular-nums;font-weight:600" class="'+(op.monto>100000000?'amount-big':'')+'">'+fmt(op.monto)+'</td>'+
+      '<td>'+mailPill(op)+'</td><td>'+confirmPill(op)+'</td>'+
+      '<td class="'+timeClass(op)+'">'+fmtT(op.minutesAgo)+'</td>'+
+      '<td>'+riskBadge(op)+'</td>'+
+      '<td onclick="event.stopPropagation()"><button class="edit-btn" onclick="openEditModal(\''+op.id+'\')">✏️ Editar</button></td>'+
+      '</tr>';
+  }).join('');
+  setTimeout(function(){ops.forEach(function(o){o.isNew=false;});},500);
 }
 
-// ═══════════════════════════════════════════════════════
-// FILTROS
-// ═══════════════════════════════════════════════════════
+// ── FILTROS ──
 function populateFilterSelects(){
-  const fs = document.getElementById('filterStatus');
-  const fv = fs.value;
-  fs.innerHTML = `<option value="">Todos</option>
-    <option value="mail_pending">Mail pendiente</option>
-    <option value="confirm_pending">Confirmación pendiente</option>
-    <option value="confirmed">Confirmada</option>
-    <option value="invalid">Inválida</option>
-    <option value="critical_amount">Monto crítico &gt;100M</option>`;
-  fs.value = fv;
-
-  const fp = document.getElementById('filterProducer');
-  const fpv = fp.value;
-  fp.innerHTML = '<option value="">Todos</option>' + PRODUCERS.map(p=>`<option value="${p}">${p}</option>`).join('');
-  fp.value = fpv;
-
-  const fi = document.getElementById('filterInstrument');
-  const fiv = fi.value;
-  fi.innerHTML = '<option value="">Todos</option>' + INSTRUMENTS.map(i=>`<option value="${i}">${i}</option>`).join('');
-  fi.value = fiv;
+  var fs=document.getElementById('filterStatus');var fv=fs.value;
+  fs.innerHTML='<option value="">Todos</option><option value="mail_pending">Mail pendiente</option><option value="confirm_pending">Confirmación pendiente</option><option value="confirmed">Confirmada</option><option value="invalid">Inválida</option><option value="critical_amount">Monto crítico &gt;100M</option>';
+  fs.value=fv;
+  var fp=document.getElementById('filterProducer');var fpv=fp.value;
+  fp.innerHTML='<option value="">Todos</option>'+PRODUCERS.map(function(p){return '<option value="'+p+'">'+p+'</option>';}).join('');
+  fp.value=fpv;
+  var fi=document.getElementById('filterInstrument');var fiv=fi.value;
+  fi.innerHTML='<option value="">Todos</option>'+INSTRUMENTS.map(function(i){return '<option value="'+i+'">'+i+'</option>';}).join('');
+  fi.value=fiv;
 }
-
 function applyFilters(){
-  const s   = document.getElementById('filterStatus').value;
-  const p   = document.getElementById('filterProducer').value;
-  const ins = document.getElementById('filterInstrument').value;
-  const amt = document.getElementById('filterAmount').value;
-
-  filteredOps = allOps.filter(op => {
-    if (s==='mail_pending'     && !(op.authorized && op.mailStatus!=='sent'))           return false;
-    if (s==='confirm_pending'  && !(op.authorized && op.confirmStatus!=='confirmed'))   return false;
-    if (s==='confirmed'        && op.confirmStatus!=='confirmed')                       return false;
-    if (s==='invalid'          && op.authorized)                                        return false;
-    if (s==='critical_amount'  && !(op.authorized && op.monto>100_000_000 && op.confirmStatus!=='confirmed')) return false;
-    if (p   && op.producer  !== p)   return false;
-    if (ins && op.instrument !== ins) return false;
-    if (amt==='high' && op.monto <= 100_000_000) return false;
-    if (amt==='low'  && op.monto >  100_000_000) return false;
+  var s=document.getElementById('filterStatus').value;
+  var p=document.getElementById('filterProducer').value;
+  var ins=document.getElementById('filterInstrument').value;
+  var amt=document.getElementById('filterAmount').value;
+  filteredOps=allOps.filter(function(op){
+    if(s==='mail_pending'&&!(op.authorized&&op.mailStatus!=='sent')) return false;
+    if(s==='confirm_pending'&&!(op.authorized&&op.confirmStatus!=='confirmed')) return false;
+    if(s==='confirmed'&&op.confirmStatus!=='confirmed') return false;
+    if(s==='invalid'&&op.authorized) return false;
+    if(s==='critical_amount'&&!(op.authorized&&op.monto>100000000&&op.confirmStatus!=='confirmed')) return false;
+    if(p&&op.producer!==p) return false;
+    if(ins&&op.instrument!==ins) return false;
+    if(amt==='high'&&op.monto<=100000000) return false;
+    if(amt==='low'&&op.monto>100000000) return false;
     return true;
   });
   renderTable();
 }
-
-function setRiskFilter(type, el){
-  activeRiskFilter = type;
-  document.querySelectorAll('.tbl-btn').forEach(b => b.classList.remove('active'));
+function setRiskFilter(type,el){
+  activeRiskFilter=type;
+  document.querySelectorAll('.tbl-btn').forEach(function(b){b.classList.remove('active');});
   el.classList.add('active');
   renderTable();
 }
-
 function filterByKpi(type){
-  ['filterStatus','filterProducer','filterInstrument','filterAmount'].forEach(id => document.getElementById(id).value='');
-  const a = allOps;
-  if      (type==='unconfirmed') filteredOps = a.filter(o => o.authorized && o.confirmStatus!=='confirmed');
-  else if (type==='highrisk')    filteredOps = a.filter(o => o.authorized && o.monto>100_000_000 && o.confirmStatus!=='confirmed');
-  else if (type==='total')       filteredOps = a.filter(o => o.authorized && o.confirmStatus!=='confirmed');
-  else if (type==='compliance')  filteredOps = a.filter(o => o.authorized && o.confirmStatus==='confirmed');
-  activeRiskFilter = 'all';
-  document.querySelectorAll('.tbl-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector('.content').scrollTo({top:300, behavior:'smooth'});
+  ['filterStatus','filterProducer','filterInstrument','filterAmount'].forEach(function(id){document.getElementById(id).value='';});
+  if(type==='unconfirmed') filteredOps=allOps.filter(function(o){return o.authorized&&o.confirmStatus!=='confirmed';});
+  else if(type==='highrisk') filteredOps=allOps.filter(function(o){return o.authorized&&o.monto>100000000&&o.confirmStatus!=='confirmed';});
+  else if(type==='total') filteredOps=allOps.filter(function(o){return o.authorized&&o.confirmStatus!=='confirmed';});
+  else if(type==='compliance') filteredOps=allOps.filter(function(o){return o.authorized&&o.confirmStatus==='confirmed';});
+  activeRiskFilter='all';
+  document.querySelectorAll('.tbl-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelector('.content').scrollTo({top:300,behavior:'smooth'});
   renderTable();
 }
 
-// ═══════════════════════════════════════════════════════
-// KPIs
-// ═══════════════════════════════════════════════════════
+// ── KPIS ──
 function updateKPIs(){
-  const aut   = allOps.filter(o => o.authorized);
-  const total = Math.max(aut.length, 1);
-  const sinConf   = aut.filter(o => o.confirmStatus !== 'confirmed');
-  const sinMail   = aut.filter(o => o.mailStatus    !== 'sent');
-  const highRisk  = aut.filter(o => o.monto > 100_000_000 && o.confirmStatus !== 'confirmed');
-  const confirmed = aut.filter(o => o.confirmStatus === 'confirmed');
-
-  document.getElementById('kpiUnconfirmed').textContent    = Math.round(sinConf.length/total*100) + '%';
-  document.getElementById('kpiUnconfirmedCount').textContent = sinConf.length + ' operaciones';
-  document.getElementById('kpiHighRisk').textContent        = fmt(highRisk.reduce((s,o)=>s+o.monto,0));
-  document.getElementById('kpiTotalUnconf').textContent     = fmt(sinConf.reduce((s,o)=>s+o.monto,0));
-  document.getElementById('kpiCompliance').textContent      = Math.round(confirmed.length/total*100) + '%';
+  var aut=allOps.filter(function(o){return o.authorized;});
+  var total=Math.max(aut.length,1);
+  var sinConf=aut.filter(function(o){return o.confirmStatus!=='confirmed';});
+  var highRisk=aut.filter(function(o){return o.monto>100000000&&o.confirmStatus!=='confirmed';});
+  var confirmed=aut.filter(function(o){return o.confirmStatus==='confirmed';});
+  document.getElementById('kpiUnconfirmed').textContent=Math.round(sinConf.length/total*100)+'%';
+  document.getElementById('kpiUnconfirmedCount').textContent=sinConf.length+' operaciones';
+  document.getElementById('kpiHighRisk').textContent=fmt(highRisk.reduce(function(s,o){return s+o.monto;},0));
+  document.getElementById('kpiTotalUnconf').textContent=fmt(sinConf.reduce(function(s,o){return s+o.monto;},0));
+  document.getElementById('kpiCompliance').textContent=Math.round(confirmed.length/total*100)+'%';
 }
 
-// ═══════════════════════════════════════════════════════
-// PRODUCTORES
-// ═══════════════════════════════════════════════════════
+// ── RIESGO GLOBAL ──
+function renderGlobalRisk(){
+  var score=globalScore();var absScore=Math.abs(score);
+  var totalAut=Math.max(allOps.filter(function(o){return o.authorized;}).length,1);
+  var circ=2*Math.PI*24;var pct=Math.min(absScore/totalAut,1);
+  var arc=document.getElementById('gaugeArc');
+  if(arc){
+    var color=score===0?'#1ddb3a':absScore<=totalAut*0.3?'#eab308':absScore<=totalAut*0.6?'#f97316':'#ef4444';
+    arc.style.stroke=color;
+    arc.setAttribute('stroke-dasharray',(circ*pct)+' '+(circ*(1-pct)));
+  }
+  var numEl=document.getElementById('globalScoreNum');if(numEl) numEl.textContent=score;
+  var level=producerRiskLevel(score);
+  var icons={perfect:'⭐',low:'🟢',medium:'🟡',high:'🟠',critical:'🔴'};
+  var descs={perfect:'Sin operaciones pendientes',low:absScore+' op(s) — bajo impacto',medium:absScore+' op(s) — seguimiento recomendado',high:absScore+' op(s) — acción requerida',critical:absScore+' op(s) — atención urgente'};
+  var band=document.getElementById('globalRiskBand');var desc=document.getElementById('globalRiskDesc');
+  if(band) band.textContent=icons[level]+' '+RISK_LABEL[level];
+  if(desc) desc.textContent=descs[level];
+}
+
+// ── PRODUCTORES ──
 function renderProducers(){
-  const data = PRODUCERS.map(name => {
-    const ops      = allOps.filter(o => o.producer===name && o.authorized);
-    const pend     = ops.filter(o => o.confirmStatus !== 'confirmed').length;
-    const conf     = ops.filter(o => o.confirmStatus === 'confirmed').length;
-    const sinMail  = ops.filter(o => o.mailStatus    !== 'sent').length;
-    const score    = producerScore(name);
-    const level    = producerRiskLevel(score);
-    return {name, total:ops.length, pend, conf, sinMail, score, level};
-  }).sort((a,b) => a.score - b.score); // más negativo primero
-
-  // Sidebar ranking
-  document.getElementById('producerList').innerHTML = data.map((p,i) => `
-    <div class="producer-item" onclick="document.getElementById('filterProducer').value='${p.name}';applyFilters()">
-      <div style="width:18px;height:18px;border-radius:50%;background:#1a1fe8;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>
-      <div class="p-avatar">${p.name.charAt(0)}</div>
-      <div style="flex:1;min-width:0">
-        <div class="p-name">${p.name}</div>
-        <div class="p-ops">${p.total} ops · ${p.pend} pendientes · ${p.conf} conf.</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:12px;font-weight:700;color:${RISK_COLOR[p.level]};background:${RISK_BG[p.level]};padding:2px 8px;border-radius:4px">${p.score} pts</div>
-        <div style="font-size:9px;color:var(--text-light);margin-top:2px">${RISK_LABEL[p.level]}</div>
-      </div>
-    </div>`).join('');
-
-  // Bar chart
-  const maxAbs = Math.max(...data.map(p => Math.abs(p.score)), 1);
-  document.getElementById('producerChart').innerHTML = data.map(p => {
-    const pct   = Math.round(Math.abs(p.score)/maxAbs*100);
-    const color = RISK_COLOR[p.level];
-    return `<div class="prod-row">
-      <div class="prod-label">${p.name}</div>
-      <div class="prod-track"><div class="prod-fill" style="width:${Math.max(pct,3)}%;background:${color}"></div></div>
-      <div class="prod-val" style="color:${color}">${p.score}</div>
-    </div>`;
+  var data=PRODUCERS.map(function(name){
+    var ops=allOps.filter(function(o){return o.producer===name&&o.authorized;});
+    var pend=ops.filter(function(o){return o.confirmStatus!=='confirmed';}).length;
+    var conf=ops.filter(function(o){return o.confirmStatus==='confirmed';}).length;
+    var score=producerScore(name);var level=producerRiskLevel(score);
+    return{name:name,total:ops.length,pend:pend,conf:conf,score:score,level:level};
+  }).sort(function(a,b){return a.score-b.score;});
+  document.getElementById('producerList').innerHTML=data.map(function(p,i){
+    return '<div class="producer-item" onclick="document.getElementById(\'filterProducer\').value=\''+p.name+'\';applyFilters()">'+
+      '<div style="width:18px;height:18px;border-radius:50%;background:#1ddb3a;color:#000;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</div>'+
+      '<div class="p-avatar">'+p.name.charAt(0)+'</div>'+
+      '<div style="flex:1;min-width:0"><div class="p-name">'+p.name+'</div><div class="p-ops">'+p.total+' ops · '+p.pend+' pend. · '+p.conf+' conf.</div></div>'+
+      '<div style="text-align:right;flex-shrink:0">'+
+        '<div style="font-size:12px;font-weight:700;color:'+RISK_COLOR[p.level]+';background:'+RISK_BG[p.level]+';padding:2px 8px;border-radius:4px">'+p.score+' pts</div>'+
+        '<div style="font-size:9px;color:var(--text-light);margin-top:2px">'+RISK_LABEL[p.level]+'</div>'+
+      '</div></div>';
+  }).join('');
+  var maxAbs=Math.max.apply(null,data.map(function(p){return Math.abs(p.score);}));maxAbs=Math.max(maxAbs,1);
+  document.getElementById('producerChart').innerHTML=data.map(function(p){
+    var pct=Math.round(Math.abs(p.score)/maxAbs*100);
+    return '<div class="prod-row"><div class="prod-label">'+p.name+'</div><div class="prod-track"><div class="prod-fill" style="width:'+Math.max(pct,3)+'%;background:'+RISK_COLOR[p.level]+'"></div></div><div class="prod-val" style="color:'+RISK_COLOR[p.level]+'">'+p.score+'</div></div>';
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════
-// COMPLIANCE DONUTS
-// ═══════════════════════════════════════════════════════
+// ── COMPLIANCE ──
 function renderCompliance(){
-  const aut   = allOps.filter(o => o.authorized);
-  const total = Math.max(aut.length, 1);
-  const metrics = [
-    {label:'Mail enviado',           val:Math.round(aut.filter(o=>o.mailStatus==='sent').length/total*100),               color:'#059669'},
-    {label:'Confirmadas por cliente',val:Math.round(aut.filter(o=>o.confirmStatus==='confirmed').length/total*100),        color:'#1e5bc6'},
-    {label:'Ops. autorizadas',       val:Math.round(aut.length/Math.max(allOps.length,1)*100),                            color:'#b45309'},
-    {label:'Mail + Confirm. OK',     val:Math.round(aut.filter(o=>o.mailStatus==='sent'&&o.confirmStatus==='confirmed').length/total*100), color:'#7c3aed'}
+  var aut=allOps.filter(function(o){return o.authorized;});var total=Math.max(aut.length,1);
+  var metrics=[
+    {label:'Mail enviado',val:Math.round(aut.filter(function(o){return o.mailStatus==='sent';}).length/total*100),color:'#1ddb3a'},
+    {label:'Confirmadas',val:Math.round(aut.filter(function(o){return o.confirmStatus==='confirmed';}).length/total*100),color:'#1ddb3a'},
+    {label:'Ops. autorizadas',val:Math.round(aut.length/Math.max(allOps.length,1)*100),color:'#eab308'},
+    {label:'Mail + Confirm.',val:Math.round(aut.filter(function(o){return o.mailStatus==='sent'&&o.confirmStatus==='confirmed';}).length/total*100),color:'#1ddb3a'}
   ];
-  const r = 30, circ = 2*Math.PI*r;
-  document.getElementById('complianceRow').innerHTML = metrics.map(m => {
-    const v    = Math.min(Math.max(m.val,0),100);
-    const dash = circ*v/100;
-    const tc   = v>=70 ? m.color : v>=40 ? '#d97706' : '#dc2626';
-    return `<div class="donut-block" style="padding:16px 8px">
-      <svg width="80" height="80" viewBox="0 0 80 80" style="display:block">
-        <circle cx="40" cy="40" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="7"/>
-        <circle cx="40" cy="40" r="${r}" fill="none" stroke="${m.color}" stroke-width="7"
-          stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ*0.25}" stroke-linecap="round"/>
-        <text x="40" y="44" text-anchor="middle" fill="${tc}" font-family="DM Sans,sans-serif" font-size="14" font-weight="700">${v}%</text>
-      </svg>
-      <div class="donut-label" style="font-size:10px;max-width:80px">${m.label}</div>
-    </div>`;
+  var r=30,circ=2*Math.PI*r;
+  document.getElementById('complianceRow').innerHTML=metrics.map(function(m){
+    var v=Math.min(Math.max(m.val,0),100);var dash=circ*v/100;
+    var tc=v>=70?m.color:v>=40?'#f97316':'#ef4444';
+    return '<div class="donut-block" style="padding:16px 8px">'+
+      '<svg width="80" height="80" viewBox="0 0 80 80" style="display:block">'+
+        '<circle cx="40" cy="40" r="'+r+'" fill="none" stroke="#242424" stroke-width="7"/>'+
+        '<circle cx="40" cy="40" r="'+r+'" fill="none" stroke="'+m.color+'" stroke-width="7" stroke-dasharray="'+dash+' '+(circ-dash)+'" stroke-dashoffset="'+(circ*0.25)+'" stroke-linecap="round"/>'+
+        '<text x="40" y="44" text-anchor="middle" fill="'+tc+'" font-family="DM Sans,sans-serif" font-size="14" font-weight="700">'+v+'%</text>'+
+      '</svg>'+
+      '<div class="donut-label" style="font-size:10px;max-width:80px">'+m.label+'</div></div>';
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════
-// GRÁFICO EVOLUCIÓN RIESGO
-// ═══════════════════════════════════════════════════════
-const riskHistory = [18,22,31,28,45,52,68,74,71,78,74];
-const riskHours   = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
-
+// ── GRÁFICO DIARIO ──
 function renderRiskEvo(){
-  const el = document.getElementById('riskEvoChart');
-  if (!el) return;
-  const W=560, H=130, pad={l:30,r:24,t:22,b:26};
-  const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
-  const max = Math.max(...riskHistory, 1);
-  const slotW = cW/riskHistory.length, barW = Math.max(slotW-6, 8);
-  const yRef = pad.t + cH - (60/max*cH);
-  let bars='', vals='', xLbls='', yAxis='';
+  var el=document.getElementById('riskEvoChart');if(!el) return;
 
-  [0,25,50,75,100].forEach(t => {
-    const y = pad.t + cH - (t/max*cH);
-    yAxis += `<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="${t?'4,3':'0'}"/>`;
-    yAxis += `<text x="${pad.l-4}" y="${y+3.5}" text-anchor="end" font-size="9" fill="#94a3b8">${t}</text>`;
+  // Generar horas desde 08:00 hasta la hora actual (máx 18:00)
+  var now=new Date();
+  var currentHour=Math.min(now.getHours(),18);
+  var startHour=8;
+  if(currentHour<startHour) currentHour=startHour;
+  var hours=[],data=[];
+  // Datos de riesgo por hora — patrón realista que sube a media jornada
+  var basePattern=[8,12,18,22,31,40,55,68,74,71,78];
+  for(var h=startHour;h<=currentHour;h++){
+    var idx=h-startHour;
+    var v=basePattern[Math.min(idx,basePattern.length-1)];
+    // Variación leve
+    v=Math.max(0,Math.min(100,v+Math.round((Math.random()-0.5)*4)));
+    hours.push(String(h).padStart(2,'0')+':00');
+    data.push(v);
+  }
+  // La última barra es el valor actual (más visible)
+  if(data.length>0) data[data.length-1]=Math.max(data[data.length-1],data[data.length-2]||0);
+
+  var W=560,H=130,padL=30,padR=28,padT=22,padB=26;
+  var cW=W-padL-padR,cH=H-padT-padB;
+  var n=data.length;if(n===0) return;
+  var max=Math.max.apply(null,data);max=Math.max(max,20);
+  var slotW=cW/n,barW=Math.max(slotW-4,6);
+  var yRef=padT+cH-(60/max*cH);
+  var bars='',vals='',xLbls='',yAxis='';
+
+  [0,20,40,60,80,100].forEach(function(t){
+    if(t>max+10) return;
+    var y=padT+cH-(t/max*cH);
+    yAxis+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#1e1e1e" stroke-width="0.8" stroke-dasharray="'+(t===0?'0':'4,3')+'"/>';
+    yAxis+='<text x="'+(padL-4)+'" y="'+(y+3.5)+'" text-anchor="end" font-size="9" fill="#444">'+t+'</text>';
   });
 
-  riskHistory.forEach((v,i) => {
-    const x   = pad.l + i*slotW + (slotW-barW)/2;
-    const bh  = Math.max(Math.round(v/max*cH), 3);
-    const y   = pad.t + cH - bh;
-    const col = v>60 ? '#dc2626' : v>40 ? '#d97706' : '#059669';
-    const last = i === riskHistory.length-1;
-    bars  += `<rect x="${x}" y="${y}" width="${barW}" height="${bh}" fill="${col}" opacity="${last?1:0.55}" rx="3"><title>${riskHours[i]}: ${v}</title></rect>`;
-    if (last)        vals  += `<text x="${x+barW/2}" y="${y-6}" text-anchor="middle" font-size="10" font-weight="700" fill="${col}">${v}</text>`;
-    if (i%2===0||last) xLbls += `<text x="${x+barW/2}" y="${H-3}" text-anchor="middle" font-size="9" fill="#94a3b8">${riskHours[i]}</text>`;
+  data.forEach(function(v,i){
+    var x=padL+i*slotW+(slotW-barW)/2;
+    var bh=Math.max(Math.round(v/max*cH),3);
+    var y=padT+cH-bh;
+    var col=v>60?'#ef4444':v>40?'#f97316':'#1ddb3a';
+    var isLast=i===n-1;
+    bars+='<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+bh+'" fill="'+col+'" opacity="'+(isLast?1:0.5)+'" rx="2"><title>'+hours[i]+': '+v+'</title></rect>';
+    if(isLast) vals+='<text x="'+(x+barW/2)+'" y="'+(y-5)+'" text-anchor="middle" font-size="10" font-weight="700" fill="'+col+'">'+v+'</text>';
+    // Mostrar solo cada 2 horas o la última
+    if(i%2===0||isLast) xLbls+='<text x="'+(x+barW/2)+'" y="'+(H-3)+'" text-anchor="middle" font-size="9" fill="#555">'+hours[i]+'</text>';
   });
 
-  const ref = `<line x1="${pad.l}" y1="${yRef}" x2="${W-pad.r}" y2="${yRef}" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.55"/>
-    <text x="${W-pad.r+2}" y="${yRef+4}" font-size="9" fill="#dc2626" font-weight="600">60</text>`;
-
-  el.innerHTML = `<svg width="100%" height="130" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">
-    ${yAxis}${ref}${bars}${vals}${xLbls}</svg>`;
+  var ref='';
+  if(max>=60){
+    ref='<line x1="'+padL+'" y1="'+yRef+'" x2="'+(W-padR)+'" y2="'+yRef+'" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.5"/>'+
+        '<text x="'+(W-padR+2)+'" y="'+(yRef+4)+'" font-size="9" fill="#ef4444" font-weight="600">60</text>';
+  }
+  el.innerHTML='<svg width="100%" height="130" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">'+yAxis+ref+bars+vals+xLbls+'</svg>';
 }
 
-// ═══════════════════════════════════════════════════════
-// TOGGLE MAIL (click en pill de tabla)
-// ═══════════════════════════════════════════════════════
+// ── GRÁFICO SEMANAL ──
+// Gráfico semanal: datos de los últimos 7 días con días reales
+function getWeekData(){
+  var now=new Date();
+  var dayNames=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var days=[],scores=[],confirmed=[],opsTotal=[],critical=[];
+  for(var i=6;i>=0;i--){
+    var d=new Date(now);d.setDate(now.getDate()-i);
+    days.push(i===0?'Hoy':dayNames[d.getDay()]);
+    scores.push([-2,-5,-8,-4,-11,-6,-3][6-i]);
+    confirmed.push([88,70,55,74,42,65,80][6-i]);
+    opsTotal.push([18,24,31,22,38,19,28][6-i]);
+    critical.push([0,1,2,0,3,1,1][6-i]);
+  }
+  return{days:days,scores:scores,confirmed:confirmed,opsTotal:opsTotal,critical:critical};
+}
+
+function renderWeeklyChart(){
+  var el=document.getElementById('weeklyRiskChart');if(!el) return;
+  var wd=getWeekData();
+  var days=wd.days,scores=wd.scores,confirmed=wd.confirmed,opsTotal=wd.opsTotal,critical=wd.critical;
+  var n=days.length;
+
+  // Layout con espacio extra abajo para etiquetas y círculos críticos
+  var W=900,H=200,padL=44,padR=30,padT=28,padB=60;
+  var cW=W-padL-padR,cH=H-padT-padB;
+  var slotW=cW/n;
+
+  var minScore=Math.min.apply(null,scores);minScore=Math.min(minScore,-1);
+  var scoreRange=Math.abs(minScore)+0.5;
+  function yScore(v){return padT+cH-((v-minScore)/scoreRange*cH);}
+  function yConf(v){return padT+cH-(v/100*cH);}
+
+  var yAxis='',bars='',scoreLabels='',lineConf='',dots='',xArea='';
+
+  // Guías Y
+  var gridVals=[0,-3,-6,-9,-12].filter(function(t){return t>=minScore-1;});
+  gridVals.forEach(function(t){
+    var y=yScore(t);
+    yAxis+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#1e1e1e" stroke-width="1" stroke-dasharray="'+(t===0?'0':'4,3')+'"/>';
+    yAxis+='<text x="'+(padL-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="9" fill="#444">'+t+'</text>';
+  });
+
+  // Línea base 0
+  var yBase=yScore(0);
+  yAxis+='<line x1="'+padL+'" y1="'+yBase+'" x2="'+(W-padR)+'" y2="'+yBase+'" stroke="#333" stroke-width="1"/>';
+
+  // Barras
+  scores.forEach(function(v,i){
+    var cx=padL+i*slotW+slotW/2;
+    var bw=slotW*0.52;var x=cx-bw/2;
+    var yTop=yScore(v);var bh=Math.max(yBase-yTop,2);
+    var col=v<=-9?'#ef4444':v<=-6?'#f97316':v<=-3?'#eab308':'#1ddb3a';
+    var isToday=i===n-1;
+    // Columna resaltada para hoy
+    if(isToday) bars+='<rect x="'+(padL+i*slotW)+'" y="'+padT+'" width="'+slotW+'" height="'+cH+'" fill="rgba(29,219,58,0.03)"/>';
+    bars+='<rect x="'+x+'" y="'+yTop+'" width="'+bw+'" height="'+bh+'" fill="'+col+'" opacity="'+(isToday?1:0.75)+'" rx="3"><title>'+days[i]+'\nScore: '+v+'\nOps: '+opsTotal[i]+'\nCríticas: '+critical[i]+'\nConfirmadas: '+confirmed[i]+'%</title></rect>';
+    // Score encima de la barra
+    scoreLabels+='<text x="'+cx+'" y="'+(yTop-5)+'" text-anchor="middle" font-size="10" font-weight="700" fill="'+col+'">'+v+'</text>';
+
+    // Zona inferior: día | ops | críticas
+    var yRow1=padT+cH+14; // día
+    var yRow2=padT+cH+26; // ops count
+    var yRow3=padT+cH+42; // críticas
+    scoreLabels+='<text x="'+cx+'" y="'+yRow1+'" text-anchor="middle" font-size="10" fill="'+(isToday?'#1ddb3a':'#666')+'" font-weight="'+(isToday?'700':'400')+'">'+days[i]+'</text>';
+    scoreLabels+='<text x="'+cx+'" y="'+yRow2+'" text-anchor="middle" font-size="9" fill="#555">'+opsTotal[i]+' ops</text>';
+    if(critical[i]>0){
+      scoreLabels+='<circle cx="'+cx+'" cy="'+(yRow3-3)+'" r="7" fill="#ef4444" opacity="0.9"/>';
+      scoreLabels+='<text x="'+cx+'" y="'+(yRow3+1)+'" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">'+critical[i]+'</text>';
+    } else {
+      scoreLabels+='<text x="'+cx+'" y="'+yRow3+'" text-anchor="middle" font-size="8" fill="#333">—</text>';
+    }
+  });
+
+  // Línea % confirmadas
+  var pathParts=confirmed.map(function(v,i){
+    var cx=padL+i*slotW+slotW/2;
+    return(i===0?'M':'L')+cx+','+yConf(v);
+  });
+  lineConf='<path d="'+pathParts.join(' ')+'" fill="none" stroke="#1ddb3a" stroke-width="2" stroke-dasharray="5,3" opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/>';
+
+  // Puntos % confirmadas
+  confirmed.forEach(function(v,i){
+    var cx=padL+i*slotW+slotW/2;var cy=yConf(v);
+    var col=v>=70?'#1ddb3a':v>=50?'#eab308':'#ef4444';
+    dots+='<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="'+col+'" stroke="#0a0a0a" stroke-width="2"><title>'+v+'% confirmadas</title></circle>';
+    dots+='<text x="'+cx+'" y="'+(cy-9)+'" text-anchor="middle" font-size="9" fill="'+col+'">'+v+'%</text>';
+  });
+
+  // Leyenda abajo a la derecha
+  var lyLegend=H-8;
+  var legend='<circle cx="'+(W-padR-80)+'" cy="'+(lyLegend-4)+'" r="5" fill="#ef4444" opacity="0.9"/>'+
+    '<text x="'+(W-padR-72)+'" y="'+lyLegend+'" font-size="8" fill="#ef4444">= ops críticas del día</text>'+
+    '<text x="'+(W-padR+4)+'" y="'+(padT+4)+'" font-size="9" fill="#1ddb3a" opacity="0.5">%</text>';
+
+  el.innerHTML='<svg width="100%" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">'+
+    yAxis+bars+scoreLabels+lineConf+dots+legend+'</svg>';
+}
+// ── TICKER ──
+function renderTicker(){
+  var ticker=document.getElementById('tickerContent');if(!ticker) return;
+  var items=[];
+  var criticas=allOps.filter(function(o){return o.riskLevel==='critical'&&o.authorized&&o.monto>100000000;});
+  criticas.slice(0,3).forEach(function(o){items.push('CRÍTICO · '+o.id+' · '+o.producer+' · '+o.client+' · '+fmt(o.monto)+' sin confirmar');});
+  var sinMail=allOps.filter(function(o){return o.authorized&&o.mailStatus!=='sent'&&o.confirmStatus!=='confirmed';});
+  if(sinMail.length>0) items.push('MAIL PENDIENTE · '+sinMail.length+' operación'+(sinMail.length>1?'es':'')+' sin conformidad enviada');
+  PRODUCERS.forEach(function(name){var score=producerScore(name);if(score<=-3) items.push('ACUMULACIÓN · '+name+' · Score: '+score+' pts');});
+  var altas=allOps.filter(function(o){return o.riskLevel==='high'&&o.authorized;});
+  if(altas.length>0) items.push('ALTO RIESGO · '+altas.length+' operación'+(altas.length>1?'es':'')+' entre $50M–$100M sin confirmar');
+  if(items.length===0) items.push('✅ Sin alertas activas — todas las operaciones están confirmadas');
+  var all=items.concat(items);
+  ticker.innerHTML=all.map(function(msg){return '<div class="ticker-item"><div class="ticker-dot"></div>'+msg+'</div>';}).join('');
+}
+
+// ── TOGGLE MAIL ──
 function toggleMail(id){
-  const op = allOps.find(o => o.id===id);
-  if (!op) return;
-  op.mailStatus = op.mailStatus==='sent' ? 'pending' : 'sent';
-  if (op.mailStatus==='pending') op.confirmStatus = 'pending';
-  op.score     = calcOpScore(op);
-  op.riskLevel = calcRiskLevel(op);
-  renderTable(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderCompliance();
-  showToast(op.mailStatus==='sent' ? '✉️ Mail marcado como enviado' : '📭 Mail marcado como pendiente', op.mailStatus==='sent'?'success':'danger');
+  var op=allOps.find(function(o){return o.id===id;});if(!op) return;
+  op.mailStatus=op.mailStatus==='sent'?'pending':'sent';
+  if(op.mailStatus==='pending') op.confirmStatus='pending';
+  op.score=calcOpScore(op);op.riskLevel=calcRiskLevel(op);
+  renderTable();updateKPIs();renderProducers();renderGlobalRisk();renderTicker();renderCompliance();
+  showToast(op.mailStatus==='sent'?'✉️ Mail marcado como enviado':'📭 Mail marcado como pendiente',op.mailStatus==='sent'?'success':'danger');
 }
 
-// ═══════════════════════════════════════════════════════
-// MODAL DETALLE
-// ═══════════════════════════════════════════════════════
+// ── MODAL DETALLE ──
 function showOpDetail(id){
-  const op = allOps.find(o => o.id===id);
-  if (!op) return;
-  document.getElementById('modalTitle').textContent = `${op.id} — ${op.instrument}`;
-  document.getElementById('modalEl').style.maxWidth = '580px';
-  const rc = RISK_COLOR[op.riskLevel];
-  document.getElementById('modalBody').innerHTML = `
-    <div class="detail-grid">
-      <div><div class="detail-key">Cliente</div><div class="detail-val">${op.client}</div></div>
-      <div><div class="detail-key">Productor</div><div class="detail-val">${op.producer}</div></div>
-      <div><div class="detail-key">Monto</div><div class="detail-val" style="color:${op.monto>100_000_000?'var(--red)':'var(--text)'}">${fmt(op.monto)}</div></div>
-      <div><div class="detail-key">Instrumento</div><div class="detail-val" style="color:#1a1fe8">${op.instrument}</div></div>
-      <div><div class="detail-key">Mail conformidad</div><div class="detail-val">${mailPill(op)}</div></div>
-      <div><div class="detail-key">Confirmación cliente</div><div class="detail-val">${confirmPill(op)}</div></div>
-      <div><div class="detail-key">Tiempo</div><div class="detail-val">${fmtT(op.minutesAgo)}</div></div>
-      <div><div class="detail-key">Nivel de riesgo</div><div class="detail-val" style="color:${rc}">${RISK_LABEL[op.riskLevel]}</div></div>
-      <div><div class="detail-key">Score op.</div><div class="detail-val" style="color:${rc}">${op.score} pts</div></div>
-      <div><div class="detail-key">Autorizado</div><div class="detail-val" style="color:${op.authorized?'var(--green)':'var(--red)'}">${op.authorized?'✓ Sí':'✗ No'}</div></div>
-    </div>
-    <div class="rec-box" style="margin-bottom:14px">
-      <div class="rec-title">Recomendación</div>
-      <div class="rec-text">${
-        !op.authorized                                                          ? '🔴 Operador no autorizado. Escalar a Compliance inmediatamente.' :
-        op.monto>100_000_000 && op.confirmStatus!=='confirmed'                  ? '🔴 Monto >100M sin confirmación. Contactar al cliente de inmediato.' :
-        op.mailStatus!=='sent'                                                  ? '🟠 Mail de conformidad no enviado. Enviar y aguardar respuesta del cliente.' :
-        op.confirmStatus!=='confirmed'                                          ? '🟡 Mail enviado. Pendiente de confirmación del cliente.' :
-        '🟢 Operación dentro de parámetros. Sin acción requerida.'
-      }</div>
-    </div>
-    <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);padding-top:14px">
-      <button class="btn-secondary" onclick="closeModal()">Cerrar</button>
-      <button class="btn-primary" onclick="closeModal();openEditModal('${op.id}')">✏️ Editar</button>
-    </div>`;
+  var op=allOps.find(function(o){return o.id===id;});if(!op) return;
+  document.getElementById('modalTitle').textContent=op.id+' — '+op.instrument;
+  document.getElementById('modalEl').style.maxWidth='580px';
+  var rc=RISK_COLOR[op.riskLevel];
+  var rl=op.authorized&&op.confirmStatus==='confirmed'?'NULO':(RISK_LABEL[op.riskLevel]||'BAJO');
+  var rec=!op.authorized&&op.monto>100000000?'🔴 Operador no autorizado en op. >$100M. Escalar a Compliance.':
+    !op.authorized?'🔴 Operador no autorizado. Escalar a Compliance.':
+    op.monto>100000000&&op.confirmStatus!=='confirmed'?'🔴 Monto >$100M sin confirmación. Contactar al cliente urgente.':
+    op.mailStatus!=='sent'?'🟠 Mail de conformidad no enviado.':
+    op.confirmStatus!=='confirmed'?'🟡 Mail enviado. Esperando confirmación.':'🟢 Confirmada. Sin acción.';
+  document.getElementById('modalBody').innerHTML=
+    '<div class="detail-grid">'+
+      '<div><div class="detail-key">Cliente</div><div class="detail-val">'+op.client+'</div></div>'+
+      '<div><div class="detail-key">Productor</div><div class="detail-val">'+op.producer+'</div></div>'+
+      '<div><div class="detail-key">Monto</div><div class="detail-val" style="color:'+(op.monto>100000000?'var(--red)':'var(--text)')+'">'+fmt(op.monto)+'</div></div>'+
+      '<div><div class="detail-key">Instrumento</div><div class="detail-val" style="color:#1ddb3a">'+op.instrument+'</div></div>'+
+      '<div><div class="detail-key">Mail conformidad</div><div class="detail-val">'+mailPill(op)+'</div></div>'+
+      '<div><div class="detail-key">Confirmación cliente</div><div class="detail-val">'+confirmPill(op)+'</div></div>'+
+      '<div><div class="detail-key">Tiempo</div><div class="detail-val">'+fmtT(op.minutesAgo)+'</div></div>'+
+      '<div><div class="detail-key">Nivel de riesgo</div><div class="detail-val" style="color:'+rc+'">'+rl+'</div></div>'+
+      '<div><div class="detail-key">Score</div><div class="detail-val" style="color:'+rc+'">'+op.score+' pts</div></div>'+
+      '<div><div class="detail-key">Autorizado</div><div class="detail-val" style="color:'+(op.authorized?'#1ddb3a':'#ef4444')+'">'+(op.authorized?'✓ Sí':'✗ No')+'</div></div>'+
+    '</div>'+
+    '<div class="rec-box" style="margin-bottom:14px"><div class="rec-title">Recomendación</div><div class="rec-text">'+rec+'</div></div>'+
+    '<div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);padding-top:14px">'+
+      '<button class="btn-secondary" onclick="closeModal()">Cerrar</button>'+
+      '<button class="btn-primary" onclick="closeModal();openEditModal(\''+op.id+'\')">✏️ Editar</button>'+
+    '</div>';
   openModal();
 }
 
-// ═══════════════════════════════════════════════════════
-// MODAL EDITAR
-// ═══════════════════════════════════════════════════════
+// ── MODAL EDITAR ──
 function openEditModal(id){
-  const op = allOps.find(o => o.id===id);
-  if (!op) return;
-  document.getElementById('modalTitle').textContent = `✏️ Editar — ${op.id}`;
-  document.getElementById('modalEl').style.maxWidth = '580px';
-  document.getElementById('modalBody').innerHTML = `
-    <div class="edit-form">
-      <div class="form-group">
-        <label class="form-label">Cliente</label>
-        <select class="form-select" id="ef-client">${CLIENT_NAMES.map(c=>`<option value="${c}" ${op.client===c?'selected':''}>${c}</option>`).join('')}</select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Productor</label>
-        <select class="form-select" id="ef-producer">${PRODUCERS.map(p=>`<option value="${p}" ${op.producer===p?'selected':''}>${p}</option>`).join('')}</select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Instrumento</label>
-        <select class="form-select" id="ef-instrument">${INSTRUMENTS.map(i=>`<option value="${i}" ${op.instrument===i?'selected':''}>${i}</option>`).join('')}</select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Monto (ARS)</label>
-        <input class="form-input" id="ef-monto" type="number" value="${op.monto}" min="1"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Mail de conformidad</label>
-        <select class="form-select" id="ef-mail">
-          <option value="pending" ${op.mailStatus!=='sent'?'selected':''}>📭 Pendiente</option>
-          <option value="sent"    ${op.mailStatus==='sent'?'selected':''}>✉️ Enviado</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Confirmación del cliente</label>
-        <select class="form-select" id="ef-confirm">
-          <option value="pending"   ${op.confirmStatus!=='confirmed'?'selected':''}>⏳ Pendiente</option>
-          <option value="confirmed" ${op.confirmStatus==='confirmed'?'selected':''}>✅ Confirmada</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Minutos transcurridos</label>
-        <input class="form-input" id="ef-minutes" type="number" value="${op.minutesAgo}" min="1"/>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">
-      <button class="btn-danger"     onclick="deleteOp('${op.id}')">🗑 Eliminar</button>
-      <button class="btn-secondary"  onclick="closeModal()">Cancelar</button>
-      <button class="btn-primary"    onclick="saveEdit('${op.id}')">Guardar</button>
-    </div>`;
+  var op=allOps.find(function(o){return o.id===id;});if(!op) return;
+  document.getElementById('modalTitle').textContent='✏️ Editar — '+op.id;
+  document.getElementById('modalEl').style.maxWidth='580px';
+  document.getElementById('modalBody').innerHTML=
+    '<div class="edit-form">'+
+      '<div class="form-group"><label class="form-label">Cliente</label><select class="form-select" id="ef-client">'+CLIENT_NAMES.map(function(c){return '<option value="'+c+'"'+(op.client===c?' selected':'')+'>'+c+'</option>';}).join('')+'</select></div>'+
+      '<div class="form-group"><label class="form-label">Productor</label><select class="form-select" id="ef-producer">'+PRODUCERS.map(function(p){return '<option value="'+p+'"'+(op.producer===p?' selected':'')+'>'+p+'</option>';}).join('')+'</select></div>'+
+      '<div class="form-group"><label class="form-label">Instrumento</label><select class="form-select" id="ef-instrument">'+INSTRUMENTS.map(function(i){return '<option value="'+i+'"'+(op.instrument===i?' selected':'')+'>'+i+'</option>';}).join('')+'</select></div>'+
+      '<div class="form-group"><label class="form-label">Monto (ARS)</label><input class="form-input" id="ef-monto" type="number" value="'+op.monto+'" min="1"/></div>'+
+      '<div class="form-group"><label class="form-label">Mail de conformidad</label><select class="form-select" id="ef-mail">'+
+        '<option value="pending"'+(op.mailStatus!=='sent'?' selected':'')+'>📭 Pendiente</option>'+
+        '<option value="sent"'+(op.mailStatus==='sent'?' selected':'')+'>✉️ Enviado</option>'+
+      '</select></div>'+
+      '<div class="form-group"><label class="form-label">Confirmación del cliente</label><select class="form-select" id="ef-confirm">'+
+        '<option value="pending"'+(op.confirmStatus!=='confirmed'?' selected':'')+'>⏳ Pendiente</option>'+
+        '<option value="confirmed"'+(op.confirmStatus==='confirmed'?' selected':'')+'>✅ Confirmada</option>'+
+      '</select></div>'+
+      '<div class="form-group"><label class="form-label">Minutos transcurridos</label><input class="form-input" id="ef-minutes" type="number" value="'+op.minutesAgo+'" min="1"/></div>'+
+    '</div>'+
+    '<div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">'+
+      '<button class="btn-danger" onclick="deleteOp(\''+op.id+'\')">🗑 Eliminar</button>'+
+      '<button class="btn-secondary" onclick="closeModal()">Cancelar</button>'+
+      '<button class="btn-primary" onclick="saveEdit(\''+op.id+'\')">Guardar</button>'+
+    '</div>';
   openModal();
 }
-
 function saveEdit(id){
-  const op = allOps.find(o => o.id===id);
-  if (!op) return;
-  op.client        = document.getElementById('ef-client').value;
-  op.producer      = document.getElementById('ef-producer').value;
-  op.instrument    = document.getElementById('ef-instrument').value;
-  op.monto         = parseInt(document.getElementById('ef-monto').value)    || op.monto;
-  op.mailStatus    = document.getElementById('ef-mail').value;
-  op.confirmStatus = document.getElementById('ef-confirm').value;
-  op.minutesAgo    = parseInt(document.getElementById('ef-minutes').value) || op.minutesAgo;
-  op.authorized    = isAuth(op.client, op.producer);
-  // si se revierte mail, confirmación vuelve a pendiente
-  if (op.mailStatus==='pending') op.confirmStatus = 'pending';
-  op.score     = calcOpScore(op);
-  op.riskLevel = calcRiskLevel(op);
-  filteredOps = [...allOps];
-  applyFilters(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderCompliance();
-  if (prodMetricsOpen) renderProdMetrics();
-  closeModal();
-  showToast('Operación actualizada','success');
+  var op=allOps.find(function(o){return o.id===id;});if(!op) return;
+  op.client=document.getElementById('ef-client').value;
+  op.producer=document.getElementById('ef-producer').value;
+  op.instrument=document.getElementById('ef-instrument').value;
+  op.monto=parseInt(document.getElementById('ef-monto').value)||op.monto;
+  op.mailStatus=document.getElementById('ef-mail').value;
+  op.confirmStatus=document.getElementById('ef-confirm').value;
+  op.minutesAgo=parseInt(document.getElementById('ef-minutes').value)||op.minutesAgo;
+  op.authorized=isAuth(op.client,op.producer);
+  if(op.mailStatus==='pending') op.confirmStatus='pending';
+  op.score=calcOpScore(op);op.riskLevel=calcRiskLevel(op);
+  filteredOps=allOps.slice();applyFilters();updateKPIs();renderProducers();renderGlobalRisk();renderCompliance();renderTicker();
+  if(prodMetricsOpen) renderProdMetrics();
+  closeModal();showToast('Operación actualizada','success');
 }
-
 function deleteOp(id){
-  if (!confirm('¿Eliminar esta operación?')) return;
-  allOps     = allOps.filter(o => o.id!==id);
-  filteredOps = filteredOps.filter(o => o.id!==id);
-  renderTable(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderCompliance();
-  closeModal();
-  showToast('Operación eliminada','danger');
+  if(!confirm('¿Eliminar esta operación?')) return;
+  allOps=allOps.filter(function(o){return o.id!==id;});
+  filteredOps=filteredOps.filter(function(o){return o.id!==id;});
+  renderTable();updateKPIs();renderProducers();renderGlobalRisk();renderCompliance();renderTicker();
+  closeModal();showToast('Operación eliminada','danger');
 }
 
-// ═══════════════════════════════════════════════════════
-// MODAL NUEVA OPERACIÓN
-// ═══════════════════════════════════════════════════════
+// ── NUEVA OPERACIÓN ──
 function openNewOpModal(){
-  document.getElementById('modalTitle').textContent = '➕ Nueva Operación';
-  document.getElementById('modalEl').style.maxWidth = '580px';
-  document.getElementById('modalBody').innerHTML = `
-    <div class="edit-form">
-      <div class="form-group">
-        <label class="form-label">Cliente</label>
-        <select class="form-select" id="nf-client">${CLIENT_NAMES.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Productor</label>
-        <select class="form-select" id="nf-producer">${PRODUCERS.map(p=>`<option value="${p}">${p}</option>`).join('')}</select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Instrumento</label>
-        <select class="form-select" id="nf-instrument">${INSTRUMENTS.map(i=>`<option value="${i}">${i}</option>`).join('')}</select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Monto (ARS)</label>
-        <input class="form-input" id="nf-monto" type="number" placeholder="Ej: 50000000" min="1"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Mail de conformidad</label>
-        <select class="form-select" id="nf-mail">
-          <option value="pending">📭 Pendiente</option>
-          <option value="sent">✉️ Enviado</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Confirmación del cliente</label>
-        <select class="form-select" id="nf-confirm">
-          <option value="pending">⏳ Pendiente</option>
-          <option value="confirmed">✅ Confirmada</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Minutos transcurridos</label>
-        <input class="form-input" id="nf-minutes" type="number" value="5" min="1"/>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">
-      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
-      <button class="btn-primary"   onclick="saveNewOp()">Crear</button>
-    </div>`;
+  document.getElementById('modalTitle').textContent='➕ Nueva Operación';
+  document.getElementById('modalEl').style.maxWidth='580px';
+  document.getElementById('modalBody').innerHTML=
+    '<div class="edit-form">'+
+      '<div class="form-group"><label class="form-label">Cliente</label><select class="form-select" id="nf-client">'+CLIENT_NAMES.map(function(c){return '<option value="'+c+'">'+c+'</option>';}).join('')+'</select></div>'+
+      '<div class="form-group"><label class="form-label">Productor</label><select class="form-select" id="nf-producer">'+PRODUCERS.map(function(p){return '<option value="'+p+'">'+p+'</option>';}).join('')+'</select></div>'+
+      '<div class="form-group"><label class="form-label">Instrumento</label><select class="form-select" id="nf-instrument">'+INSTRUMENTS.map(function(i){return '<option value="'+i+'">'+i+'</option>';}).join('')+'</select></div>'+
+      '<div class="form-group"><label class="form-label">Monto (ARS)</label><input class="form-input" id="nf-monto" type="number" placeholder="Ej: 50000000" min="1"/></div>'+
+      '<div class="form-group"><label class="form-label">Mail de conformidad</label><select class="form-select" id="nf-mail"><option value="pending">📭 Pendiente</option><option value="sent">✉️ Enviado</option></select></div>'+
+      '<div class="form-group"><label class="form-label">Confirmación del cliente</label><select class="form-select" id="nf-confirm"><option value="pending">⏳ Pendiente</option><option value="confirmed">✅ Confirmada</option></select></div>'+
+      '<div class="form-group"><label class="form-label">Minutos transcurridos</label><input class="form-input" id="nf-minutes" type="number" value="5" min="1"/></div>'+
+    '</div>'+
+    '<div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">'+
+      '<button class="btn-secondary" onclick="closeModal()">Cancelar</button>'+
+      '<button class="btn-primary" onclick="saveNewOp()">Crear</button>'+
+    '</div>';
   openModal();
 }
-
 function saveNewOp(){
-  const monto = parseInt(document.getElementById('nf-monto').value);
-  if (!monto||monto<1){ showToast('Ingresá un monto válido','danger'); return; }
-  const op = buildOp({
-    client:        document.getElementById('nf-client').value,
-    producer:      document.getElementById('nf-producer').value,
-    instrument:    document.getElementById('nf-instrument').value,
-    monto,
-    mailStatus:    document.getElementById('nf-mail').value,
-    confirmStatus: document.getElementById('nf-confirm').value,
-    minutesAgo:    parseInt(document.getElementById('nf-minutes').value)||5
+  var monto=parseInt(document.getElementById('nf-monto').value);
+  if(!monto||monto<1){showToast('Ingresá un monto válido','danger');return;}
+  var op=buildOp({
+    client:document.getElementById('nf-client').value,
+    producer:document.getElementById('nf-producer').value,
+    instrument:document.getElementById('nf-instrument').value,
+    monto:monto,
+    mailStatus:document.getElementById('nf-mail').value,
+    confirmStatus:document.getElementById('nf-confirm').value,
+    minutesAgo:parseInt(document.getElementById('nf-minutes').value)||5
   });
-  allOps.unshift(op);
-  filteredOps = [...allOps];
-  applyFilters(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderCompliance();
-  if (prodMetricsOpen) renderProdMetrics();
-  closeModal();
-  showToast('Operación creada','success');
+  allOps.unshift(op);filteredOps=allOps.slice();applyFilters();updateKPIs();renderProducers();renderGlobalRisk();renderCompliance();renderTicker();
+  if(prodMetricsOpen) renderProdMetrics();
+  closeModal();showToast('Operación creada','success');
 }
 
-// ═══════════════════════════════════════════════════════
-// EDITOR DE FILTROS / CONFIG
-// ═══════════════════════════════════════════════════════
+// ── CONFIG ──
 function openFilterEditor(){
-  document.getElementById('modalTitle').textContent = '⚙️ Configuración';
-  document.getElementById('modalEl').style.maxWidth = '620px';
-  document.getElementById('modalBody').innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:20px">
-      <div>
-        <div class="score-title" style="margin-bottom:10px">Productores</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
-          ${PRODUCERS.map(p=>`<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600">
-            ${p}${PRODUCERS.length>1?`<span onclick="removeProducer('${p}')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px">×</span>`:''}
-          </div>`).join('')}
-        </div>
-        <div style="display:flex;gap:8px">
-          <input class="form-input" id="fe-new-producer" placeholder="Nuevo productor" style="flex:1"/>
-          <button class="btn-primary" onclick="addProducer()">+ Agregar</button>
-        </div>
-      </div>
-      <div>
-        <div class="score-title" style="margin-bottom:10px">Instrumentos</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
-          ${INSTRUMENTS.map(i=>`<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600">
-            ${i}<span onclick="removeInstrument('${i}')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px">×</span>
-          </div>`).join('')}
-        </div>
-        <div style="display:flex;gap:8px">
-          <input class="form-input" id="fe-new-instrument" placeholder="Nuevo instrumento"/>
-          <button class="btn-primary" onclick="addInstrument()">+ Agregar</button>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;justify-content:flex-end;margin-top:20px;border-top:1px solid var(--border);padding-top:14px">
-      <button class="btn-secondary" onclick="closeModal()">Cerrar</button>
-    </div>`;
+  document.getElementById('modalTitle').textContent='⚙️ Configuración';
+  document.getElementById('modalEl').style.maxWidth='620px';
+  var prodHtml=PRODUCERS.map(function(p){
+    return '<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--text)">'+p+(PRODUCERS.length>1?'<span onclick="removeProducer(\''+p+'\')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px">×</span>':'')+'</div>';
+  }).join('');
+  var instHtml=INSTRUMENTS.map(function(i){
+    return '<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--text)">'+i+'<span onclick="removeInstrument(\''+i+'\')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px">×</span></div>';
+  }).join('');
+  document.getElementById('modalBody').innerHTML=
+    '<div style="display:flex;flex-direction:column;gap:20px">'+
+      '<div><div class="score-title" style="margin-bottom:10px">Productores</div>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">'+prodHtml+'</div>'+
+        '<div style="display:flex;gap:8px"><input class="form-input" id="fe-new-producer" placeholder="Nuevo productor" style="flex:1"/><button class="btn-primary" onclick="addProducer()">+ Agregar</button></div>'+
+      '</div>'+
+      '<div><div class="score-title" style="margin-bottom:10px">Instrumentos</div>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">'+instHtml+'</div>'+
+        '<div style="display:flex;gap:8px"><input class="form-input" id="fe-new-instrument" placeholder="Nuevo instrumento"/><button class="btn-primary" onclick="addInstrument()">+ Agregar</button></div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="display:flex;justify-content:flex-end;margin-top:20px;border-top:1px solid var(--border);padding-top:14px"><button class="btn-secondary" onclick="closeModal()">Cerrar</button></div>';
   openModal();
 }
-
 function addProducer(){
-  const v = document.getElementById('fe-new-producer').value.trim();
-  if (!v){ showToast('Nombre requerido','danger'); return; }
-  if (PRODUCERS.includes(v)){ showToast('Ya existe','danger'); return; }
+  var v=document.getElementById('fe-new-producer').value.trim();
+  if(!v){showToast('Nombre requerido','danger');return;}
+  if(PRODUCERS.indexOf(v)>=0){showToast('Ya existe','danger');return;}
   PRODUCERS.push(v);
-  CLIENT_NAMES.forEach(c => { if(!AUTHORIZED_MAP[c]) AUTHORIZED_MAP[c]=[]; AUTHORIZED_MAP[c].push(v); });
-  populateFilterSelects(); renderProducers(); openFilterEditor();
-  showToast(`Productor "${v}" agregado`,'success');
+  CLIENT_NAMES.forEach(function(c){if(!AUTHORIZED_MAP[c])AUTHORIZED_MAP[c]=[];AUTHORIZED_MAP[c].push(v);});
+  populateFilterSelects();renderProducers();openFilterEditor();showToast('"'+v+'" agregado','success');
 }
 function removeProducer(p){
-  if (PRODUCERS.length<=1){ showToast('Debe haber al menos un productor','danger'); return; }
-  PRODUCERS = PRODUCERS.filter(x=>x!==p);
-  CLIENT_NAMES.forEach(c => { AUTHORIZED_MAP[c]=(AUTHORIZED_MAP[c]||[]).filter(x=>x!==p); });
-  populateFilterSelects(); renderProducers(); openFilterEditor();
+  if(PRODUCERS.length<=1){showToast('Debe haber al menos un productor','danger');return;}
+  PRODUCERS=PRODUCERS.filter(function(x){return x!==p;});
+  CLIENT_NAMES.forEach(function(c){AUTHORIZED_MAP[c]=(AUTHORIZED_MAP[c]||[]).filter(function(x){return x!==p;});});
+  populateFilterSelects();renderProducers();openFilterEditor();
 }
 function addInstrument(){
-  const v = document.getElementById('fe-new-instrument').value.trim().toUpperCase();
-  if (!v){ showToast('Nombre requerido','danger'); return; }
-  if (INSTRUMENTS.includes(v)){ showToast('Ya existe','danger'); return; }
-  INSTRUMENTS.push(v);
-  populateFilterSelects(); openFilterEditor();
-  showToast(`Instrumento "${v}" agregado`,'success');
+  var v=document.getElementById('fe-new-instrument').value.trim().toUpperCase();
+  if(!v){showToast('Nombre requerido','danger');return;}
+  if(INSTRUMENTS.indexOf(v)>=0){showToast('Ya existe','danger');return;}
+  INSTRUMENTS.push(v);populateFilterSelects();openFilterEditor();showToast('"'+v+'" agregado','success');
 }
 function removeInstrument(i){
-  if (INSTRUMENTS.length<=1){ showToast('Debe haber al menos uno','danger'); return; }
-  INSTRUMENTS = INSTRUMENTS.filter(x=>x!==i);
-  populateFilterSelects(); openFilterEditor();
+  if(INSTRUMENTS.length<=1){showToast('Debe haber al menos uno','danger');return;}
+  INSTRUMENTS=INSTRUMENTS.filter(function(x){return x!==i;});populateFilterSelects();openFilterEditor();
 }
 
-// ═══════════════════════════════════════════════════════
-// MÉTRICAS POR PRODUCTOR
-// ═══════════════════════════════════════════════════════
+// ── MÉTRICAS PRODUCTOR ──
 function toggleProdMetrics(){
-  prodMetricsOpen = !prodMetricsOpen;
-  document.getElementById('prodMetricsBody').style.display = prodMetricsOpen ? 'block' : 'none';
-  document.getElementById('prodMetricsChevron').classList.toggle('open', prodMetricsOpen);
-  if (prodMetricsOpen) renderProdMetrics();
+  prodMetricsOpen=!prodMetricsOpen;
+  document.getElementById('prodMetricsBody').style.display=prodMetricsOpen?'block':'none';
+  document.getElementById('prodMetricsChevron').classList.toggle('open',prodMetricsOpen);
+  if(prodMetricsOpen) renderProdMetrics();
 }
-
-function selectProd(p){ selectedProdFilter=p; renderProdMetrics(); }
-
+function selectProd(p){selectedProdFilter=p;renderProdMetrics();}
 function renderProdMetrics(){
-  // Selector
-  document.getElementById('prodSelectorRow').innerHTML =
-    `<button class="prod-selector-btn ${selectedProdFilter==='__all__'?'active':''}" onclick="selectProd('__all__')">Todos</button>` +
-    PRODUCERS.map(p=>`<button class="prod-selector-btn ${selectedProdFilter===p?'active':''}" onclick="selectProd('${p}')">${p}</button>`).join('');
-
-  const ops  = selectedProdFilter==='__all__' ? allOps : allOps.filter(o=>o.producer===selectedProdFilter);
-  const aut  = ops.filter(o=>o.authorized);
-  const conf = aut.filter(o=>o.confirmStatus==='confirmed').length;
-  const sinM = aut.filter(o=>o.mailStatus!=='sent').length;
-
-  document.getElementById('prodMetricsKpis').innerHTML = `
-    <div class="metric-card"><div class="metric-card-label">Total Ops</div><div class="metric-card-value">${ops.length}</div></div>
-    <div class="metric-card"><div class="metric-card-label">Confirmadas</div><div class="metric-card-value" style="color:var(--green)">${conf}</div><div class="metric-card-sub">${Math.round(conf/Math.max(aut.length,1)*100)}%</div></div>
-    <div class="metric-card"><div class="metric-card-label">Sin mail</div><div class="metric-card-value" style="color:var(--red)">${sinM}</div></div>
-    <div class="metric-card"><div class="metric-card-label">Monto Total</div><div class="metric-card-value" style="font-size:18px">${fmt(ops.reduce((s,o)=>s+o.monto,0))}</div></div>`;
-
-  const grid = document.getElementById('prodDetailGrid');
-
-  if (selectedProdFilter==='__all__'){
-    const clientRows = CLIENT_NAMES.map(c=>({
-      c, total:ops.filter(o=>o.client===c).length,
-      monto:ops.filter(o=>o.client===c).reduce((s,o)=>s+o.monto,0)
-    })).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
-    const maxC = Math.max(...clientRows.map(x=>x.total),1);
-
-    const prodRows = PRODUCERS.map(p=>({
-      p,
-      total:ops.filter(o=>o.producer===p).length,
-      conf:ops.filter(o=>o.producer===p&&o.confirmStatus==='confirmed').length,
-      sinMail:ops.filter(o=>o.producer===p&&o.authorized&&o.mailStatus!=='sent').length,
-      monto:ops.filter(o=>o.producer===p).reduce((s,o)=>s+o.monto,0)
-    }));
-
-    grid.innerHTML = `
-      <div class="prod-detail-card">
-        <div class="prod-detail-card-title">Operaciones por Cliente</div>
-        <table class="prod-mini-table">
-          <thead><tr><th>Cliente</th><th>Ops</th><th>Monto</th><th>Dist.</th></tr></thead>
-          <tbody>${clientRows.slice(0,10).map(x=>`
-            <tr><td>${x.c}</td><td><strong>${x.total}</strong></td><td>${fmt(x.monto)}</td>
-            <td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round(x.total/maxC*100)}%"></div></div></td></tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-      <div class="prod-detail-card">
-        <div class="prod-detail-card-title">Resumen por Productor</div>
-        <table class="prod-mini-table">
-          <thead><tr><th>Productor</th><th>Ops</th><th>Confirm.</th><th>Sin mail</th><th>Monto</th></tr></thead>
-          <tbody>${prodRows.map(x=>`
-            <tr><td><strong>${x.p}</strong></td><td>${x.total}</td>
-            <td style="color:var(--green)">${x.conf}</td>
-            <td style="color:${x.sinMail>0?'var(--red)':'var(--text-muted)'}">${x.sinMail}</td>
-            <td>${fmt(x.monto)}</td></tr>`).join('')}
-          </tbody>
-        </table>
-      </div>`;
+  document.getElementById('prodSelectorRow').innerHTML=
+    '<button class="prod-selector-btn '+(selectedProdFilter==='__all__'?'active':'')+'" onclick="selectProd(\'__all__\')">Todos</button>'+
+    PRODUCERS.map(function(p){return '<button class="prod-selector-btn '+(selectedProdFilter===p?'active':'')+'" onclick="selectProd(\''+p+'\')">'+p+'</button>';}).join('');
+  var ops=selectedProdFilter==='__all__'?allOps:allOps.filter(function(o){return o.producer===selectedProdFilter;});
+  var aut=ops.filter(function(o){return o.authorized;});
+  var conf=aut.filter(function(o){return o.confirmStatus==='confirmed';}).length;
+  var sinM=aut.filter(function(o){return o.mailStatus!=='sent';}).length;
+  document.getElementById('prodMetricsKpis').innerHTML=
+    '<div class="metric-card"><div class="metric-card-label">Total Ops</div><div class="metric-card-value">'+ops.length+'</div></div>'+
+    '<div class="metric-card"><div class="metric-card-label">Confirmadas</div><div class="metric-card-value" style="color:#1ddb3a">'+conf+'</div><div class="metric-card-sub">'+Math.round(conf/Math.max(aut.length,1)*100)+'%</div></div>'+
+    '<div class="metric-card"><div class="metric-card-label">Sin mail</div><div class="metric-card-value" style="color:var(--red)">'+sinM+'</div></div>'+
+    '<div class="metric-card"><div class="metric-card-label">Monto Total</div><div class="metric-card-value" style="font-size:18px">'+fmt(ops.reduce(function(s,o){return s+o.monto;},0))+'</div></div>';
+  var grid=document.getElementById('prodDetailGrid');
+  if(selectedProdFilter==='__all__'){
+    var clientRows=CLIENT_NAMES.map(function(c){
+      return{c:c,total:ops.filter(function(o){return o.client===c;}).length,monto:ops.filter(function(o){return o.client===c;}).reduce(function(s,o){return s+o.monto;},0)};
+    }).filter(function(x){return x.total>0;}).sort(function(a,b){return b.total-a.total;});
+    var maxC=Math.max.apply(null,clientRows.map(function(x){return x.total;}));maxC=Math.max(maxC,1);
+    var prodRows=PRODUCERS.map(function(p){
+      return{p:p,total:ops.filter(function(o){return o.producer===p;}).length,
+        conf:ops.filter(function(o){return o.producer===p&&o.confirmStatus==='confirmed';}).length,
+        sinMail:ops.filter(function(o){return o.producer===p&&o.authorized&&o.mailStatus!=='sent';}).length,
+        monto:ops.filter(function(o){return o.producer===p;}).reduce(function(s,o){return s+o.monto;},0)};
+    });
+    grid.innerHTML=
+      '<div class="prod-detail-card"><div class="prod-detail-card-title">Operaciones por Cliente</div><table class="prod-mini-table"><thead><tr><th>Cliente</th><th>Ops</th><th>Monto</th><th>Dist.</th></tr></thead><tbody>'+
+      clientRows.slice(0,10).map(function(x){return '<tr><td>'+x.c+'</td><td><strong>'+x.total+'</strong></td><td>'+fmt(x.monto)+'</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round(x.total/maxC*100)+'%;background:#1ddb3a"></div></div></td></tr>';}).join('')+
+      '</tbody></table></div>'+
+      '<div class="prod-detail-card"><div class="prod-detail-card-title">Resumen por Productor</div><table class="prod-mini-table"><thead><tr><th>Productor</th><th>Ops</th><th>Confirm.</th><th>Sin mail</th><th>Monto</th></tr></thead><tbody>'+
+      prodRows.map(function(x){return '<tr><td><strong>'+x.p+'</strong></td><td>'+x.total+'</td><td style="color:#1ddb3a">'+x.conf+'</td><td style="color:'+(x.sinMail>0?'var(--red)':'var(--text-muted)')+'">'+x.sinMail+'</td><td>'+fmt(x.monto)+'</td></tr>';}).join('')+
+      '</tbody></table></div>';
   } else {
-    const pAut = aut;
-    const clientRows = CLIENT_NAMES.map(c=>({
-      c, total:pAut.filter(o=>o.client===c).length,
-      conf:pAut.filter(o=>o.client===c&&o.confirmStatus==='confirmed').length,
-      sinMail:pAut.filter(o=>o.client===c&&o.mailStatus!=='sent').length,
-      monto:pAut.filter(o=>o.client===c).reduce((s,o)=>s+o.monto,0)
-    })).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
-
-    const mailSent = pAut.filter(o=>o.mailStatus==='sent').length;
-    const confOk   = pAut.filter(o=>o.confirmStatus==='confirmed').length;
-    const n        = Math.max(pAut.length,1);
-
-    grid.innerHTML = `
-      <div class="prod-detail-card">
-        <div class="prod-detail-card-title">Clientes de ${selectedProdFilter}</div>
-        <table class="prod-mini-table">
-          <thead><tr><th>Cliente</th><th>Ops</th><th>Confirm.</th><th>Sin mail</th><th>Monto</th></tr></thead>
-          <tbody>${clientRows.map(x=>`
-            <tr><td>${x.c}</td><td><strong>${x.total}</strong></td>
-            <td style="color:var(--green)">${x.conf}</td>
-            <td style="color:${x.sinMail>0?'var(--red)':'var(--text-muted)'}">${x.sinMail}</td>
-            <td>${fmt(x.monto)}</td></tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-      <div class="prod-detail-card">
-        <div class="prod-detail-card-title">Mail y Confirmación</div>
-        <table class="prod-mini-table">
-          <thead><tr><th>Concepto</th><th>Cant.</th><th>%</th><th>Barra</th></tr></thead>
-          <tbody>
-            <tr><td>✉️ Mail enviado</td><td><strong>${mailSent}</strong></td><td>${Math.round(mailSent/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round(mailSent/n*100)}%;background:#059669"></div></div></td></tr>
-            <tr><td>📭 Mail pendiente</td><td><strong>${n-mailSent}</strong></td><td>${Math.round((n-mailSent)/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round((n-mailSent)/n*100)}%;background:#eab308"></div></div></td></tr>
-            <tr><td>✅ Confirmada</td><td><strong>${confOk}</strong></td><td>${Math.round(confOk/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round(confOk/n*100)}%;background:#1a1fe8"></div></div></td></tr>
-            <tr><td>⏳ Pend. confirm.</td><td><strong>${n-confOk}</strong></td><td>${Math.round((n-confOk)/n*100)}%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:${Math.round((n-confOk)/n*100)}%;background:#dc2626"></div></div></td></tr>
-          </tbody>
-        </table>
-      </div>`;
+    var pAut=aut;var n=Math.max(pAut.length,1);
+    var cRows=CLIENT_NAMES.map(function(c){
+      return{c:c,total:pAut.filter(function(o){return o.client===c;}).length,
+        conf:pAut.filter(function(o){return o.client===c&&o.confirmStatus==='confirmed';}).length,
+        sinMail:pAut.filter(function(o){return o.client===c&&o.mailStatus!=='sent';}).length,
+        monto:pAut.filter(function(o){return o.client===c;}).reduce(function(s,o){return s+o.monto;},0)};
+    }).filter(function(x){return x.total>0;}).sort(function(a,b){return b.total-a.total;});
+    var mailSent=pAut.filter(function(o){return o.mailStatus==='sent';}).length;
+    var confOk=pAut.filter(function(o){return o.confirmStatus==='confirmed';}).length;
+    grid.innerHTML=
+      '<div class="prod-detail-card"><div class="prod-detail-card-title">Clientes de '+selectedProdFilter+'</div><table class="prod-mini-table"><thead><tr><th>Cliente</th><th>Ops</th><th>Confirm.</th><th>Sin mail</th><th>Monto</th></tr></thead><tbody>'+
+      cRows.map(function(x){return '<tr><td>'+x.c+'</td><td><strong>'+x.total+'</strong></td><td style="color:#1ddb3a">'+x.conf+'</td><td style="color:'+(x.sinMail>0?'var(--red)':'var(--text-muted)')+'">'+x.sinMail+'</td><td>'+fmt(x.monto)+'</td></tr>';}).join('')+
+      '</tbody></table></div>'+
+      '<div class="prod-detail-card"><div class="prod-detail-card-title">Mail y Confirmación</div><table class="prod-mini-table"><thead><tr><th>Concepto</th><th>Cant.</th><th>%</th><th>Barra</th></tr></thead><tbody>'+
+        '<tr><td>✉️ Mail enviado</td><td><strong>'+mailSent+'</strong></td><td>'+Math.round(mailSent/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round(mailSent/n*100)+'%;background:#1ddb3a"></div></div></td></tr>'+
+        '<tr><td>📭 Mail pendiente</td><td><strong>'+(n-mailSent)+'</strong></td><td>'+Math.round((n-mailSent)/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round((n-mailSent)/n*100)+'%;background:#eab308"></div></div></td></tr>'+
+        '<tr><td>✅ Confirmada</td><td><strong>'+confOk+'</strong></td><td>'+Math.round(confOk/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round(confOk/n*100)+'%;background:#1ddb3a"></div></div></td></tr>'+
+        '<tr><td>⏳ Pend. confirm.</td><td><strong>'+(n-confOk)+'</strong></td><td>'+Math.round((n-confOk)/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round((n-confOk)/n*100)+'%;background:#ef4444"></div></div></td></tr>'+
+      '</tbody></table></div>';
   }
 }
 
-// ═══════════════════════════════════════════════════════
-// NOTIFICACIONES
-// ═══════════════════════════════════════════════════════
-const notifData = [
-  {id:1,level:'critical',type:'MONTO CRÍTICO',     msg:'OP-0001 · $245M sin confirmación · 47 min transcurridos', time:'hace 2min',  read:false},
-  {id:2,level:'critical',type:'ACUMULACIÓN',        msg:'Manager 139 · score acumulado elevado · umbral superado',  time:'hace 5min',  read:false},
-  {id:3,level:'high',    type:'MAIL PENDIENTE',      msg:'OP-0018 · $42M · 6hs sin enviar mail al cliente',         time:'hace 12min', read:false},
-  {id:4,level:'high',    type:'CIERRE CERCANO',      msg:'8 ops < $100M sin confirmar · cierre en 2hs',             time:'hace 25min', read:false},
-  {id:5,level:'medium',  type:'CONFIRMACIÓN PARCIAL',msg:'OP-0011 · mail enviado pero sin respuesta del cliente',   time:'hace 31min', read:false},
-  {id:6,level:'high',    type:'SIN CONFIRMAR',       msg:'OP-0022 · $178M · Cliente 2 · pendiente 38min',           time:'hace 38min', read:true},
-  {id:7,level:'medium',  type:'PENDIENTE',            msg:'OP-0015 · $34M · Cliente 5 · sin respuesta 2hs',         time:'hace 52min', read:true},
+// ── NOTIFICACIONES ──
+var notifData=[
+  {id:1,level:'critical',type:'MONTO CRÍTICO',msg:'OP-0001 · $245M sin confirmación · 47 min',time:'hace 2min',read:false},
+  {id:2,level:'critical',type:'ACUMULACIÓN',msg:'Manager 139 · score acumulado elevado',time:'hace 5min',read:false},
+  {id:3,level:'high',type:'MAIL PENDIENTE',msg:'OP-0018 · $42M · sin enviar mail',time:'hace 12min',read:false},
+  {id:4,level:'high',type:'CIERRE CERCANO',msg:'8 ops sin confirmar · cierre en 2hs',time:'hace 25min',read:false},
+  {id:5,level:'medium',type:'CONFIRMACIÓN',msg:'OP-0011 · mail enviado sin respuesta',time:'hace 31min',read:false},
+  {id:6,level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 · $178M · Cliente 2',time:'hace 38min',read:true},
+  {id:7,level:'medium',type:'PENDIENTE',msg:'OP-0015 · $34M · Cliente 5',time:'hace 52min',read:true}
 ];
-
 function toggleNotifPanel(){
-  notifOpen = !notifOpen;
-  document.getElementById('notifPanel').classList.toggle('open', notifOpen);
-  if (notifOpen) renderNotifList();
+  notifOpen=!notifOpen;
+  document.getElementById('notifPanel').classList.toggle('open',notifOpen);
+  if(notifOpen) renderNotifList();
 }
 function switchNotifTab(tab){
-  currentNotifTab = tab;
-  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  currentNotifTab=tab;
+  document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('active');});
   document.getElementById('ntab-'+tab).classList.add('active');
   renderNotifList();
 }
 function renderNotifList(){
-  let items = notifData;
-  if (currentNotifTab==='critical') items = notifData.filter(n=>n.level==='critical');
-  if (currentNotifTab==='unread')   items = notifData.filter(n=>!n.read);
-  const unread = notifData.filter(n=>!n.read).length;
-  document.getElementById('notifCount').textContent  = unread;
-  document.getElementById('bellBadge').textContent   = unread;
-  document.getElementById('notifList').innerHTML = items.length
-    ? items.map(n=>`<div class="notif-item ${n.level} ${n.read?'read':''}" onclick="markNotifRead(${n.id})">
-        ${!n.read?'<div class="notif-unread-dot"></div>':''}
-        <div class="notif-type">${n.type}</div>
-        <div class="notif-msg">${n.msg}</div>
-        <div class="notif-time">${n.time}</div>
-      </div>`).join('')
-    : '<div style="padding:20px;text-align:center;font-size:12px;color:var(--text-light)">Sin notificaciones</div>';
+  var items=notifData;
+  if(currentNotifTab==='critical') items=notifData.filter(function(n){return n.level==='critical';});
+  if(currentNotifTab==='unread') items=notifData.filter(function(n){return !n.read;});
+  var unread=notifData.filter(function(n){return !n.read;}).length;
+  document.getElementById('notifCount').textContent=unread;
+  document.getElementById('bellBadge').textContent=unread;
+  document.getElementById('notifList').innerHTML=items.length?items.map(function(n){
+    return '<div class="notif-item '+n.level+' '+(n.read?'read':'')+'" onclick="markNotifRead('+n.id+')">'+(n.read?'':'<div class="notif-unread-dot"></div>')+'<div class="notif-type">'+n.type+'</div><div class="notif-msg">'+n.msg+'</div><div class="notif-time">'+n.time+'</div></div>';
+  }).join(''):'<div style="padding:20px;text-align:center;font-size:12px;color:var(--text-light)">Sin notificaciones</div>';
 }
-function markNotifRead(id){ const n=notifData.find(x=>x.id===id); if(n){n.read=true;renderNotifList();} }
-function markAllRead(){ notifData.forEach(n=>n.read=true); renderNotifList(); }
-
-document.addEventListener('click', e => {
-  if (notifOpen &&
-      !document.getElementById('notifPanel').contains(e.target) &&
-      !e.target.closest('[onclick*="toggleNotifPanel"]')){
-    notifOpen = false;
-    document.getElementById('notifPanel').classList.remove('open');
+function markNotifRead(id){var n=notifData.find(function(x){return x.id===id;});if(n){n.read=true;renderNotifList();}}
+function markAllRead(){notifData.forEach(function(n){n.read=true;});renderNotifList();}
+document.addEventListener('click',function(e){
+  if(notifOpen&&!document.getElementById('notifPanel').contains(e.target)&&!e.target.closest('[onclick*="toggleNotifPanel"]')){
+    notifOpen=false;document.getElementById('notifPanel').classList.remove('open');
   }
 });
 
-// ═══════════════════════════════════════════════════════
-// MODAL HELPERS
-// ═══════════════════════════════════════════════════════
-function openModal(){ document.getElementById('modalOverlay').classList.add('open'); }
-function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
-function closeModalOutside(e){ if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+// ── MODAL ──
+function openModal(){document.getElementById('modalOverlay').classList.add('open');}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay')) closeModal();}
 
-// ═══════════════════════════════════════════════════════
-// TOAST
-// ═══════════════════════════════════════════════════════
-function showToast(msg, type='success'){
-  const t = document.createElement('div');
-  t.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;background:${type==='success'?'#059669':'#dc2626'};color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.2)`;
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(), 2800);
+// ── TOAST ──
+function showToast(msg,type){
+  type=type||'success';
+  var t=document.createElement('div');
+  var bg=type==='success'?'#1ddb3a':'#ef4444';var tc=type==='success'?'#000':'#fff';
+  t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:9999;background:'+bg+';color:'+tc+';padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.5)';
+  t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove();},2800);
 }
 
-// ═══════════════════════════════════════════════════════
-// TICKER — generado desde ops reales
-// ═══════════════════════════════════════════════════════
-function renderTicker(){
-  const ticker = document.getElementById('tickerContent');
-  if (!ticker) return;
-
-  // Construir items desde ops reales con riesgo
-  const items = [];
-
-  // Ops críticas (>100M sin confirmar)
-  const criticas = allOps.filter(o => o.riskLevel === 'critical' && o.authorized && o.monto > 100_000_000);
-  criticas.slice(0,3).forEach(o => {
-    items.push(`CRÍTICO · ${o.id} · ${o.producer} · ${o.client} · ${fmt(o.monto)} sin confirmar`);
-  });
-
-  // Ops sin mail enviado
-  const sinMail = allOps.filter(o => o.authorized && o.mailStatus !== 'sent' && o.confirmStatus !== 'confirmed');
-  if (sinMail.length > 0) {
-    items.push(`MAIL PENDIENTE · ${sinMail.length} operación${sinMail.length>1?'es':''} sin conformidad enviada`);
-  }
-
-  // Score acumulado por productor
-  PRODUCERS.forEach(name => {
-    const score = producerScore(name);
-    if (score <= -3) {
-      items.push(`ACUMULACIÓN · ${name} · Score: ${score} pts · ${Math.abs(score)} ops pendientes`);
-    }
-  });
-
-  // Ops >50M sin confirmar (alto riesgo)
-  const altas = allOps.filter(o => o.riskLevel === 'high' && o.authorized);
-  if (altas.length > 0) {
-    items.push(`ALTO RIESGO · ${altas.length} operación${altas.length>1?'es':''} entre $50M y $100M sin confirmar`);
-  }
-
-  // Si no hay alertas reales
-  if (items.length === 0) {
-    items.push('✅ Sin alertas activas — todas las operaciones están confirmadas');
-  }
-
-  // Duplicar para loop continuo sin cortes
-  const all = [...items, ...items];
-  ticker.innerHTML = all.map(msg =>
-    `<div class="ticker-item"><div class="ticker-dot"></div>${msg}</div>`
-  ).join('');
-}
+// ── RELOJ Y LIVE ──
 function updateClock(){
-  const now = new Date();
-  document.getElementById('clock').textContent = now.toLocaleTimeString('es-AR',{hour12:false});
-  document.getElementById('lastUpdate').textContent =
-    now.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' +
-    now.toLocaleTimeString('es-AR',{hour12:false});
+  var now=new Date();
+  var hh=String(now.getHours()).padStart(2,'0');
+  var mm=String(now.getMinutes()).padStart(2,'0');
+  var ss=String(now.getSeconds()).padStart(2,'0');
+  var dd=String(now.getDate()).padStart(2,'0');
+  var mo=String(now.getMonth()+1).padStart(2,'0');
+  var yyyy=now.getFullYear();
+  document.getElementById('clock').textContent=hh+':'+mm+':'+ss;
+  document.getElementById('lastUpdate').textContent=dd+'/'+mo+'/'+yyyy+' '+hh+':'+mm+':'+ss;
 }
-
 function toggleAutoScroll(){
-  autoScrollOn = !autoScrollOn;
-  document.getElementById('autoBtn').classList.toggle('on', autoScrollOn);
-  document.getElementById('autoIcon').textContent = autoScrollOn ? '⏸' : '▶';
+  autoScrollOn=!autoScrollOn;
+  document.getElementById('autoBtn').classList.toggle('on',autoScrollOn);
+  document.getElementById('autoIcon').textContent=autoScrollOn?'⏸':'▶';
 }
-
 function liveUpdate(){
-  if (!autoScrollOn || Math.random()>=0.3) return;
-  const op = buildOp();
-  op.isNew = true;
-  allOps.unshift(op);
-  if (allOps.length > 60) allOps.pop();
-  filteredOps = [...allOps];
-  renderTable(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderTicker();
-  if (prodMetricsOpen) renderProdMetrics();
-  document.querySelector('.live-dot').style.background = '#fff';
-  setTimeout(()=>document.querySelector('.live-dot').style.background='#f87171', 300);
+  if(!autoScrollOn||Math.random()>=0.3) return;
+  var op=buildOp();op.isNew=true;allOps.unshift(op);if(allOps.length>60) allOps.pop();
+  filteredOps=allOps.slice();renderTable();updateKPIs();renderProducers();renderGlobalRisk();renderTicker();
+  if(prodMetricsOpen) renderProdMetrics();
+  document.querySelector('.live-dot').style.background='#fff';
+  setTimeout(function(){document.querySelector('.live-dot').style.background='#f87171';},300);
 }
 
-// ═══════════════════════════════════════════════════════
-// GMAIL INTEGRATION (placeholder — completar con tu URL)
-// ═══════════════════════════════════════════════════════
-const APPS_SCRIPT_URL = 'REEMPLAZAR_CON_TU_URL';
-const gmailEnabled = APPS_SCRIPT_URL !== 'REEMPLAZAR_CON_TU_URL';
-
-async function fetchFromGmail(){
-  if (!gmailEnabled) return;
-  try {
-    const res  = await fetch(APPS_SCRIPT_URL);
-    const data = await res.json();
-    if (!data.operaciones?.length) return;
-    const existingIds = new Set(allOps.map(o=>o.id));
-    let added = 0;
-    data.operaciones.forEach(row => {
-      if (existingIds.has(row.ID_Operacion)) return;
-      const label = (() => {
-        const key = row.Nro_Comitente || row.Nombre_Comitente;
-        if (!key) return `Cliente ${opId}`;
-        if (!fetchFromGmail._map) fetchFromGmail._map = {};
-        if (!fetchFromGmail._ctr) fetchFromGmail._ctr = CLIENT_NAMES.length+1;
-        if (!fetchFromGmail._map[key]){
-          const lbl = `Cliente ${fetchFromGmail._ctr++}`;
-          fetchFromGmail._map[key] = lbl;
-          if (!CLIENT_NAMES.includes(lbl)) CLIENT_NAMES.push(lbl);
-          AUTHORIZED_MAP[lbl] = [...PRODUCERS];
-        }
-        return fetchFromGmail._map[key];
-      })();
-      const op = buildOp({
-        id:            row.ID_Operacion,
-        client:        label,
-        producer:      row.Productor_Detectado || PRODUCERS[0],
-        instrument:    (row.Instrumento||'ON').toUpperCase(),
-        monto:         parseFloat(row.Monto_Estimado)||0,
-        mailStatus:    'sent',
-        confirmStatus: row.Estado_Confirmacion==='Confirmada' ? 'confirmed' : 'pending',
-        minutesAgo:    5
-      });
-      allOps.unshift(op);
-      added++;
-    });
-    if (added>0){
-      filteredOps=[...allOps];
-      renderTable(); updateKPIs(); renderProducers(); renderGlobalRisk(); renderCompliance();
-      showToast(`📧 ${added} operación(es) importadas desde Gmail`,'success');
-    }
-  } catch(e){ console.error('Gmail sync error:',e); }
-}
-
-// ═══════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════
+// ── INIT ──
 seedData();
 populateFilterSelects();
-updateKPIs();
-renderTable();
-renderProducers();
-renderGlobalRisk();
-renderCompliance();
-renderTicker();
-updateClock();
-renderRiskEvo();
-setTimeout(renderRiskEvo, 200);
-window.addEventListener('resize', renderRiskEvo);
-
-// Estado Gmail en header
-const gmailEl = document.createElement('div');
-gmailEl.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;';
-gmailEl.title = 'Sincronizar con Gmail';
-gmailEl.innerHTML = `<span style="width:6px;height:6px;border-radius:50%;background:${gmailEnabled?'#10b981':'#64748b'};display:inline-block"></span><span style="color:rgba(255,255,255,0.45)">${gmailEnabled?'Gmail activo':'Gmail: no configurado'}</span>`;
-gmailEl.onclick = () => { if(gmailEnabled) fetchFromGmail(); };
+updateKPIs();renderTable();renderProducers();renderGlobalRisk();renderCompliance();renderTicker();updateClock();
+renderRiskEvo();renderWeeklyChart();
+setTimeout(function(){renderRiskEvo();renderWeeklyChart();},200);
+window.addEventListener('resize',function(){renderRiskEvo();renderWeeklyChart();});
+var gmailEl=document.createElement('div');
+gmailEl.style.cssText='display:flex;align-items:center;gap:4px;font-size:11px;';
+gmailEl.innerHTML='<span style="width:6px;height:6px;border-radius:50%;background:#555;display:inline-block"></span><span style="color:rgba(255,255,255,0.35)">Gmail: no configurado</span>';
 document.querySelector('.header-center').appendChild(gmailEl);
-
-if (gmailEnabled){ fetchFromGmail(); setInterval(fetchFromGmail, 5*60*1000); }
-setInterval(updateClock, 1000);
-setInterval(liveUpdate, 3500);
+setInterval(updateClock,1000);
+setInterval(liveUpdate,3500);
 </script>
 </body>
 </html>
