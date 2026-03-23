@@ -548,7 +548,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
         </div>
       </div>
       <div class="chart-pad" style="padding:14px 18px">
-        <div id="weeklyRiskChart" style="width:100%;min-height:140px"></div>
+        <div id="weeklyRiskChart" style="width:100%;min-height:230px"></div>
       </div>
     </div>
 
@@ -605,29 +605,29 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 
 <script>
 'use strict';
-let PRODUCERS=['Manager 139'];
-let INSTRUMENTS=['ON','FCI','CEDEAR','BONO','ACCIÓN','OPCIONES','FUTUROS','CAUCIÓN'];
-const CLIENT_NAMES=Array.from({length:10},(_,i)=>'Cliente '+(i+1));
-const AUTHORIZED_MAP={};
-// Clientes 1-8 autorizados, 9 y 10 sin productor asignado → generan ops CRÍTICO
-CLIENT_NAMES.forEach(function(c,i){AUTHORIZED_MAP[c]=i<8?[...PRODUCERS]:[];});
-let allOps=[],filteredOps=[],autoScrollOn=true,activeRiskFilter='all';
-let opId=1,darkMode=true,selectedProdFilter='__all__',prodMetricsOpen=false;
-let notifOpen=false,currentNotifTab='all';
+var PRODUCERS=['Manager 139'];
+var INSTRUMENTS=['ON','FCI','CEDEAR','BONO','ACCION','OPCIONES','FUTUROS','CAUCION'];
+var CLIENT_NAMES=['Cliente 1','Cliente 2','Cliente 3','Cliente 4','Cliente 5','Cliente 6','Cliente 7','Cliente 8','Cliente 9','Cliente 10'];
+var AUTHORIZED_MAP={};
+CLIENT_NAMES.forEach(function(c,i){AUTHORIZED_MAP[c]=i<8?PRODUCERS.slice():[];});
+var allOps=[],filteredOps=[],autoScrollOn=true,activeRiskFilter='all';
+var opId=1,darkMode=true,selectedProdFilter='__all__',prodMetricsOpen=false;
+var notifOpen=false,currentNotifTab='all';
 
-const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
-const isAuth=(c,p)=>(AUTHORIZED_MAP[c]||[]).includes(p);
-const fmt=m=>m>=1e9?'$'+(m/1e9).toFixed(2)+'B':m>=1e6?'$'+(m/1e6).toFixed(1)+'M':'$'+m.toLocaleString('es-AR');
-const fmtT=min=>min<60?min+'m':Math.floor(min/60)+'h '+min%60+'m';
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function isAuth(c,p){return(AUTHORIZED_MAP[c]||[]).indexOf(p)>=0;}
+function pad2(n){return n<10?'0'+n:String(n);}
+function fmt(m){return m>=1e9?'$'+(m/1e9).toFixed(2)+'B':m>=1e6?'$'+(m/1e6).toFixed(1)+'M':'$'+m.toLocaleString();}
+function fmtT(min){return min<60?min+'m':Math.floor(min/60)+'h '+(min%60)+'m';}
 
 function toggleTheme(){
   darkMode=!darkMode;
   document.documentElement.setAttribute('data-theme',darkMode?'':'light');
-  document.getElementById('themeBtn').textContent=darkMode?'☀️':'🌙';
+  document.getElementById('themeBtn').textContent=darkMode?'&#9728;':'&#127769;';
 }
 
-// ── RIESGO ──
+/* RIESGO */
 function calcRiskLevel(op){
   if(op.authorized&&op.confirmStatus==='confirmed') return 'low';
   if(!op.authorized&&op.monto>100000000) return 'critical';
@@ -645,10 +645,11 @@ function producerScore(name){
 }
 function globalScore(){return PRODUCERS.reduce(function(s,n){return s+producerScore(n);},0);}
 function producerRiskLevel(s){return s===0?'perfect':s>=-2?'low':s>=-6?'medium':s>=-10?'high':'critical';}
-var RISK_LABEL={perfect:'PERFECTO',low:'BAJO',medium:'MEDIO',high:'ALTO',critical:'CRÍTICO'};
+var RISK_LABEL={perfect:'PERFECTO',low:'BAJO',medium:'MEDIO',high:'ALTO',critical:'CRITICO'};
 var RISK_COLOR={perfect:'#1ddb3a',low:'#1ddb3a',medium:'#eab308',high:'#f97316',critical:'#ef4444'};
 var RISK_BG={perfect:'rgba(29,219,58,0.1)',low:'rgba(29,219,58,0.1)',medium:'rgba(234,179,8,0.1)',high:'rgba(249,115,22,0.1)',critical:'rgba(239,68,68,0.1)'};
 
+/* BUILD OP */
 function buildOp(ov){
   ov=ov||{};
   var client=ov.client||pick(CLIENT_NAMES);
@@ -658,14 +659,12 @@ function buildOp(ov){
   var minutesAgo=ov.minutesAgo||rnd(1,480);
   var mailStatus=ov.mailStatus!==undefined?ov.mailStatus:(authorized&&Math.random()<0.6?'sent':'pending');
   var confirmStatus=ov.confirmStatus!==undefined?ov.confirmStatus:(authorized&&Math.random()<0.4?'confirmed':'pending');
-  var op={
-    id:ov.id||'OP-'+String(opId++).padStart(4,'0'),
+  var op={id:ov.id||'OP-'+pad2(Math.floor(opId/100))+pad2(opId++%100),
     client:client,producer:producer,authorized:authorized,
     instrument:ov.instrument||pick(INSTRUMENTS),
     monto:monto,minutesAgo:minutesAgo,
     mailStatus:mailStatus,confirmStatus:confirmStatus,
-    score:0,riskLevel:'low',isNew:true
-  };
+    score:0,riskLevel:'low',isNew:true};
   op.score=calcOpScore(op);
   op.riskLevel=calcRiskLevel(op);
   return op;
@@ -673,61 +672,61 @@ function buildOp(ov){
 
 function seedData(){
   allOps=[];
-  // Ops garantizadas para cada nivel de riesgo
-  allOps.push(buildOp({monto:245000000,client:'Cliente 9',mailStatus:'pending',confirmStatus:'pending'}));  // CRÍTICO: no autorizado >100M
-  allOps.push(buildOp({monto:320000000,client:'Cliente 10',mailStatus:'pending',confirmStatus:'pending'})); // CRÍTICO: no autorizado >100M
-  allOps.push(buildOp({monto:178000000,client:'Cliente 1',mailStatus:'sent',confirmStatus:'pending'}));     // ALTO: >100M sin confirmar
-  allOps.push(buildOp({monto:130000000,client:'Cliente 2',mailStatus:'pending',confirmStatus:'pending'}));  // ALTO: >100M sin confirmar
-  allOps.push(buildOp({monto:42000000,client:'Cliente 3',mailStatus:'sent',confirmStatus:'pending'}));      // MEDIO
-  allOps.push(buildOp({monto:15000000,client:'Cliente 4',mailStatus:'sent',confirmStatus:'confirmed'}));    // NULO
+  allOps.push(buildOp({monto:245000000,client:'Cliente 9',mailStatus:'pending',confirmStatus:'pending'}));
+  allOps.push(buildOp({monto:320000000,client:'Cliente 10',mailStatus:'pending',confirmStatus:'pending'}));
+  allOps.push(buildOp({monto:178000000,client:'Cliente 1',mailStatus:'sent',confirmStatus:'pending'}));
+  allOps.push(buildOp({monto:130000000,client:'Cliente 2',mailStatus:'pending',confirmStatus:'pending'}));
+  allOps.push(buildOp({monto:42000000,client:'Cliente 3',mailStatus:'sent',confirmStatus:'pending'}));
+  allOps.push(buildOp({monto:15000000,client:'Cliente 4',mailStatus:'sent',confirmStatus:'confirmed'}));
   for(var i=0;i<22;i++) allOps.push(buildOp());
   filteredOps=allOps.slice();
 }
 
-// ── PILLS ──
+/* PILLS */
 function mailPill(op){
-  if(!op.authorized) return '<span class="pill pill-mail-pending"><span class="pill-dot"></span>Pendiente</span>';
-  if(op.mailStatus==='sent') return '<span class="pill pill-mail-sent" style="cursor:pointer" onclick="event.stopPropagation();toggleMail(\''+op.id+'\')"><span class="pill-dot"></span>Enviado</span>';
-  return '<span class="pill pill-mail-pending" style="cursor:pointer" onclick="event.stopPropagation();toggleMail(\''+op.id+'\')"><span class="pill-dot"></span>Pendiente</span>';
+  if(!op.authorized||op.mailStatus!=='sent')
+    return '<span class="pill pill-mail-pending" style="cursor:pointer" onclick="event.stopPropagation();toggleMail(\''+op.id+'\')"><span class="pill-dot"></span>Pendiente</span>';
+  return '<span class="pill pill-mail-sent" style="cursor:pointer" onclick="event.stopPropagation();toggleMail(\''+op.id+'\')"><span class="pill-dot"></span>Enviado</span>';
 }
 function confirmPill(op){
-  if(!op.authorized) return '<span class="pill pill-conf-pending"><span class="pill-dot"></span>Pendiente</span>';
-  if(op.confirmStatus==='confirmed') return '<span class="pill pill-conf-ok"><span class="pill-dot"></span>Confirmada</span>';
+  if(op.confirmStatus==='confirmed')
+    return '<span class="pill pill-conf-ok"><span class="pill-dot"></span>Confirmada</span>';
   return '<span class="pill pill-conf-pending"><span class="pill-dot"></span>Pendiente</span>';
 }
 function riskBadge(op){
-  if(op.authorized&&op.confirmStatus==='confirmed') return '<span class="rbadge" style="background:rgba(29,219,58,0.1);color:#1ddb3a">NULO</span>';
+  if(op.authorized&&op.confirmStatus==='confirmed')
+    return '<span class="rbadge" style="background:rgba(29,219,58,0.1);color:#1ddb3a">NULO</span>';
   var l=op.riskLevel;
   return '<span class="rbadge" style="background:'+RISK_BG[l]+';color:'+RISK_COLOR[l]+'">'+RISK_LABEL[l]+'</span>';
 }
 function timeClass(op){return op.minutesAgo>360?'time-crit':op.minutesAgo>60?'time-warn':'time-ok';}
 
-// ── TABLA ──
+/* TABLA */
 function renderTable(){
   var ops=filteredOps.slice();
-  if(activeRiskFilter==='critical') ops=ops.filter(function(o){return o.riskLevel==='critical'||o.riskLevel==='high';});
+  if(activeRiskFilter==='critical') ops=ops.filter(function(o){return o.riskLevel==='critical';});
   var ord={critical:0,high:1,medium:2,low:3};
   ops.sort(function(a,b){return ord[a.riskLevel]-ord[b.riskLevel];});
   document.getElementById('opsTableBody').innerHTML=ops.slice(0,25).map(function(op){
     return '<tr class="'+(op.isNew?'is-new':'')+'" onclick="showOpDetail(\''+op.id+'\')">'+
       '<td class="op-id">'+op.id+'</td>'+
       '<td style="font-size:11px">'+op.client+'</td>'+
-      '<td style="font-size:12px;color:var(--text);font-weight:500">'+op.producer+'</td>'+
-      '<td style="font-size:11px;font-weight:600;color:var(--text)">'+op.instrument+'</td>'+
+      '<td style="font-size:12px;font-weight:500">'+op.producer+'</td>'+
+      '<td style="font-size:11px;font-weight:600">'+op.instrument+'</td>'+
       '<td style="font-variant-numeric:tabular-nums;font-weight:600" class="'+(op.monto>100000000?'amount-big':'')+'">'+fmt(op.monto)+'</td>'+
       '<td>'+mailPill(op)+'</td><td>'+confirmPill(op)+'</td>'+
       '<td class="'+timeClass(op)+'">'+fmtT(op.minutesAgo)+'</td>'+
       '<td>'+riskBadge(op)+'</td>'+
-      '<td onclick="event.stopPropagation()"><button class="edit-btn" onclick="openEditModal(\''+op.id+'\')">✏️ Editar</button></td>'+
+      '<td onclick="event.stopPropagation()"><button class="edit-btn" onclick="openEditModal(\''+op.id+'\')">Editar</button></td>'+
       '</tr>';
   }).join('');
   setTimeout(function(){ops.forEach(function(o){o.isNew=false;});},500);
 }
 
-// ── FILTROS ──
+/* FILTROS */
 function populateFilterSelects(){
   var fs=document.getElementById('filterStatus');var fv=fs.value;
-  fs.innerHTML='<option value="">Todos</option><option value="mail_pending">Mail pendiente</option><option value="confirm_pending">Confirmación pendiente</option><option value="confirmed">Confirmada</option><option value="invalid">Inválida</option><option value="critical_amount">Monto crítico &gt;100M</option>';
+  fs.innerHTML='<option value="">Todos</option><option value="mail_pending">Mail pendiente</option><option value="confirm_pending">Confirmacion pendiente</option><option value="confirmed">Confirmada</option><option value="invalid">Invalida</option>';
   fs.value=fv;
   var fp=document.getElementById('filterProducer');var fpv=fp.value;
   fp.innerHTML='<option value="">Todos</option>'+PRODUCERS.map(function(p){return '<option value="'+p+'">'+p+'</option>';}).join('');
@@ -742,11 +741,10 @@ function applyFilters(){
   var ins=document.getElementById('filterInstrument').value;
   var amt=document.getElementById('filterAmount').value;
   filteredOps=allOps.filter(function(op){
-    if(s==='mail_pending'&&!(op.authorized&&op.mailStatus!=='sent')) return false;
-    if(s==='confirm_pending'&&!(op.authorized&&op.confirmStatus!=='confirmed')) return false;
+    if(s==='mail_pending'&&op.mailStatus==='sent') return false;
+    if(s==='confirm_pending'&&op.confirmStatus==='confirmed') return false;
     if(s==='confirmed'&&op.confirmStatus!=='confirmed') return false;
     if(s==='invalid'&&op.authorized) return false;
-    if(s==='critical_amount'&&!(op.authorized&&op.monto>100000000&&op.confirmStatus!=='confirmed')) return false;
     if(p&&op.producer!==p) return false;
     if(ins&&op.instrument!==ins) return false;
     if(amt==='high'&&op.monto<=100000000) return false;
@@ -758,8 +756,7 @@ function applyFilters(){
 function setRiskFilter(type,el){
   activeRiskFilter=type;
   document.querySelectorAll('.tbl-btn').forEach(function(b){b.classList.remove('active');});
-  el.classList.add('active');
-  renderTable();
+  el.classList.add('active');renderTable();
 }
 function filterByKpi(type){
   ['filterStatus','filterProducer','filterInstrument','filterAmount'].forEach(function(id){document.getElementById(id).value='';});
@@ -773,7 +770,7 @@ function filterByKpi(type){
   renderTable();
 }
 
-// ── KPIS ──
+/* KPIS */
 function updateKPIs(){
   var aut=allOps.filter(function(o){return o.authorized;});
   var total=Math.max(aut.length,1);
@@ -787,7 +784,7 @@ function updateKPIs(){
   document.getElementById('kpiCompliance').textContent=Math.round(confirmed.length/total*100)+'%';
 }
 
-// ── RIESGO GLOBAL ──
+/* RIESGO GLOBAL */
 function renderGlobalRisk(){
   var score=globalScore();var absScore=Math.abs(score);
   var totalAut=Math.max(allOps.filter(function(o){return o.authorized;}).length,1);
@@ -795,19 +792,18 @@ function renderGlobalRisk(){
   var arc=document.getElementById('gaugeArc');
   if(arc){
     var color=score===0?'#1ddb3a':absScore<=totalAut*0.3?'#eab308':absScore<=totalAut*0.6?'#f97316':'#ef4444';
-    arc.style.stroke=color;
-    arc.setAttribute('stroke-dasharray',(circ*pct)+' '+(circ*(1-pct)));
+    arc.style.stroke=color;arc.setAttribute('stroke-dasharray',(circ*pct)+' '+(circ*(1-pct)));
   }
-  var numEl=document.getElementById('globalScoreNum');if(numEl) numEl.textContent=score;
+  var numEl=document.getElementById('globalScoreNum');if(numEl)numEl.textContent=score;
   var level=producerRiskLevel(score);
-  var icons={perfect:'⭐',low:'🟢',medium:'🟡',high:'🟠',critical:'🔴'};
-  var descs={perfect:'Sin operaciones pendientes',low:absScore+' op(s) — bajo impacto',medium:absScore+' op(s) — seguimiento recomendado',high:absScore+' op(s) — acción requerida',critical:absScore+' op(s) — atención urgente'};
+  var icons={perfect:'',low:'',medium:'',high:'',critical:''};
+  var descs={perfect:'Sin operaciones pendientes',low:absScore+' op(s) bajo impacto',medium:absScore+' op(s) seguimiento recomendado',high:absScore+' op(s) accion requerida',critical:absScore+' op(s) atencion urgente'};
   var band=document.getElementById('globalRiskBand');var desc=document.getElementById('globalRiskDesc');
-  if(band) band.textContent=icons[level]+' '+RISK_LABEL[level];
-  if(desc) desc.textContent=descs[level];
+  if(band)band.textContent=RISK_LABEL[level];
+  if(desc)desc.textContent=descs[level];
 }
 
-// ── PRODUCTORES ──
+/* PRODUCTORES */
 function renderProducers(){
   var data=PRODUCERS.map(function(name){
     var ops=allOps.filter(function(o){return o.producer===name&&o.authorized;});
@@ -826,71 +822,43 @@ function renderProducers(){
         '<div style="font-size:9px;color:var(--text-light);margin-top:2px">'+RISK_LABEL[p.level]+'</div>'+
       '</div></div>';
   }).join('');
-  var maxAbs=Math.max.apply(null,data.map(function(p){return Math.abs(p.score);}));maxAbs=Math.max(maxAbs,1);
+  var maxAbs=0;data.forEach(function(p){if(Math.abs(p.score)>maxAbs)maxAbs=Math.abs(p.score);});if(maxAbs===0)maxAbs=1;
   document.getElementById('producerChart').innerHTML=data.map(function(p){
     var pct=Math.round(Math.abs(p.score)/maxAbs*100);
     return '<div class="prod-row"><div class="prod-label">'+p.name+'</div><div class="prod-track"><div class="prod-fill" style="width:'+Math.max(pct,3)+'%;background:'+RISK_COLOR[p.level]+'"></div></div><div class="prod-val" style="color:'+RISK_COLOR[p.level]+'">'+p.score+'</div></div>';
   }).join('');
 }
 
-// ── COMPLIANCE ──
-function renderCompliance(){
-  var aut=allOps.filter(function(o){return o.authorized;});var total=Math.max(aut.length,1);
-  var metrics=[
-    {label:'Mail enviado',val:Math.round(aut.filter(function(o){return o.mailStatus==='sent';}).length/total*100),color:'#1ddb3a'},
-    {label:'Confirmadas',val:Math.round(aut.filter(function(o){return o.confirmStatus==='confirmed';}).length/total*100),color:'#1ddb3a'},
-    {label:'Ops. autorizadas',val:Math.round(aut.length/Math.max(allOps.length,1)*100),color:'#eab308'},
-    {label:'Mail + Confirm.',val:Math.round(aut.filter(function(o){return o.mailStatus==='sent'&&o.confirmStatus==='confirmed';}).length/total*100),color:'#1ddb3a'}
-  ];
-  var r=30,circ=2*Math.PI*r;
-  document.getElementById('complianceRow').innerHTML=metrics.map(function(m){
-    var v=Math.min(Math.max(m.val,0),100);var dash=circ*v/100;
-    var tc=v>=70?m.color:v>=40?'#f97316':'#ef4444';
-    return '<div class="donut-block" style="padding:16px 8px">'+
-      '<svg width="80" height="80" viewBox="0 0 80 80" style="display:block">'+
-        '<circle cx="40" cy="40" r="'+r+'" fill="none" stroke="#242424" stroke-width="7"/>'+
-        '<circle cx="40" cy="40" r="'+r+'" fill="none" stroke="'+m.color+'" stroke-width="7" stroke-dasharray="'+dash+' '+(circ-dash)+'" stroke-dashoffset="'+(circ*0.25)+'" stroke-linecap="round"/>'+
-        '<text x="40" y="44" text-anchor="middle" fill="'+tc+'" font-family="DM Sans,sans-serif" font-size="14" font-weight="700">'+v+'%</text>'+
-      '</svg>'+
-      '<div class="donut-label" style="font-size:10px;max-width:80px">'+m.label+'</div></div>';
-  }).join('');
-}
-
-// ── GRÁFICO DIARIO ──
+/* GRAFICO DIARIO - siempre muestra datos independiente de la hora */
 function renderRiskEvo(){
-  var el=document.getElementById('riskEvoChart');if(!el) return;
-
-  // Generar horas desde 08:00 hasta la hora actual (máx 18:00)
-  var now=new Date();
-  var currentHour=Math.min(now.getHours(),18);
-  var startHour=8;
-  if(currentHour<startHour) currentHour=startHour;
-  var hours=[],data=[];
-  // Datos de riesgo por hora — patrón realista que sube a media jornada
-  var basePattern=[8,12,18,22,31,40,55,68,74,71,78];
-  for(var h=startHour;h<=currentHour;h++){
-    var idx=h-startHour;
-    var v=basePattern[Math.min(idx,basePattern.length-1)];
-    // Variación leve
-    v=Math.max(0,Math.min(100,v+Math.round((Math.random()-0.5)*4)));
-    hours.push(String(h).padStart(2,'0')+':00');
-    data.push(v);
-  }
-  // La última barra es el valor actual (más visible)
-  if(data.length>0) data[data.length-1]=Math.max(data[data.length-1],data[data.length-2]||0);
-
-  var W=560,H=130,padL=30,padR=28,padT=22,padB=26;
+  var el=document.getElementById('riskEvoChart');if(!el)return;
+  var W=560,H=130,padL=30,padR=28,padT=20,padB=24;
   var cW=W-padL-padR,cH=H-padT-padB;
-  var n=data.length;if(n===0) return;
-  var max=Math.max.apply(null,data);max=Math.max(max,20);
-  var slotW=cW/n,barW=Math.max(slotW-4,6);
-  var yRef=padT+cH-(60/max*cH);
+
+  /* Horas fijas de la jornada laboral con datos simulados realistas */
+  var hoursAll=['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
+  var dataAll=[8,14,22,31,45,52,60,68,71,74,78];
+
+  /* Mostrar hasta la hora actual si es horario laboral, si no mostrar todo */
+  var now=new Date();
+  var nowH=now.getHours();
+  var showAll=(nowH<8||nowH>=18);
+  var hours=[],data=[];
+  hoursAll.forEach(function(h,i){
+    var hNum=parseInt(h);
+    if(showAll||hNum<=nowH){hours.push(h);data.push(dataAll[i]);}
+  });
+  if(hours.length===0){hours=hoursAll.slice();data=dataAll.slice();}
+
+  var max=0;data.forEach(function(v){if(v>max)max=v;});max=Math.max(max,20);
+  var n=data.length;
+  var slotW=cW/n,barW=Math.max(slotW-5,6);
   var bars='',vals='',xLbls='',yAxis='';
 
-  [0,20,40,60,80,100].forEach(function(t){
-    if(t>max+10) return;
+  [0,20,40,60,80].forEach(function(t){
+    if(t>max+5)return;
     var y=padT+cH-(t/max*cH);
-    yAxis+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#1e1e1e" stroke-width="0.8" stroke-dasharray="'+(t===0?'0':'4,3')+'"/>';
+    yAxis+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#1e1e1e" stroke-width="0.8" stroke-dasharray="'+(t?'4,3':'0')+'"/>';
     yAxis+='<text x="'+(padL-4)+'" y="'+(y+3.5)+'" text-anchor="end" font-size="9" fill="#444">'+t+'</text>';
   });
 
@@ -900,181 +868,170 @@ function renderRiskEvo(){
     var y=padT+cH-bh;
     var col=v>60?'#ef4444':v>40?'#f97316':'#1ddb3a';
     var isLast=i===n-1;
-    bars+='<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+bh+'" fill="'+col+'" opacity="'+(isLast?1:0.5)+'" rx="2"><title>'+hours[i]+': '+v+'</title></rect>';
-    if(isLast) vals+='<text x="'+(x+barW/2)+'" y="'+(y-5)+'" text-anchor="middle" font-size="10" font-weight="700" fill="'+col+'">'+v+'</text>';
-    // Mostrar solo cada 2 horas o la última
-    if(i%2===0||isLast) xLbls+='<text x="'+(x+barW/2)+'" y="'+(H-3)+'" text-anchor="middle" font-size="9" fill="#555">'+hours[i]+'</text>';
+    bars+='<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+bh+'" fill="'+col+'" opacity="'+(isLast?1:0.55)+'" rx="2"><title>'+hours[i]+': '+v+'</title></rect>';
+    if(isLast)vals+='<text x="'+(x+barW/2)+'" y="'+(y-5)+'" text-anchor="middle" font-size="10" font-weight="700" fill="'+col+'">'+v+'</text>';
+    if(i%2===0||isLast)xLbls+='<text x="'+(x+barW/2)+'" y="'+(H-2)+'" text-anchor="middle" font-size="9" fill="#555">'+hours[i]+'</text>';
   });
 
-  var ref='';
-  if(max>=60){
-    ref='<line x1="'+padL+'" y1="'+yRef+'" x2="'+(W-padR)+'" y2="'+yRef+'" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.5"/>'+
-        '<text x="'+(W-padR+2)+'" y="'+(yRef+4)+'" font-size="9" fill="#ef4444" font-weight="600">60</text>';
-  }
-  el.innerHTML='<svg width="100%" height="130" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">'+yAxis+ref+bars+vals+xLbls+'</svg>';
+  var yRef=padT+cH-(60/max*cH);
+  var ref='<line x1="'+padL+'" y1="'+yRef+'" x2="'+(W-padR)+'" y2="'+yRef+'" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="4,3" opacity="0.6"/>'+
+    '<text x="'+(W-padR+2)+'" y="'+(yRef+4)+'" font-size="8" fill="#ef4444">60</text>';
+
+  el.innerHTML='<svg width="100%" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">'+yAxis+ref+bars+vals+xLbls+'</svg>';
 }
 
-// ── GRÁFICO SEMANAL ──
-// Gráfico semanal: datos de los últimos 7 días con días reales
-function getWeekData(){
-  var now=new Date();
-  var dayNames=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  var days=[],scores=[],confirmed=[],opsTotal=[],critical=[];
-  for(var i=6;i>=0;i--){
-    var d=new Date(now);d.setDate(now.getDate()-i);
-    days.push(i===0?'Hoy':dayNames[d.getDay()]);
-    scores.push([-2,-5,-8,-4,-11,-6,-3][6-i]);
-    confirmed.push([88,70,55,74,42,65,80][6-i]);
-    opsTotal.push([18,24,31,22,38,19,28][6-i]);
-    critical.push([0,1,2,0,3,1,1][6-i]);
-  }
-  return{days:days,scores:scores,confirmed:confirmed,opsTotal:opsTotal,critical:critical};
-}
-
+/* GRAFICO SEMANAL */
 function renderWeeklyChart(){
-  var el=document.getElementById('weeklyRiskChart');if(!el) return;
-  var wd=getWeekData();
-  var days=wd.days,scores=wd.scores,confirmed=wd.confirmed,opsTotal=wd.opsTotal,critical=wd.critical;
+  var el=document.getElementById('weeklyRiskChart');if(!el)return;
+
+  var dayNames=['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+  var now=new Date();
+  var days=[],scores=[],confirmed=[],opsTotal=[],critical=[];
+  var sData=[-2,-5,-8,-4,-11,-6,-3];
+  var cData=[88,70,55,74,42,65,80];
+  var oData=[18,24,31,22,38,19,28];
+  var crData=[0,1,2,0,3,1,1];
+  for(var i=6;i>=0;i--){
+    var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i);
+    days.push(i===0?'Hoy':dayNames[d.getDay()]);
+    scores.push(sData[6-i]);confirmed.push(cData[6-i]);
+    opsTotal.push(oData[6-i]);critical.push(crData[6-i]);
+  }
   var n=days.length;
 
-  // Layout con espacio extra abajo para etiquetas y círculos críticos
-  var W=900,H=200,padL=44,padR=30,padT=28,padB=60;
-  var cW=W-padL-padR,cH=H-padT-padB;
+  /* Todo el contenido dentro de la card — sin overflow */
+  var W=860, H=230;
+  var padL=44, padR=20, padT=30, padB=80;
+  var cW=W-padL-padR, cH=H-padT-padB;
   var slotW=cW/n;
 
-  var minScore=Math.min.apply(null,scores);minScore=Math.min(minScore,-1);
-  var scoreRange=Math.abs(minScore)+0.5;
-  function yScore(v){return padT+cH-((v-minScore)/scoreRange*cH);}
-  function yConf(v){return padT+cH-(v/100*cH);}
+  var minS=0;
+  scores.forEach(function(v){if(v<minS)minS=v;});
+  minS=Math.min(minS-1,-1);
+  var sRange=Math.abs(minS)+0.5;
+  function yS(v){return padT+cH-((v-minS)/sRange*cH);}
+  function yC(v){return padT+cH-(v/100*cH);}
+  var yBase=yS(0);
 
-  var yAxis='',bars='',scoreLabels='',lineConf='',dots='',xArea='';
+  var svg='';
 
-  // Guías Y
-  var gridVals=[0,-3,-6,-9,-12].filter(function(t){return t>=minScore-1;});
-  gridVals.forEach(function(t){
-    var y=yScore(t);
-    yAxis+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#1e1e1e" stroke-width="1" stroke-dasharray="'+(t===0?'0':'4,3')+'"/>';
-    yAxis+='<text x="'+(padL-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="9" fill="#444">'+t+'</text>';
+  /* Grid horizontal */
+  [0,-3,-6,-9,-12].forEach(function(t){
+    if(t<minS-0.5)return;
+    var y=yS(t);
+    svg+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="'+(t===0?'#2a2a2a':'#1a1a1a')+'" stroke-width="'+(t===0?1.2:0.8)+'" stroke-dasharray="'+(t===0?'0':'5,3')+'"/>';
+    svg+='<text x="'+(padL-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="9" fill="#555">'+t+'</text>';
   });
 
-  // Línea base 0
-  var yBase=yScore(0);
-  yAxis+='<line x1="'+padL+'" y1="'+yBase+'" x2="'+(W-padR)+'" y2="'+yBase+'" stroke="#333" stroke-width="1"/>';
-
-  // Barras
+  /* Barras de score */
   scores.forEach(function(v,i){
     var cx=padL+i*slotW+slotW/2;
-    var bw=slotW*0.52;var x=cx-bw/2;
-    var yTop=yScore(v);var bh=Math.max(yBase-yTop,2);
+    var bw=slotW*0.48; var x=cx-bw/2;
+    var yTop=yS(v); var bh=Math.max(yBase-yTop,2);
     var col=v<=-9?'#ef4444':v<=-6?'#f97316':v<=-3?'#eab308':'#1ddb3a';
-    var isToday=i===n-1;
-    // Columna resaltada para hoy
-    if(isToday) bars+='<rect x="'+(padL+i*slotW)+'" y="'+padT+'" width="'+slotW+'" height="'+cH+'" fill="rgba(29,219,58,0.03)"/>';
-    bars+='<rect x="'+x+'" y="'+yTop+'" width="'+bw+'" height="'+bh+'" fill="'+col+'" opacity="'+(isToday?1:0.75)+'" rx="3"><title>'+days[i]+'\nScore: '+v+'\nOps: '+opsTotal[i]+'\nCríticas: '+critical[i]+'\nConfirmadas: '+confirmed[i]+'%</title></rect>';
-    // Score encima de la barra
-    scoreLabels+='<text x="'+cx+'" y="'+(yTop-5)+'" text-anchor="middle" font-size="10" font-weight="700" fill="'+col+'">'+v+'</text>';
+    var isToday=(i===n-1);
+    if(isToday) svg+='<rect x="'+(padL+i*slotW)+'" y="'+padT+'" width="'+slotW+'" height="'+cH+'" fill="rgba(29,219,58,0.03)"/>';
+    svg+='<rect x="'+x+'" y="'+yTop+'" width="'+bw+'" height="'+bh+'" fill="'+col+'" opacity="'+(isToday?1:0.8)+'" rx="3"/>';
+    svg+='<text x="'+cx+'" y="'+(yTop-5)+'" text-anchor="middle" font-size="10" font-weight="700" fill="'+col+'">'+v+'</text>';
+  });
 
-    // Zona inferior: día | ops | críticas
-    var yRow1=padT+cH+14; // día
-    var yRow2=padT+cH+26; // ops count
-    var yRow3=padT+cH+42; // críticas
-    scoreLabels+='<text x="'+cx+'" y="'+yRow1+'" text-anchor="middle" font-size="10" fill="'+(isToday?'#1ddb3a':'#666')+'" font-weight="'+(isToday?'700':'400')+'">'+days[i]+'</text>';
-    scoreLabels+='<text x="'+cx+'" y="'+yRow2+'" text-anchor="middle" font-size="9" fill="#555">'+opsTotal[i]+' ops</text>';
+  /* Línea % confirmadas */
+  var pts=confirmed.map(function(v,i){return{x:padL+i*slotW+slotW/2,y:yC(v),v:v};});
+  var path=pts.map(function(p,i){return(i===0?'M':'L')+p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
+  svg+='<path d="'+path+'" fill="none" stroke="#1ddb3a" stroke-width="2" stroke-dasharray="5,3" opacity="0.5" stroke-linecap="round"/>';
+  pts.forEach(function(p){
+    var col=p.v>=70?'#1ddb3a':p.v>=50?'#eab308':'#ef4444';
+    svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4" fill="'+col+'" stroke="#111" stroke-width="2"/>';
+    svg+='<text x="'+p.x.toFixed(1)+'" y="'+(p.y-9).toFixed(1)+'" text-anchor="middle" font-size="9" fill="'+col+'">'+p.v+'%</text>';
+  });
+
+  /* Eje X inferior — todo dentro de padB */
+  var rowDia  = padT+cH+18;
+  var rowOps  = padT+cH+32;
+  var rowCrit = padT+cH+52;
+
+  days.forEach(function(d,i){
+    var cx=padL+i*slotW+slotW/2;
+    var isToday=(i===n-1);
+    svg+='<text x="'+cx+'" y="'+rowDia+'" text-anchor="middle" font-size="10" fill="'+(isToday?'#1ddb3a':'#666')+'" font-weight="'+(isToday?700:400)+'">'+d+'</text>';
+    svg+='<text x="'+cx+'" y="'+rowOps+'" text-anchor="middle" font-size="9" fill="#444">'+opsTotal[i]+' ops</text>';
     if(critical[i]>0){
-      scoreLabels+='<circle cx="'+cx+'" cy="'+(yRow3-3)+'" r="7" fill="#ef4444" opacity="0.9"/>';
-      scoreLabels+='<text x="'+cx+'" y="'+(yRow3+1)+'" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">'+critical[i]+'</text>';
-    } else {
-      scoreLabels+='<text x="'+cx+'" y="'+yRow3+'" text-anchor="middle" font-size="8" fill="#333">—</text>';
+      svg+='<circle cx="'+cx+'" cy="'+(rowCrit-4)+'" r="8" fill="#ef4444" opacity="0.9"/>';
+      svg+='<text x="'+cx+'" y="'+(rowCrit+1)+'" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">'+critical[i]+'</text>';
     }
   });
 
-  // Línea % confirmadas
-  var pathParts=confirmed.map(function(v,i){
-    var cx=padL+i*slotW+slotW/2;
-    return(i===0?'M':'L')+cx+','+yConf(v);
-  });
-  lineConf='<path d="'+pathParts.join(' ')+'" fill="none" stroke="#1ddb3a" stroke-width="2" stroke-dasharray="5,3" opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  /* Leyenda */
+  svg+='<text x="'+(W-padR)+'" y="'+(padT-10)+'" text-anchor="end" font-size="9" fill="#1ddb3a" opacity="0.7">--- % confirmadas</text>';
+  svg+='<circle cx="'+(padL+6)+'" cy="'+(rowCrit-4)+'" r="8" fill="#ef4444" opacity="0.7"/>';
+  svg+='<text x="'+(padL+18)+'" y="'+(rowCrit+1)+'" font-size="8" fill="#ef4444">= criticas</text>';
 
-  // Puntos % confirmadas
-  confirmed.forEach(function(v,i){
-    var cx=padL+i*slotW+slotW/2;var cy=yConf(v);
-    var col=v>=70?'#1ddb3a':v>=50?'#eab308':'#ef4444';
-    dots+='<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="'+col+'" stroke="#0a0a0a" stroke-width="2"><title>'+v+'% confirmadas</title></circle>';
-    dots+='<text x="'+cx+'" y="'+(cy-9)+'" text-anchor="middle" font-size="9" fill="'+col+'">'+v+'%</text>';
-  });
-
-  // Leyenda abajo a la derecha
-  var lyLegend=H-8;
-  var legend='<circle cx="'+(W-padR-80)+'" cy="'+(lyLegend-4)+'" r="5" fill="#ef4444" opacity="0.9"/>'+
-    '<text x="'+(W-padR-72)+'" y="'+lyLegend+'" font-size="8" fill="#ef4444">= ops críticas del día</text>'+
-    '<text x="'+(W-padR+4)+'" y="'+(padT+4)+'" font-size="9" fill="#1ddb3a" opacity="0.5">%</text>';
-
-  el.innerHTML='<svg width="100%" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" style="display:block;overflow:visible">'+
-    yAxis+bars+scoreLabels+lineConf+dots+legend+'</svg>';
+  el.innerHTML='<svg width="100%" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" style="display:block">'+svg+'</svg>';
 }
-// ── TICKER ──
+
+/* TICKER */
 function renderTicker(){
-  var ticker=document.getElementById('tickerContent');if(!ticker) return;
+  var ticker=document.getElementById('tickerContent');if(!ticker)return;
   var items=[];
-  var criticas=allOps.filter(function(o){return o.riskLevel==='critical'&&o.authorized&&o.monto>100000000;});
-  criticas.slice(0,3).forEach(function(o){items.push('CRÍTICO · '+o.id+' · '+o.producer+' · '+o.client+' · '+fmt(o.monto)+' sin confirmar');});
-  var sinMail=allOps.filter(function(o){return o.authorized&&o.mailStatus!=='sent'&&o.confirmStatus!=='confirmed';});
-  if(sinMail.length>0) items.push('MAIL PENDIENTE · '+sinMail.length+' operación'+(sinMail.length>1?'es':'')+' sin conformidad enviada');
-  PRODUCERS.forEach(function(name){var score=producerScore(name);if(score<=-3) items.push('ACUMULACIÓN · '+name+' · Score: '+score+' pts');});
+  var criticas=allOps.filter(function(o){return o.riskLevel==='critical';});
+  criticas.slice(0,3).forEach(function(o){items.push('CRITICO · '+o.id+' · '+o.client+' · '+fmt(o.monto)+' · operador no autorizado');});
+  var sinMail=allOps.filter(function(o){return o.mailStatus!=='sent'&&o.confirmStatus!=='confirmed'&&o.authorized;});
+  if(sinMail.length>0)items.push('MAIL PENDIENTE · '+sinMail.length+' op'+(sinMail.length>1?'s':'')+' sin conformidad enviada');
+  PRODUCERS.forEach(function(name){var sc=producerScore(name);if(sc<=-3)items.push('ACUMULACION · '+name+' · Score: '+sc+' pts');});
   var altas=allOps.filter(function(o){return o.riskLevel==='high'&&o.authorized;});
-  if(altas.length>0) items.push('ALTO RIESGO · '+altas.length+' operación'+(altas.length>1?'es':'')+' entre $50M–$100M sin confirmar');
-  if(items.length===0) items.push('✅ Sin alertas activas — todas las operaciones están confirmadas');
+  if(altas.length>0)items.push('ALTO RIESGO · '+altas.length+' op'+(altas.length>1?'s':'')+' mayores a $50M sin confirmar');
+  if(items.length===0)items.push('Sin alertas activas - todas las operaciones confirmadas');
   var all=items.concat(items);
   ticker.innerHTML=all.map(function(msg){return '<div class="ticker-item"><div class="ticker-dot"></div>'+msg+'</div>';}).join('');
 }
 
-// ── TOGGLE MAIL ──
+/* TOGGLE MAIL */
 function toggleMail(id){
-  var op=allOps.find(function(o){return o.id===id;});if(!op) return;
+  var op=allOps.find(function(o){return o.id===id;});if(!op)return;
+  if(!op.authorized)return;
   op.mailStatus=op.mailStatus==='sent'?'pending':'sent';
-  if(op.mailStatus==='pending') op.confirmStatus='pending';
+  if(op.mailStatus==='pending')op.confirmStatus='pending';
   op.score=calcOpScore(op);op.riskLevel=calcRiskLevel(op);
-  renderTable();updateKPIs();renderProducers();renderGlobalRisk();renderTicker();renderCompliance();
-  showToast(op.mailStatus==='sent'?'✉️ Mail marcado como enviado':'📭 Mail marcado como pendiente',op.mailStatus==='sent'?'success':'danger');
+  renderTable();updateKPIs();renderProducers();renderGlobalRisk();renderTicker();
+  showToast(op.mailStatus==='sent'?'Mail marcado como enviado':'Mail marcado como pendiente',op.mailStatus==='sent'?'success':'danger');
 }
 
-// ── MODAL DETALLE ──
+/* MODAL DETALLE */
 function showOpDetail(id){
-  var op=allOps.find(function(o){return o.id===id;});if(!op) return;
-  document.getElementById('modalTitle').textContent=op.id+' — '+op.instrument;
+  var op=allOps.find(function(o){return o.id===id;});if(!op)return;
+  document.getElementById('modalTitle').textContent=op.id+' - '+op.instrument;
   document.getElementById('modalEl').style.maxWidth='580px';
   var rc=RISK_COLOR[op.riskLevel];
   var rl=op.authorized&&op.confirmStatus==='confirmed'?'NULO':(RISK_LABEL[op.riskLevel]||'BAJO');
-  var rec=!op.authorized&&op.monto>100000000?'🔴 Operador no autorizado en op. >$100M. Escalar a Compliance.':
-    !op.authorized?'🔴 Operador no autorizado. Escalar a Compliance.':
-    op.monto>100000000&&op.confirmStatus!=='confirmed'?'🔴 Monto >$100M sin confirmación. Contactar al cliente urgente.':
-    op.mailStatus!=='sent'?'🟠 Mail de conformidad no enviado.':
-    op.confirmStatus!=='confirmed'?'🟡 Mail enviado. Esperando confirmación.':'🟢 Confirmada. Sin acción.';
+  var rec=!op.authorized&&op.monto>100000000?'CRITICO: Operador no autorizado en op. mayor a $100M. Escalar a Compliance.':
+    !op.authorized?'CRITICO: Operador no autorizado. Escalar a Compliance.':
+    op.monto>100000000&&op.confirmStatus!=='confirmed'?'ALTO: Monto mayor a $100M sin confirmacion. Contactar cliente.':
+    op.mailStatus!=='sent'?'MEDIO: Mail de conformidad no enviado.':
+    op.confirmStatus!=='confirmed'?'BAJO: Mail enviado. Esperando confirmacion.':'OK: Confirmada. Sin accion requerida.';
   document.getElementById('modalBody').innerHTML=
     '<div class="detail-grid">'+
       '<div><div class="detail-key">Cliente</div><div class="detail-val">'+op.client+'</div></div>'+
       '<div><div class="detail-key">Productor</div><div class="detail-val">'+op.producer+'</div></div>'+
       '<div><div class="detail-key">Monto</div><div class="detail-val" style="color:'+(op.monto>100000000?'var(--red)':'var(--text)')+'">'+fmt(op.monto)+'</div></div>'+
-      '<div><div class="detail-key">Instrumento</div><div class="detail-val" style="color:#1ddb3a">'+op.instrument+'</div></div>'+
+      '<div><div class="detail-key">Instrumento</div><div class="detail-val">'+op.instrument+'</div></div>'+
       '<div><div class="detail-key">Mail conformidad</div><div class="detail-val">'+mailPill(op)+'</div></div>'+
-      '<div><div class="detail-key">Confirmación cliente</div><div class="detail-val">'+confirmPill(op)+'</div></div>'+
+      '<div><div class="detail-key">Confirmacion cliente</div><div class="detail-val">'+confirmPill(op)+'</div></div>'+
       '<div><div class="detail-key">Tiempo</div><div class="detail-val">'+fmtT(op.minutesAgo)+'</div></div>'+
       '<div><div class="detail-key">Nivel de riesgo</div><div class="detail-val" style="color:'+rc+'">'+rl+'</div></div>'+
-      '<div><div class="detail-key">Score</div><div class="detail-val" style="color:'+rc+'">'+op.score+' pts</div></div>'+
-      '<div><div class="detail-key">Autorizado</div><div class="detail-val" style="color:'+(op.authorized?'#1ddb3a':'#ef4444')+'">'+(op.authorized?'✓ Sí':'✗ No')+'</div></div>'+
+      '<div><div class="detail-key">Autorizado</div><div class="detail-val" style="color:'+(op.authorized?'#1ddb3a':'#ef4444')+'">'+(op.authorized?'Si':'No')+'</div></div>'+
     '</div>'+
-    '<div class="rec-box" style="margin-bottom:14px"><div class="rec-title">Recomendación</div><div class="rec-text">'+rec+'</div></div>'+
+    '<div class="rec-box" style="margin-bottom:14px"><div class="rec-title">Recomendacion</div><div class="rec-text">'+rec+'</div></div>'+
     '<div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);padding-top:14px">'+
       '<button class="btn-secondary" onclick="closeModal()">Cerrar</button>'+
-      '<button class="btn-primary" onclick="closeModal();openEditModal(\''+op.id+'\')">✏️ Editar</button>'+
+      '<button class="btn-primary" onclick="closeModal();openEditModal(\''+op.id+'\')">Editar</button>'+
     '</div>';
   openModal();
 }
 
-// ── MODAL EDITAR ──
+/* MODAL EDITAR */
 function openEditModal(id){
-  var op=allOps.find(function(o){return o.id===id;});if(!op) return;
-  document.getElementById('modalTitle').textContent='✏️ Editar — '+op.id;
+  var op=allOps.find(function(o){return o.id===id;});if(!op)return;
+  document.getElementById('modalTitle').textContent='Editar - '+op.id;
   document.getElementById('modalEl').style.maxWidth='580px';
   document.getElementById('modalBody').innerHTML=
     '<div class="edit-form">'+
@@ -1083,24 +1040,24 @@ function openEditModal(id){
       '<div class="form-group"><label class="form-label">Instrumento</label><select class="form-select" id="ef-instrument">'+INSTRUMENTS.map(function(i){return '<option value="'+i+'"'+(op.instrument===i?' selected':'')+'>'+i+'</option>';}).join('')+'</select></div>'+
       '<div class="form-group"><label class="form-label">Monto (ARS)</label><input class="form-input" id="ef-monto" type="number" value="'+op.monto+'" min="1"/></div>'+
       '<div class="form-group"><label class="form-label">Mail de conformidad</label><select class="form-select" id="ef-mail">'+
-        '<option value="pending"'+(op.mailStatus!=='sent'?' selected':'')+'>📭 Pendiente</option>'+
-        '<option value="sent"'+(op.mailStatus==='sent'?' selected':'')+'>✉️ Enviado</option>'+
+        '<option value="pending"'+(op.mailStatus!=='sent'?' selected':'')+'>Pendiente</option>'+
+        '<option value="sent"'+(op.mailStatus==='sent'?' selected':'')+'>Enviado</option>'+
       '</select></div>'+
-      '<div class="form-group"><label class="form-label">Confirmación del cliente</label><select class="form-select" id="ef-confirm">'+
-        '<option value="pending"'+(op.confirmStatus!=='confirmed'?' selected':'')+'>⏳ Pendiente</option>'+
-        '<option value="confirmed"'+(op.confirmStatus==='confirmed'?' selected':'')+'>✅ Confirmada</option>'+
+      '<div class="form-group"><label class="form-label">Confirmacion del cliente</label><select class="form-select" id="ef-confirm">'+
+        '<option value="pending"'+(op.confirmStatus!=='confirmed'?' selected':'')+'>Pendiente</option>'+
+        '<option value="confirmed"'+(op.confirmStatus==='confirmed'?' selected':'')+'>Confirmada</option>'+
       '</select></div>'+
       '<div class="form-group"><label class="form-label">Minutos transcurridos</label><input class="form-input" id="ef-minutes" type="number" value="'+op.minutesAgo+'" min="1"/></div>'+
     '</div>'+
     '<div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">'+
-      '<button class="btn-danger" onclick="deleteOp(\''+op.id+'\')">🗑 Eliminar</button>'+
+      '<button class="btn-danger" onclick="deleteOp(\''+op.id+'\')">Eliminar</button>'+
       '<button class="btn-secondary" onclick="closeModal()">Cancelar</button>'+
       '<button class="btn-primary" onclick="saveEdit(\''+op.id+'\')">Guardar</button>'+
     '</div>';
   openModal();
 }
 function saveEdit(id){
-  var op=allOps.find(function(o){return o.id===id;});if(!op) return;
+  var op=allOps.find(function(o){return o.id===id;});if(!op)return;
   op.client=document.getElementById('ef-client').value;
   op.producer=document.getElementById('ef-producer').value;
   op.instrument=document.getElementById('ef-instrument').value;
@@ -1109,32 +1066,32 @@ function saveEdit(id){
   op.confirmStatus=document.getElementById('ef-confirm').value;
   op.minutesAgo=parseInt(document.getElementById('ef-minutes').value)||op.minutesAgo;
   op.authorized=isAuth(op.client,op.producer);
-  if(op.mailStatus==='pending') op.confirmStatus='pending';
+  if(op.mailStatus==='pending')op.confirmStatus='pending';
   op.score=calcOpScore(op);op.riskLevel=calcRiskLevel(op);
-  filteredOps=allOps.slice();applyFilters();updateKPIs();renderProducers();renderGlobalRisk();renderCompliance();renderTicker();
-  if(prodMetricsOpen) renderProdMetrics();
-  closeModal();showToast('Operación actualizada','success');
+  filteredOps=allOps.slice();applyFilters();updateKPIs();renderProducers();renderGlobalRisk();renderTicker();
+  if(prodMetricsOpen)renderProdMetrics();
+  closeModal();showToast('Operacion actualizada','success');
 }
 function deleteOp(id){
-  if(!confirm('¿Eliminar esta operación?')) return;
+  if(!confirm('Eliminar esta operacion?'))return;
   allOps=allOps.filter(function(o){return o.id!==id;});
   filteredOps=filteredOps.filter(function(o){return o.id!==id;});
-  renderTable();updateKPIs();renderProducers();renderGlobalRisk();renderCompliance();renderTicker();
-  closeModal();showToast('Operación eliminada','danger');
+  renderTable();updateKPIs();renderProducers();renderGlobalRisk();renderTicker();
+  closeModal();showToast('Operacion eliminada','danger');
 }
 
-// ── NUEVA OPERACIÓN ──
+/* NUEVA OP */
 function openNewOpModal(){
-  document.getElementById('modalTitle').textContent='➕ Nueva Operación';
+  document.getElementById('modalTitle').textContent='Nueva Operacion';
   document.getElementById('modalEl').style.maxWidth='580px';
   document.getElementById('modalBody').innerHTML=
     '<div class="edit-form">'+
-      '<div class="form-group"><label class="form-label">Cliente</label><select class="form-select" id="nf-client">'+CLIENT_NAMES.map(function(c){return '<option value="'+c+'">'+c+'</option>';}).join('')+'</select></div>'+
-      '<div class="form-group"><label class="form-label">Productor</label><select class="form-select" id="nf-producer">'+PRODUCERS.map(function(p){return '<option value="'+p+'">'+p+'</option>';}).join('')+'</select></div>'+
-      '<div class="form-group"><label class="form-label">Instrumento</label><select class="form-select" id="nf-instrument">'+INSTRUMENTS.map(function(i){return '<option value="'+i+'">'+i+'</option>';}).join('')+'</select></div>'+
-      '<div class="form-group"><label class="form-label">Monto (ARS)</label><input class="form-input" id="nf-monto" type="number" placeholder="Ej: 50000000" min="1"/></div>'+
-      '<div class="form-group"><label class="form-label">Mail de conformidad</label><select class="form-select" id="nf-mail"><option value="pending">📭 Pendiente</option><option value="sent">✉️ Enviado</option></select></div>'+
-      '<div class="form-group"><label class="form-label">Confirmación del cliente</label><select class="form-select" id="nf-confirm"><option value="pending">⏳ Pendiente</option><option value="confirmed">✅ Confirmada</option></select></div>'+
+      '<div class="form-group"><label class="form-label">Cliente</label><select class="form-select" id="nf-client">'+CLIENT_NAMES.map(function(c){return '<option>'+c+'</option>';}).join('')+'</select></div>'+
+      '<div class="form-group"><label class="form-label">Productor</label><select class="form-select" id="nf-producer">'+PRODUCERS.map(function(p){return '<option>'+p+'</option>';}).join('')+'</select></div>'+
+      '<div class="form-group"><label class="form-label">Instrumento</label><select class="form-select" id="nf-instrument">'+INSTRUMENTS.map(function(i){return '<option>'+i+'</option>';}).join('')+'</select></div>'+
+      '<div class="form-group"><label class="form-label">Monto (ARS)</label><input class="form-input" id="nf-monto" type="number" placeholder="50000000" min="1"/></div>'+
+      '<div class="form-group"><label class="form-label">Mail</label><select class="form-select" id="nf-mail"><option value="pending">Pendiente</option><option value="sent">Enviado</option></select></div>'+
+      '<div class="form-group"><label class="form-label">Confirmacion</label><select class="form-select" id="nf-confirm"><option value="pending">Pendiente</option><option value="confirmed">Confirmada</option></select></div>'+
       '<div class="form-group"><label class="form-label">Minutos transcurridos</label><input class="form-input" id="nf-minutes" type="number" value="5" min="1"/></div>'+
     '</div>'+
     '<div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">'+
@@ -1145,52 +1102,39 @@ function openNewOpModal(){
 }
 function saveNewOp(){
   var monto=parseInt(document.getElementById('nf-monto').value);
-  if(!monto||monto<1){showToast('Ingresá un monto válido','danger');return;}
-  var op=buildOp({
-    client:document.getElementById('nf-client').value,
-    producer:document.getElementById('nf-producer').value,
-    instrument:document.getElementById('nf-instrument').value,
-    monto:monto,
-    mailStatus:document.getElementById('nf-mail').value,
-    confirmStatus:document.getElementById('nf-confirm').value,
-    minutesAgo:parseInt(document.getElementById('nf-minutes').value)||5
-  });
-  allOps.unshift(op);filteredOps=allOps.slice();applyFilters();updateKPIs();renderProducers();renderGlobalRisk();renderCompliance();renderTicker();
-  if(prodMetricsOpen) renderProdMetrics();
-  closeModal();showToast('Operación creada','success');
+  if(!monto||monto<1){showToast('Ingresa un monto valido','danger');return;}
+  var op=buildOp({client:document.getElementById('nf-client').value,producer:document.getElementById('nf-producer').value,
+    instrument:document.getElementById('nf-instrument').value,monto:monto,
+    mailStatus:document.getElementById('nf-mail').value,confirmStatus:document.getElementById('nf-confirm').value,
+    minutesAgo:parseInt(document.getElementById('nf-minutes').value)||5});
+  allOps.unshift(op);filteredOps=allOps.slice();applyFilters();updateKPIs();renderProducers();renderGlobalRisk();renderTicker();
+  if(prodMetricsOpen)renderProdMetrics();
+  closeModal();showToast('Operacion creada','success');
 }
 
-// ── CONFIG ──
+/* CONFIG */
 function openFilterEditor(){
-  document.getElementById('modalTitle').textContent='⚙️ Configuración';
+  document.getElementById('modalTitle').textContent='Configuracion';
   document.getElementById('modalEl').style.maxWidth='620px';
-  var prodHtml=PRODUCERS.map(function(p){
-    return '<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--text)">'+p+(PRODUCERS.length>1?'<span onclick="removeProducer(\''+p+'\')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px">×</span>':'')+'</div>';
-  }).join('');
-  var instHtml=INSTRUMENTS.map(function(i){
-    return '<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--text)">'+i+'<span onclick="removeInstrument(\''+i+'\')" style="cursor:pointer;color:var(--red);margin-left:4px;font-size:14px">×</span></div>';
-  }).join('');
+  var pH=PRODUCERS.map(function(p){return '<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--text)">'+p+(PRODUCERS.length>1?'<span onclick="removeProducer(\''+p+'\')" style="cursor:pointer;color:var(--red);margin-left:4px">x</span>':'')+'</div>';}).join('');
+  var iH=INSTRUMENTS.map(function(i){return '<div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--text)">'+i+'<span onclick="removeInstrument(\''+i+'\')" style="cursor:pointer;color:var(--red);margin-left:4px">x</span></div>';}).join('');
   document.getElementById('modalBody').innerHTML=
     '<div style="display:flex;flex-direction:column;gap:20px">'+
-      '<div><div class="score-title" style="margin-bottom:10px">Productores</div>'+
-        '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">'+prodHtml+'</div>'+
-        '<div style="display:flex;gap:8px"><input class="form-input" id="fe-new-producer" placeholder="Nuevo productor" style="flex:1"/><button class="btn-primary" onclick="addProducer()">+ Agregar</button></div>'+
-      '</div>'+
-      '<div><div class="score-title" style="margin-bottom:10px">Instrumentos</div>'+
-        '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">'+instHtml+'</div>'+
-        '<div style="display:flex;gap:8px"><input class="form-input" id="fe-new-instrument" placeholder="Nuevo instrumento"/><button class="btn-primary" onclick="addInstrument()">+ Agregar</button></div>'+
-      '</div>'+
+      '<div><div style="font-weight:700;margin-bottom:10px;color:var(--text)">Productores</div>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">'+pH+'</div>'+
+        '<div style="display:flex;gap:8px"><input class="form-input" id="fe-new-producer" placeholder="Nuevo productor" style="flex:1"/><button class="btn-primary" onclick="addProducer()">Agregar</button></div></div>'+
+      '<div><div style="font-weight:700;margin-bottom:10px;color:var(--text)">Instrumentos</div>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">'+iH+'</div>'+
+        '<div style="display:flex;gap:8px"><input class="form-input" id="fe-new-instrument" placeholder="Nuevo instrumento"/><button class="btn-primary" onclick="addInstrument()">Agregar</button></div></div>'+
     '</div>'+
     '<div style="display:flex;justify-content:flex-end;margin-top:20px;border-top:1px solid var(--border);padding-top:14px"><button class="btn-secondary" onclick="closeModal()">Cerrar</button></div>';
   openModal();
 }
 function addProducer(){
   var v=document.getElementById('fe-new-producer').value.trim();
-  if(!v){showToast('Nombre requerido','danger');return;}
-  if(PRODUCERS.indexOf(v)>=0){showToast('Ya existe','danger');return;}
-  PRODUCERS.push(v);
-  CLIENT_NAMES.forEach(function(c){if(!AUTHORIZED_MAP[c])AUTHORIZED_MAP[c]=[];AUTHORIZED_MAP[c].push(v);});
-  populateFilterSelects();renderProducers();openFilterEditor();showToast('"'+v+'" agregado','success');
+  if(!v)return;if(PRODUCERS.indexOf(v)>=0){showToast('Ya existe','danger');return;}
+  PRODUCERS.push(v);CLIENT_NAMES.forEach(function(c){if(!AUTHORIZED_MAP[c])AUTHORIZED_MAP[c]=[];AUTHORIZED_MAP[c].push(v);});
+  populateFilterSelects();renderProducers();openFilterEditor();showToast(v+' agregado','success');
 }
 function removeProducer(p){
   if(PRODUCERS.length<=1){showToast('Debe haber al menos un productor','danger');return;}
@@ -1200,21 +1144,20 @@ function removeProducer(p){
 }
 function addInstrument(){
   var v=document.getElementById('fe-new-instrument').value.trim().toUpperCase();
-  if(!v){showToast('Nombre requerido','danger');return;}
-  if(INSTRUMENTS.indexOf(v)>=0){showToast('Ya existe','danger');return;}
-  INSTRUMENTS.push(v);populateFilterSelects();openFilterEditor();showToast('"'+v+'" agregado','success');
+  if(!v)return;if(INSTRUMENTS.indexOf(v)>=0){showToast('Ya existe','danger');return;}
+  INSTRUMENTS.push(v);populateFilterSelects();openFilterEditor();showToast(v+' agregado','success');
 }
 function removeInstrument(i){
   if(INSTRUMENTS.length<=1){showToast('Debe haber al menos uno','danger');return;}
   INSTRUMENTS=INSTRUMENTS.filter(function(x){return x!==i;});populateFilterSelects();openFilterEditor();
 }
 
-// ── MÉTRICAS PRODUCTOR ──
+/* METRICAS PRODUCTOR */
 function toggleProdMetrics(){
   prodMetricsOpen=!prodMetricsOpen;
   document.getElementById('prodMetricsBody').style.display=prodMetricsOpen?'block':'none';
   document.getElementById('prodMetricsChevron').classList.toggle('open',prodMetricsOpen);
-  if(prodMetricsOpen) renderProdMetrics();
+  if(prodMetricsOpen)renderProdMetrics();
 }
 function selectProd(p){selectedProdFilter=p;renderProdMetrics();}
 function renderProdMetrics(){
@@ -1232,60 +1175,48 @@ function renderProdMetrics(){
     '<div class="metric-card"><div class="metric-card-label">Monto Total</div><div class="metric-card-value" style="font-size:18px">'+fmt(ops.reduce(function(s,o){return s+o.monto;},0))+'</div></div>';
   var grid=document.getElementById('prodDetailGrid');
   if(selectedProdFilter==='__all__'){
-    var clientRows=CLIENT_NAMES.map(function(c){
-      return{c:c,total:ops.filter(function(o){return o.client===c;}).length,monto:ops.filter(function(o){return o.client===c;}).reduce(function(s,o){return s+o.monto;},0)};
-    }).filter(function(x){return x.total>0;}).sort(function(a,b){return b.total-a.total;});
-    var maxC=Math.max.apply(null,clientRows.map(function(x){return x.total;}));maxC=Math.max(maxC,1);
-    var prodRows=PRODUCERS.map(function(p){
-      return{p:p,total:ops.filter(function(o){return o.producer===p;}).length,
-        conf:ops.filter(function(o){return o.producer===p&&o.confirmStatus==='confirmed';}).length,
-        sinMail:ops.filter(function(o){return o.producer===p&&o.authorized&&o.mailStatus!=='sent';}).length,
-        monto:ops.filter(function(o){return o.producer===p;}).reduce(function(s,o){return s+o.monto;},0)};
-    });
+    var cRows=CLIENT_NAMES.map(function(c){return{c:c,total:ops.filter(function(o){return o.client===c;}).length,monto:ops.filter(function(o){return o.client===c;}).reduce(function(s,o){return s+o.monto;},0)};}).filter(function(x){return x.total>0;}).sort(function(a,b){return b.total-a.total;});
+    var maxC=0;cRows.forEach(function(x){if(x.total>maxC)maxC=x.total;});if(maxC===0)maxC=1;
+    var pRows=PRODUCERS.map(function(p){return{p:p,total:ops.filter(function(o){return o.producer===p;}).length,conf:ops.filter(function(o){return o.producer===p&&o.confirmStatus==='confirmed';}).length,sinMail:ops.filter(function(o){return o.producer===p&&o.authorized&&o.mailStatus!=='sent';}).length,monto:ops.filter(function(o){return o.producer===p;}).reduce(function(s,o){return s+o.monto;},0)};});
     grid.innerHTML=
       '<div class="prod-detail-card"><div class="prod-detail-card-title">Operaciones por Cliente</div><table class="prod-mini-table"><thead><tr><th>Cliente</th><th>Ops</th><th>Monto</th><th>Dist.</th></tr></thead><tbody>'+
-      clientRows.slice(0,10).map(function(x){return '<tr><td>'+x.c+'</td><td><strong>'+x.total+'</strong></td><td>'+fmt(x.monto)+'</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round(x.total/maxC*100)+'%;background:#1ddb3a"></div></div></td></tr>';}).join('')+
+      cRows.slice(0,10).map(function(x){return '<tr><td>'+x.c+'</td><td><b>'+x.total+'</b></td><td>'+fmt(x.monto)+'</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round(x.total/maxC*100)+'%;background:#1ddb3a"></div></div></td></tr>';}).join('')+
       '</tbody></table></div>'+
-      '<div class="prod-detail-card"><div class="prod-detail-card-title">Resumen por Productor</div><table class="prod-mini-table"><thead><tr><th>Productor</th><th>Ops</th><th>Confirm.</th><th>Sin mail</th><th>Monto</th></tr></thead><tbody>'+
-      prodRows.map(function(x){return '<tr><td><strong>'+x.p+'</strong></td><td>'+x.total+'</td><td style="color:#1ddb3a">'+x.conf+'</td><td style="color:'+(x.sinMail>0?'var(--red)':'var(--text-muted)')+'">'+x.sinMail+'</td><td>'+fmt(x.monto)+'</td></tr>';}).join('')+
+      '<div class="prod-detail-card"><div class="prod-detail-card-title">Resumen por Productor</div><table class="prod-mini-table"><thead><tr><th>Productor</th><th>Ops</th><th>Conf.</th><th>Sin mail</th><th>Monto</th></tr></thead><tbody>'+
+      pRows.map(function(x){return '<tr><td><b>'+x.p+'</b></td><td>'+x.total+'</td><td style="color:#1ddb3a">'+x.conf+'</td><td style="color:'+(x.sinMail>0?'var(--red)':'var(--text-muted)')+'">'+x.sinMail+'</td><td>'+fmt(x.monto)+'</td></tr>';}).join('')+
       '</tbody></table></div>';
   } else {
     var pAut=aut;var n=Math.max(pAut.length,1);
-    var cRows=CLIENT_NAMES.map(function(c){
-      return{c:c,total:pAut.filter(function(o){return o.client===c;}).length,
-        conf:pAut.filter(function(o){return o.client===c&&o.confirmStatus==='confirmed';}).length,
-        sinMail:pAut.filter(function(o){return o.client===c&&o.mailStatus!=='sent';}).length,
-        monto:pAut.filter(function(o){return o.client===c;}).reduce(function(s,o){return s+o.monto;},0)};
-    }).filter(function(x){return x.total>0;}).sort(function(a,b){return b.total-a.total;});
-    var mailSent=pAut.filter(function(o){return o.mailStatus==='sent';}).length;
-    var confOk=pAut.filter(function(o){return o.confirmStatus==='confirmed';}).length;
+    var cR=CLIENT_NAMES.map(function(c){return{c:c,total:pAut.filter(function(o){return o.client===c;}).length,conf:pAut.filter(function(o){return o.client===c&&o.confirmStatus==='confirmed';}).length,sinM:pAut.filter(function(o){return o.client===c&&o.mailStatus!=='sent';}).length,monto:pAut.filter(function(o){return o.client===c;}).reduce(function(s,o){return s+o.monto;},0)};}).filter(function(x){return x.total>0;}).sort(function(a,b){return b.total-a.total;});
+    var mS=pAut.filter(function(o){return o.mailStatus==='sent';}).length;
+    var cO=pAut.filter(function(o){return o.confirmStatus==='confirmed';}).length;
     grid.innerHTML=
-      '<div class="prod-detail-card"><div class="prod-detail-card-title">Clientes de '+selectedProdFilter+'</div><table class="prod-mini-table"><thead><tr><th>Cliente</th><th>Ops</th><th>Confirm.</th><th>Sin mail</th><th>Monto</th></tr></thead><tbody>'+
-      cRows.map(function(x){return '<tr><td>'+x.c+'</td><td><strong>'+x.total+'</strong></td><td style="color:#1ddb3a">'+x.conf+'</td><td style="color:'+(x.sinMail>0?'var(--red)':'var(--text-muted)')+'">'+x.sinMail+'</td><td>'+fmt(x.monto)+'</td></tr>';}).join('')+
+      '<div class="prod-detail-card"><div class="prod-detail-card-title">Clientes de '+selectedProdFilter+'</div><table class="prod-mini-table"><thead><tr><th>Cliente</th><th>Ops</th><th>Conf.</th><th>Sin mail</th><th>Monto</th></tr></thead><tbody>'+
+      cR.map(function(x){return '<tr><td>'+x.c+'</td><td><b>'+x.total+'</b></td><td style="color:#1ddb3a">'+x.conf+'</td><td style="color:'+(x.sinM>0?'var(--red)':'var(--text-muted)')+'">'+x.sinM+'</td><td>'+fmt(x.monto)+'</td></tr>';}).join('')+
       '</tbody></table></div>'+
-      '<div class="prod-detail-card"><div class="prod-detail-card-title">Mail y Confirmación</div><table class="prod-mini-table"><thead><tr><th>Concepto</th><th>Cant.</th><th>%</th><th>Barra</th></tr></thead><tbody>'+
-        '<tr><td>✉️ Mail enviado</td><td><strong>'+mailSent+'</strong></td><td>'+Math.round(mailSent/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round(mailSent/n*100)+'%;background:#1ddb3a"></div></div></td></tr>'+
-        '<tr><td>📭 Mail pendiente</td><td><strong>'+(n-mailSent)+'</strong></td><td>'+Math.round((n-mailSent)/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round((n-mailSent)/n*100)+'%;background:#eab308"></div></div></td></tr>'+
-        '<tr><td>✅ Confirmada</td><td><strong>'+confOk+'</strong></td><td>'+Math.round(confOk/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round(confOk/n*100)+'%;background:#1ddb3a"></div></div></td></tr>'+
-        '<tr><td>⏳ Pend. confirm.</td><td><strong>'+(n-confOk)+'</strong></td><td>'+Math.round((n-confOk)/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round((n-confOk)/n*100)+'%;background:#ef4444"></div></div></td></tr>'+
+      '<div class="prod-detail-card"><div class="prod-detail-card-title">Mail y Confirmacion</div><table class="prod-mini-table"><thead><tr><th>Concepto</th><th>Cant.</th><th>%</th><th>Barra</th></tr></thead><tbody>'+
+        '<tr><td>Mail enviado</td><td><b>'+mS+'</b></td><td>'+Math.round(mS/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round(mS/n*100)+'%;background:#1ddb3a"></div></div></td></tr>'+
+        '<tr><td>Mail pendiente</td><td><b>'+(n-mS)+'</b></td><td>'+Math.round((n-mS)/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round((n-mS)/n*100)+'%;background:#eab308"></div></div></td></tr>'+
+        '<tr><td>Confirmada</td><td><b>'+cO+'</b></td><td>'+Math.round(cO/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round(cO/n*100)+'%;background:#1ddb3a"></div></div></td></tr>'+
+        '<tr><td>Pend. confirm.</td><td><b>'+(n-cO)+'</b></td><td>'+Math.round((n-cO)/n*100)+'%</td><td><div class="prod-bar-mini-wrap"><div class="prod-bar-mini" style="width:'+Math.round((n-cO)/n*100)+'%;background:#ef4444"></div></div></td></tr>'+
       '</tbody></table></div>';
   }
 }
 
-// ── NOTIFICACIONES ──
+/* NOTIFICACIONES */
 var notifData=[
-  {id:1,level:'critical',type:'MONTO CRÍTICO',msg:'OP-0001 · $245M sin confirmación · 47 min',time:'hace 2min',read:false},
-  {id:2,level:'critical',type:'ACUMULACIÓN',msg:'Manager 139 · score acumulado elevado',time:'hace 5min',read:false},
-  {id:3,level:'high',type:'MAIL PENDIENTE',msg:'OP-0018 · $42M · sin enviar mail',time:'hace 12min',read:false},
-  {id:4,level:'high',type:'CIERRE CERCANO',msg:'8 ops sin confirmar · cierre en 2hs',time:'hace 25min',read:false},
-  {id:5,level:'medium',type:'CONFIRMACIÓN',msg:'OP-0011 · mail enviado sin respuesta',time:'hace 31min',read:false},
-  {id:6,level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 · $178M · Cliente 2',time:'hace 38min',read:true},
-  {id:7,level:'medium',type:'PENDIENTE',msg:'OP-0015 · $34M · Cliente 5',time:'hace 52min',read:true}
+  {id:1,level:'critical',type:'MONTO CRITICO',msg:'OP-0001 - $245M sin confirmacion - 47 min',time:'hace 2min',read:false},
+  {id:2,level:'critical',type:'ACUMULACION',msg:'Manager 139 - score acumulado elevado',time:'hace 5min',read:false},
+  {id:3,level:'high',type:'MAIL PENDIENTE',msg:'OP-0018 - $42M - sin enviar mail',time:'hace 12min',read:false},
+  {id:4,level:'high',type:'CIERRE CERCANO',msg:'8 ops sin confirmar - cierre en 2hs',time:'hace 25min',read:false},
+  {id:5,level:'medium',type:'CONFIRMACION',msg:'OP-0011 - mail enviado sin respuesta',time:'hace 31min',read:false},
+  {id:6,level:'high',type:'SIN CONFIRMAR',msg:'OP-0022 - $178M - Cliente 2',time:'hace 38min',read:true},
+  {id:7,level:'medium',type:'PENDIENTE',msg:'OP-0015 - $34M - Cliente 5',time:'hace 52min',read:true}
 ];
 function toggleNotifPanel(){
   notifOpen=!notifOpen;
   document.getElementById('notifPanel').classList.toggle('open',notifOpen);
-  if(notifOpen) renderNotifList();
+  if(notifOpen)renderNotifList();
 }
 function switchNotifTab(tab){
   currentNotifTab=tab;
@@ -1295,8 +1226,8 @@ function switchNotifTab(tab){
 }
 function renderNotifList(){
   var items=notifData;
-  if(currentNotifTab==='critical') items=notifData.filter(function(n){return n.level==='critical';});
-  if(currentNotifTab==='unread') items=notifData.filter(function(n){return !n.read;});
+  if(currentNotifTab==='critical')items=notifData.filter(function(n){return n.level==='critical';});
+  if(currentNotifTab==='unread')items=notifData.filter(function(n){return !n.read;});
   var unread=notifData.filter(function(n){return !n.read;}).length;
   document.getElementById('notifCount').textContent=unread;
   document.getElementById('bellBadge').textContent=unread;
@@ -1312,12 +1243,12 @@ document.addEventListener('click',function(e){
   }
 });
 
-// ── MODAL ──
+/* MODAL */
 function openModal(){document.getElementById('modalOverlay').classList.add('open');}
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
-function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay')) closeModal();}
+function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
 
-// ── TOAST ──
+/* TOAST */
 function showToast(msg,type){
   type=type||'success';
   var t=document.createElement('div');
@@ -1326,45 +1257,54 @@ function showToast(msg,type){
   t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove();},2800);
 }
 
-// ── RELOJ Y LIVE ──
+/* RELOJ */
 function updateClock(){
-  var now=new Date();
-  var hh=String(now.getHours()).padStart(2,'0');
-  var mm=String(now.getMinutes()).padStart(2,'0');
-  var ss=String(now.getSeconds()).padStart(2,'0');
-  var dd=String(now.getDate()).padStart(2,'0');
-  var mo=String(now.getMonth()+1).padStart(2,'0');
-  var yyyy=now.getFullYear();
-  document.getElementById('clock').textContent=hh+':'+mm+':'+ss;
-  document.getElementById('lastUpdate').textContent=dd+'/'+mo+'/'+yyyy+' '+hh+':'+mm+':'+ss;
+  var n=new Date();
+  var h=n.getHours(),m=n.getMinutes(),s=n.getSeconds();
+  var hh=(h<10?'0':'')+h,mm=(m<10?'0':'')+m,ss=(s<10?'0':'')+s;
+  var d=n.getDate(),mo=n.getMonth()+1,y=n.getFullYear();
+  var dd=(d<10?'0':'')+d,mmo=(mo<10?'0':'')+mo;
+  var time=hh+':'+mm+':'+ss;
+  var date=dd+'/'+mmo+'/'+y;
+  var el=document.getElementById('clock');if(el)el.textContent=time;
+  var lu=document.getElementById('lastUpdate');if(lu)lu.textContent=date+' '+time;
 }
+
 function toggleAutoScroll(){
   autoScrollOn=!autoScrollOn;
   document.getElementById('autoBtn').classList.toggle('on',autoScrollOn);
-  document.getElementById('autoIcon').textContent=autoScrollOn?'⏸':'▶';
+  document.getElementById('autoIcon').textContent=autoScrollOn?'||':'>';
 }
 function liveUpdate(){
-  if(!autoScrollOn||Math.random()>=0.3) return;
-  var op=buildOp();op.isNew=true;allOps.unshift(op);if(allOps.length>60) allOps.pop();
+  if(!autoScrollOn||Math.random()>=0.3)return;
+  var op=buildOp();op.isNew=true;allOps.unshift(op);if(allOps.length>60)allOps.pop();
   filteredOps=allOps.slice();renderTable();updateKPIs();renderProducers();renderGlobalRisk();renderTicker();
-  if(prodMetricsOpen) renderProdMetrics();
-  document.querySelector('.live-dot').style.background='#fff';
-  setTimeout(function(){document.querySelector('.live-dot').style.background='#f87171';},300);
+  if(prodMetricsOpen)renderProdMetrics();
+  var dot=document.querySelector('.live-dot');if(dot){dot.style.background='#fff';setTimeout(function(){dot.style.background='#f87171';},300);}
 }
 
-// ── INIT ──
+/* INIT */
 seedData();
 populateFilterSelects();
-updateKPIs();renderTable();renderProducers();renderGlobalRisk();renderCompliance();renderTicker();updateClock();
-renderRiskEvo();renderWeeklyChart();
-setTimeout(function(){renderRiskEvo();renderWeeklyChart();},200);
+updateKPIs();
+renderTable();
+renderProducers();
+renderGlobalRisk();
+renderTicker();
+updateClock();
+renderRiskEvo();
+renderWeeklyChart();
+setTimeout(function(){renderRiskEvo();renderWeeklyChart();},300);
 window.addEventListener('resize',function(){renderRiskEvo();renderWeeklyChart();});
+
 var gmailEl=document.createElement('div');
 gmailEl.style.cssText='display:flex;align-items:center;gap:4px;font-size:11px;';
 gmailEl.innerHTML='<span style="width:6px;height:6px;border-radius:50%;background:#555;display:inline-block"></span><span style="color:rgba(255,255,255,0.35)">Gmail: no configurado</span>';
-document.querySelector('.header-center').appendChild(gmailEl);
+var hc=document.querySelector('.header-center');if(hc)hc.appendChild(gmailEl);
+
 setInterval(updateClock,1000);
 setInterval(liveUpdate,3500);
+
 </script>
 </body>
 </html>
